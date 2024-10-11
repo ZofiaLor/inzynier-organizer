@@ -1,0 +1,21 @@
+services:
+  backend:
+    container_name: organizer-back
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+  db:
+    container_name: organizer-db
+    image: mysql:5.7
+    platform: linux/x86_64
+    environment:
+      MYSQL_ROOT_PASSWORD: jdnYYYjka34sdncasjlkcla!!!
+      MYSQL_DATABASE: organizer
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql:/var/lib/mysql

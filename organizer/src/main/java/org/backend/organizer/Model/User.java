@@ -1,9 +1,9 @@
 package org.backend.organizer.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -14,6 +14,16 @@ public class User {
     private String name;
     private String email;
     private String password;
+
+    private String role;
+
+    public User() {}
+
+    public User(String username, String name, String email) {
+        this.username = username;
+        this.name = name;
+        this.email = email;
+    }
 
     public Long getId() {
         return id;
@@ -53,5 +63,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

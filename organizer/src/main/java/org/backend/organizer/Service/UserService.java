@@ -1,11 +1,14 @@
 package org.backend.organizer.Service;
 
 import org.backend.organizer.Model.User;
+import org.backend.organizer.Model.UserPrincipal;
 import org.backend.organizer.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,18 +38,29 @@ public class UserService {
     }
 
     public User register(User user) {
+        if (repository.existsByUsername(user.getUsername())) {
+            return null;
+        }
         user.setPassword(encoder.encode(user.getPassword()));
+        user.setRole("ROLE_USER");
         return repository.save(user);
     }
 
     public String login(User user) {
         Authentication authentication = manager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         if (authentication.isAuthenticated()) {
-            return jwtService.generateToken(user.getUsername());
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            ResponseCookie jwtCookie = jwtService.generateJwtCookie(userPrincipal);
+            return jwtCookie.toString();
         } else {
             return "fail";
         }
+    }
+
+    public String logout() {
+        return jwtService.getCleanJwtCookie().toString();
     }
 
     public User getUserByUsername(String username) {

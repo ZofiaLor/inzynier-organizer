@@ -9,9 +9,11 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
@@ -21,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
@@ -28,13 +31,14 @@ public class SecurityConfig {
     JWTFilter jwtFilter;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable); // it is needed in POST requests when enabled
-        http.authorizeHttpRequests(request -> request
-                .requestMatchers("/", "/users/login", "users/register").permitAll()
-                .anyRequest().authenticated()); // blocks guests from accessing any page
-        http.formLogin(Customizer.withDefaults()); // shows login form in browser
-        http.httpBasic(Customizer.withDefaults()); // enables login from e.g. Postman
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.csrf(AbstractHttpConfigurer::disable) // it is needed in POST requests when enabled
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(request -> request
+                .requestMatchers("/", "/auth/login", "auth/register").permitAll()
+                .anyRequest().permitAll()) // blocks guests from accessing any page
+            .formLogin(Customizer.withDefaults()) // shows login form in browser
+            .httpBasic(Customizer.withDefaults()) // enables login from e.g. Postman
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

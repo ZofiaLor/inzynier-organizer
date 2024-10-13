@@ -6,6 +6,7 @@ import org.backend.organizer.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,11 +18,13 @@ public class UserController {
     UserService service;
 
     @GetMapping("")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<User>> getAllUsers() {
         return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(service.getUserById(id), HttpStatus.OK);
@@ -31,6 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
         try {
             return new ResponseEntity<>(service.getUserByUsername(username), HttpStatus.OK);
@@ -39,22 +43,14 @@ public class UserController {
         }
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        return new ResponseEntity<>(service.register(user), HttpStatus.OK);
-    }
-
-    @PostMapping("/login")
-    public String login(@RequestBody User user) {
-        return service.login(user);
-    }
-
     @PutMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
         return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") Long id) {
         try {
             service.deleteUser(id);

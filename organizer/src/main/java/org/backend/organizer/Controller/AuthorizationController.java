@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AuthorizationController {
     @Autowired
     UserService service;
+    //TODO log out currently logged user, maybe log in the new one
     @PostMapping("/register")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         return new ResponseEntity<>(service.register(user), HttpStatus.OK);

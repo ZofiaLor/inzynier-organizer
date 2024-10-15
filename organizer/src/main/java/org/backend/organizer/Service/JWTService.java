@@ -1,12 +1,14 @@
 package org.backend.organizer.Service;
 
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.backend.organizer.Model.UserPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +27,7 @@ import java.util.function.Function;
 
 @Service
 public class JWTService {
+    private static final Logger logger = LoggerFactory.getLogger(JWTService.class);
     private String secretKey = "";
     @Value("${organizer.app.jwtExpirationMs}")
     private int jwtExpirationMs;
@@ -58,7 +61,7 @@ public class JWTService {
     }
 
     public ResponseCookie getCleanJwtCookie() {
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/").build();
         return cookie;
     }
 
@@ -97,9 +100,25 @@ public class JWTService {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String userName = extractUsername(token);
-        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().verifyWith(getKey()).build().parse(token);
+            return true;
+        } catch (MalformedJwtException e) {
+            logger.error("Invalid JWT token: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            logger.error("JWT token is expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            logger.error("JWT token is unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.error("JWT claims string is empty: {}", e.getMessage());
+        } catch (SignatureException e) {
+            logger.error("JWT signature is wrong: {}", e.getMessage());
+        }
+
+        return false;
+        //final String userName = extractUsername(token);
+        //return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {

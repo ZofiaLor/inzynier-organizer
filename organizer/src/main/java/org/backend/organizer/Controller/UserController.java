@@ -30,14 +30,19 @@ public class UserController {
             return new ResponseEntity<>(service.getUserById(id), HttpStatus.OK);
         } catch (EntityNotFoundException ex){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (NullPointerException ex){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping("/{username}")
+    //TODO temporary solution for id and username disambiguation
+    @GetMapping("/name/{username}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
         try {
-            return new ResponseEntity<>(service.getUserByUsername(username), HttpStatus.OK);
+            User user = service.getUserByUsername(username);
+            if (user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (EntityNotFoundException ex){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -46,7 +51,11 @@ public class UserController {
     @PutMapping("")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
-        return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/{id}")

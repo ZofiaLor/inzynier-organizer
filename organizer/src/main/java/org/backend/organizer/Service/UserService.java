@@ -1,6 +1,8 @@
 package org.backend.organizer.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.backend.organizer.DTO.UserDTO;
+import org.backend.organizer.Mapper.UserMapper;
 import org.backend.organizer.Model.User;
 import org.backend.organizer.Model.UserPrincipal;
 import org.backend.organizer.Repository.UserRepository;
@@ -13,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,28 +29,36 @@ public class UserService {
     @Autowired
     AuthenticationManager manager;
 
+    @Autowired
+    UserMapper mapper;
+
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
     //TODO Error proofing
 
-    public List<User> getAllUsers() {
-        return repository.findAll();
+    public List<UserDTO> getAllUsers() {
+        var result = new ArrayList<UserDTO>();
+        for (var user : repository.findAll()) {
+            result.add(mapper.userToUserDTO(user));
+        }
+        return result;
     }
 
-    public User getUserById(Long id) {
+    public UserDTO getUserById(Long id) {
         if(id == null) throw new NullPointerException();
-        return repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return mapper.userToUserDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
 
-    public User register(User user) {
+    public UserDTO register(UserDTO newUser) {
+        User user = mapper.userDTOToUser(newUser);
         if (repository.existsByUsername(user.getUsername())) {
             return null;
         }
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
-        return repository.save(user);
+        return mapper.userToUserDTO(repository.save(user));
     }
 
-    public String login(User user) {
+    public String login(UserDTO user) {
         Authentication authentication = manager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -64,21 +75,21 @@ public class UserService {
         return jwtService.getCleanJwtCookie().toString();
     }
 
-    public User getUserByUsername(String username) {
-        return repository.findByUsername(username);
+    public UserDTO getUserByUsername(String username) {
+        User user = repository.findByUsername(username);
+        if (user == null) throw new EntityNotFoundException();
+        return mapper.userToUserDTO(user);
     }
 
-    public User updateUser(User userUpdates) {
+    public UserDTO updateUser(UserDTO userUpdates) {
+        if (userUpdates == null) throw new NullPointerException();
         User user = repository.findById(userUpdates.getId()).orElseThrow(EntityNotFoundException::new);
         //TODO use mapper to ignore nulls
-        if (userUpdates.getEmail() != null) user.setEmail(userUpdates.getEmail());
-        if (userUpdates.getName() != null) user.setName(userUpdates.getName());
-        if (userUpdates.getUsername() != null) user.setUsername(userUpdates.getUsername());
-        if (userUpdates.getPassword() != null) user.setPassword(encoder.encode(userUpdates.getPassword()));
-        if (userUpdates.getRole() != null) user.setRole(userUpdates.getRole());
-        return repository.save(user);
+        mapper.updateUserFromUserDTO(userUpdates, user);
+        return mapper.userToUserDTO(repository.save(user));
     }
 
+    //TODO don't delete your own user
     public void deleteUser(Long id) {
         if(!repository.existsById(id)) throw new EntityNotFoundException();
         repository.deleteById(id);

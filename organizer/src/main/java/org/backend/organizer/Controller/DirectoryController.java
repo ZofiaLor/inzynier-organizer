@@ -1,0 +1,73 @@
+package org.backend.organizer.Controller;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+import org.backend.organizer.DTO.DirectoryDTO;
+import org.backend.organizer.Service.DirectoryService;
+import org.backend.organizer.Service.JWTService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@Controller
+@RequestMapping("/directories")
+public class DirectoryController {
+    @Autowired
+    DirectoryService service;
+    @Autowired
+    JWTService jwtService;
+
+    @GetMapping("")
+    public ResponseEntity<List<DirectoryDTO>> getAllDirectories() {
+        return new ResponseEntity<>(service.getAllDirectories(), HttpStatus.OK);
+    }
+
+    @GetMapping("/mydirs")
+    public ResponseEntity<List<DirectoryDTO>> getCurrentUsersDirectories(HttpServletRequest request) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
+        return new ResponseEntity<>(service.getAllDirectoriesByUsername(username), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DirectoryDTO> getDirectoryByID(@PathVariable(name = "id") Long id) {
+        try {
+            return new ResponseEntity<>(service.getByID(id), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("")
+    public ResponseEntity<DirectoryDTO> createDirectory(HttpServletRequest request, @RequestBody DirectoryDTO directory) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
+        return new ResponseEntity<>(service.createDirectory(directory, username), HttpStatus.OK);
+    }
+
+    @PutMapping("")
+    public ResponseEntity<DirectoryDTO> updateDirectory(@RequestBody DirectoryDTO directory) {
+        try {
+            return new ResponseEntity<>(service.updateDirectory(directory), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteDirectory(@PathVariable(name = "id") Long id) {
+        try {
+            service.deleteDirectory(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}

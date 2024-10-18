@@ -1,30 +1,15 @@
-package org.backend.organizer.Model;
-
-import jakarta.persistence.*;
+package org.backend.organizer.DTO;
 
 import java.util.List;
 
-@Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDTO {
     private Long id;
     private String username;
     private String name;
     private String email;
     private String password;
-
     private String role;
-    @OneToMany(mappedBy = "owner")
-    private List<Directory> directories;
-
-    public User() {}
-
-    public User(String username, String name, String email) {
-        this.username = username;
-        this.name = name;
-        this.email = email;
-    }
+    private List<Long> directories;
 
     public Long getId() {
         return id;
@@ -74,11 +59,11 @@ public class User {
         this.role = role;
     }
 
-    public List<Directory> getDirectories() {
+    public List<Long> getDirectories() {
         return directories;
     }
 
-    public void setDirectories(List<Directory> directories) {
+    public void setDirectories(List<Long> directories) {
         this.directories = directories;
     }
 }

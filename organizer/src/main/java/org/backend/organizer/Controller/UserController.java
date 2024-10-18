@@ -1,6 +1,7 @@
 package org.backend.organizer.Controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.backend.organizer.DTO.UserDTO;
 import org.backend.organizer.Model.User;
 import org.backend.organizer.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,13 @@ public class UserController {
 
     @GetMapping("")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(service.getUserById(id), HttpStatus.OK);
         } catch (EntityNotFoundException ex){
@@ -38,10 +39,9 @@ public class UserController {
     //TODO temporary solution for id and username disambiguation
     @GetMapping("/name/{username}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
+    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable("username") String username) {
         try {
-            User user = service.getUserByUsername(username);
-            if (user == null) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            UserDTO user = service.getUserByUsername(username);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (EntityNotFoundException ex){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -50,7 +50,7 @@ public class UserController {
 
     @PutMapping("")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO user) {
         try {
             return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);
         } catch (EntityNotFoundException ex) {

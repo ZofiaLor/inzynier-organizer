@@ -1,5 +1,6 @@
 package org.backend.organizer.Controller;
 
+import org.backend.organizer.DTO.UserDTO;
 import org.backend.organizer.Model.User;
 import org.backend.organizer.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,11 @@ public class AuthorizationController {
     UserService service;
     //TODO log out currently logged user, maybe log in the new one
     @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user) {
         return new ResponseEntity<>(service.register(user), HttpStatus.OK);
     }
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User user) {
+    public ResponseEntity<?> login(@RequestBody UserDTO user) {
         String loginResult = service.login(user);
         if (loginResult.equals("fail")) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Fail");
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, service.login(user)).body("Success");

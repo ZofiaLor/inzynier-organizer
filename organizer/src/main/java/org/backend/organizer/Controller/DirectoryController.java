@@ -8,7 +8,6 @@ import org.backend.organizer.Service.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,9 +33,23 @@ public class DirectoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DirectoryDTO> getDirectoryByID(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<DirectoryDTO> getDirectoryByID(HttpServletRequest request, @PathVariable(name = "id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(service.getByID(id), HttpStatus.OK);
+            return new ResponseEntity<>(service.getByID(id, username), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @GetMapping("/subdirs/{id}")
+    public ResponseEntity<List<DirectoryDTO>> getDirectoryByParentID(@PathVariable(name = "id") Long id) {
+        try {
+            return new ResponseEntity<>(service.getAllDirectoriesByParentID(id), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {
@@ -51,13 +64,16 @@ public class DirectoryController {
     }
 
     @PutMapping("")
-    public ResponseEntity<DirectoryDTO> updateDirectory(@RequestBody DirectoryDTO directory) {
+    public ResponseEntity<DirectoryDTO> updateDirectory(HttpServletRequest request, @RequestBody DirectoryDTO directory) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(service.updateDirectory(directory), HttpStatus.OK);
+            return new ResponseEntity<>(service.updateDirectory(directory, username), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 

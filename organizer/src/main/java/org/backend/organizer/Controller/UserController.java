@@ -55,6 +55,8 @@ public class UserController {
             return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (NullPointerException | IllegalArgumentException ex){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -84,6 +84,7 @@ public class UserService {
     public UserDTO updateUser(UserDTO userUpdates) {
         if (userUpdates == null) throw new NullPointerException();
         User user = repository.findById(userUpdates.getId()).orElseThrow(EntityNotFoundException::new);
+        if (repository.existsByUsername(userUpdates.getUsername())) throw new IllegalArgumentException();
         //TODO use mapper to ignore nulls
         mapper.updateUserFromUserDTO(userUpdates, user);
         return mapper.userToUserDTO(repository.save(user));

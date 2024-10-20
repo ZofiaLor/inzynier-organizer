@@ -1,11 +1,10 @@
 package org.backend.organizer.Service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.backend.organizer.DTO.FileDTO;
 import org.backend.organizer.DTO.NoteDTO;
 import org.backend.organizer.Mapper.FileMapper;
-import org.backend.organizer.Model.Note;
-import org.backend.organizer.Model.User;
+import org.backend.organizer.Model.*;
+import org.backend.organizer.Repository.DirectoryRepository;
 import org.backend.organizer.Repository.NoteRepository;
 import org.backend.organizer.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,12 @@ public class NoteService {
     FileMapper mapper;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    DirectoryRepository directoryRepository;
+    @Autowired
+    AccessDirectoryService adService;
+    @Autowired
+    AccessFileService afService;
 
     public List<NoteDTO> getAllNotesByUser(String username) {
         User user = userRepository.findByUsername(username);
@@ -46,10 +51,13 @@ public class NoteService {
         return mapper.noteToNoteDTO(repository.save(note));
     }
 
-    public NoteDTO updateNote(NoteDTO noteUpdates) {
+    public NoteDTO updateNote(NoteDTO noteUpdates, String username) {
         if (noteUpdates == null) throw new NullPointerException();
         Note note = repository.findById(noteUpdates.getId()).orElseThrow(EntityNotFoundException::new);
+        FileService.checkAccess(2, note.getId(), note.getOwner(), username, note.getParent(), userRepository, directoryRepository, afService, adService);
         mapper.updateNoteFromNoteDTO(noteUpdates, note);
         return mapper.noteToNoteDTO(repository.save(note));
     }
+
+
 }

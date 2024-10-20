@@ -3,8 +3,7 @@ package org.backend.organizer.Service;
 import jakarta.persistence.EntityNotFoundException;
 import org.backend.organizer.DTO.FileDTO;
 import org.backend.organizer.Mapper.FileMapper;
-import org.backend.organizer.Model.Directory;
-import org.backend.organizer.Model.User;
+import org.backend.organizer.Model.*;
 import org.backend.organizer.Repository.DirectoryRepository;
 import org.backend.organizer.Repository.FileRepository;
 import org.backend.organizer.Repository.UserRepository;
@@ -13,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class FileService {
@@ -24,6 +25,10 @@ public class FileService {
     UserRepository userRepository;
     @Autowired
     DirectoryRepository directoryRepository;
+    @Autowired
+    AccessDirectoryService adService;
+    @Autowired
+    AccessFileService afService;
 
     public List<FileDTO> getAllFiles() {
         var result = new ArrayList<FileDTO>();
@@ -51,13 +56,38 @@ public class FileService {
         return result;
     }
 
-    public FileDTO getFileByID(Long id) {
+    public FileDTO getFileByID(Long id, String username) {
         if (id == null) throw new NullPointerException();
-        return mapper.fileToFileDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
+        File file = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        FileService.checkAccess(1, file.getId(), file.getOwner(), username, file.getParent(), userRepository, directoryRepository, afService, adService);
+        return mapper.fileToFileDTO(file);
     }
 
     public void deleteFile(Long id) {
         if(!repository.existsById(id)) throw new EntityNotFoundException();
         repository.deleteById(id);
+    }
+
+    static void checkAccess(int accessLevel, Long id, User owner, String username, Directory parent, UserRepository userRepository, DirectoryRepository directoryRepository, AccessFileService afService, AccessDirectoryService adService) {
+        User user = userRepository.findByUsername(username);
+        if (!Objects.equals(owner.getId(), user.getId())) {
+            Optional<AccessFile> af = afService.getAccessFile(user.getId(), id);
+            if (af.isEmpty()) {
+                Optional<Directory> dir = directoryRepository.findById(parent.getId());
+                Optional<AccessDirectory> ad;
+                while (dir.isPresent()) {
+                    ad = adService.getAccessDirectory(user.getId(), dir.get().getId());
+                    if (ad.isEmpty()) {
+                        dir = directoryRepository.findById(dir.get().getParent().getId());
+                    } else if (ad.get().getAccessPrivilege() < accessLevel) {
+                        throw new IllegalArgumentException();
+                    } else {
+                        break;
+                    }
+                }
+            } else if (af.get().getAccessPrivilege() < accessLevel) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 }

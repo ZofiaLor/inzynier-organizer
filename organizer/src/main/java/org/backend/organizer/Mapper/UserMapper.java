@@ -42,7 +42,7 @@ public abstract class UserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "directories", target = "directories", qualifiedByName = "getListOfDirectories")
-    @Mapping(target = "username", ignore = true)
+    //@Mapping(target = "username", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "role", ignore = true)
     public abstract void updateUserFromUserDTO(UserDTO userDTO, @MappingTarget User user);

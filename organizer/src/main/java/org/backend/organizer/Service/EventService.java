@@ -3,8 +3,8 @@ package org.backend.organizer.Service;
 import jakarta.persistence.EntityNotFoundException;
 import org.backend.organizer.DTO.EventDTO;
 import org.backend.organizer.Mapper.FileMapper;
-import org.backend.organizer.Model.Event;
-import org.backend.organizer.Model.User;
+import org.backend.organizer.Model.*;
+import org.backend.organizer.Repository.DirectoryRepository;
 import org.backend.organizer.Repository.EventRepository;
 import org.backend.organizer.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,12 @@ public class EventService {
     FileMapper mapper;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    DirectoryRepository directoryRepository;
+    @Autowired
+    AccessDirectoryService adService;
+    @Autowired
+    AccessFileService afService;
 
     public List<EventDTO> getAllEventsByUser(String username) {
         User user = userRepository.findByUsername(username);
@@ -45,10 +51,11 @@ public class EventService {
         return mapper.eventToEventDTO(repository.save(Event));
     }
 
-    public EventDTO updateEvent(EventDTO EventUpdates) {
+    public EventDTO updateEvent(EventDTO EventUpdates, String username) {
         if (EventUpdates == null) throw new NullPointerException();
-        Event Event = repository.findById(EventUpdates.getId()).orElseThrow(EntityNotFoundException::new);
-        mapper.updateEventFromEventDTO(EventUpdates, Event);
-        return mapper.eventToEventDTO(repository.save(Event));
+        Event event = repository.findById(EventUpdates.getId()).orElseThrow(EntityNotFoundException::new);
+        FileService.checkAccess(2, event.getId(), event.getOwner(), username, event.getParent(), userRepository, directoryRepository, afService, adService);
+        mapper.updateEventFromEventDTO(EventUpdates, event);
+        return mapper.eventToEventDTO(repository.save(event));
     }
 }

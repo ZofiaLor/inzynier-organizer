@@ -50,13 +50,16 @@ public class FileController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<FileDTO> getFileByID(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<FileDTO> getFileByID(HttpServletRequest request, @PathVariable(name = "id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(fileService.getFileByID(id), HttpStatus.OK);
+            return new ResponseEntity<>(fileService.getFileByID(id, username), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
@@ -66,13 +69,16 @@ public class FileController {
         return new ResponseEntity<>(eventService.createEvent(event, username), HttpStatus.OK);
     }
     @PutMapping("/event")
-    public ResponseEntity<EventDTO> updateEvent(@RequestBody EventDTO event) {
+    public ResponseEntity<EventDTO> updateEvent(HttpServletRequest request, @RequestBody EventDTO event) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(eventService.updateEvent(event), HttpStatus.OK);
+            return new ResponseEntity<>(eventService.updateEvent(event, username), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
@@ -82,13 +88,16 @@ public class FileController {
         return new ResponseEntity<>(noteService.createNote(note, username), HttpStatus.OK);
     }
     @PutMapping("/note")
-    public ResponseEntity<NoteDTO> updateNote(@RequestBody NoteDTO note) {
+    public ResponseEntity<NoteDTO> updateNote(HttpServletRequest request, @RequestBody NoteDTO note) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(noteService.updateNote(note), HttpStatus.OK);
+            return new ResponseEntity<>(noteService.updateNote(note, username), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
@@ -98,13 +107,16 @@ public class FileController {
         return new ResponseEntity<>(taskService.createTask(task, username), HttpStatus.OK);
     }
     @PutMapping("/task")
-    public ResponseEntity<TaskDTO> updateTask(@RequestBody TaskDTO task) {
+    public ResponseEntity<TaskDTO> updateTask(HttpServletRequest request, @RequestBody TaskDTO task) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(taskService.updateTask(task), HttpStatus.OK);
+            return new ResponseEntity<>(taskService.updateTask(task, username), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 

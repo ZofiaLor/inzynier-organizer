@@ -5,6 +5,7 @@ import org.backend.organizer.DTO.TaskDTO;
 import org.backend.organizer.Mapper.FileMapper;
 import org.backend.organizer.Model.Task;
 import org.backend.organizer.Model.User;
+import org.backend.organizer.Repository.DirectoryRepository;
 import org.backend.organizer.Repository.TaskRepository;
 import org.backend.organizer.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,12 @@ public class TaskService {
     FileMapper mapper;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    DirectoryRepository directoryRepository;
+    @Autowired
+    AccessDirectoryService adService;
+    @Autowired
+    AccessFileService afService;
 
     public List<TaskDTO> getAllTasksByUser(String username) {
         User user = userRepository.findByUsername(username);
@@ -45,10 +52,11 @@ public class TaskService {
         return mapper.taskToTaskDTO(repository.save(Task));
     }
 
-    public TaskDTO updateTask(TaskDTO TaskUpdates) {
+    public TaskDTO updateTask(TaskDTO TaskUpdates, String username) {
         if (TaskUpdates == null) throw new NullPointerException();
-        Task Task = repository.findById(TaskUpdates.getId()).orElseThrow(EntityNotFoundException::new);
-        mapper.updateTaskFromTaskDTO(TaskUpdates, Task);
-        return mapper.taskToTaskDTO(repository.save(Task));
+        Task task = repository.findById(TaskUpdates.getId()).orElseThrow(EntityNotFoundException::new);
+        FileService.checkAccess(2, task.getId(), task.getOwner(), username, task.getParent(), userRepository, directoryRepository, afService, adService);
+        mapper.updateTaskFromTaskDTO(TaskUpdates, task);
+        return mapper.taskToTaskDTO(repository.save(task));
     }
 }

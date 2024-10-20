@@ -88,10 +88,14 @@ public class DirectoryService {
             Optional<AccessDirectory> ad = adService.getAccessDirectory(user.getId(), dir.get().getId());
             if (ad.isEmpty()) {
                 dir = repository.findById(dir.get().getParent().getId());
-                while (dir.isPresent()) {
+                while (true) {
                     ad = adService.getAccessDirectory(user.getId(), dir.get().getId());
                     if (ad.isEmpty()) {
-                        dir = repository.findById(dir.get().getParent().getId());
+                        if (dir.get().getParent() != null) {
+                            dir = repository.findById(dir.get().getParent().getId());
+                        } else {
+                            throw new IllegalArgumentException();
+                        }
                     } else if (ad.get().getAccessPrivilege() < accessLevel) {
                         throw new IllegalArgumentException();
                     } else {

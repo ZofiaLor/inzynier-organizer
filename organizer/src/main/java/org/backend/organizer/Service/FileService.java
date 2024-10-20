@@ -75,10 +75,14 @@ public class FileService {
             if (af.isEmpty()) {
                 Optional<Directory> dir = directoryRepository.findById(parent.getId());
                 Optional<AccessDirectory> ad;
-                while (dir.isPresent()) {
+                while (true) {
                     ad = adService.getAccessDirectory(user.getId(), dir.get().getId());
                     if (ad.isEmpty()) {
-                        dir = directoryRepository.findById(dir.get().getParent().getId());
+                        if (dir.get().getParent() != null) {
+                            dir = directoryRepository.findById(dir.get().getParent().getId());
+                        } else {
+                            throw new IllegalArgumentException();
+                        }
                     } else if (ad.get().getAccessPrivilege() < accessLevel) {
                         throw new IllegalArgumentException();
                     } else {

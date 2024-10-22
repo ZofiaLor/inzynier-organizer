@@ -1,6 +1,7 @@
 package org.backend.organizer.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.backend.organizer.DTO.UserDTO;
 import org.backend.organizer.Mapper.UserMapper;
 import org.backend.organizer.Model.User;
@@ -73,6 +74,17 @@ public class UserService {
 
     public String logout() {
         return jwtService.getCleanJwtCookie().toString();
+    }
+
+    public UserDTO changePrivilege(String newRole, String username, HttpServletRequest request) {
+        if (jwtService.extractUsername(jwtService.getJwtFromCookies(request)).equals(username)) {
+            throw new IllegalArgumentException();
+        }
+        User user = repository.findByUsername(username);
+        if (newRole.equals("ROLE_ADMIN") || newRole.equals("ROLE_USER")) {
+            user.setRole(newRole);
+        }
+        return mapper.userToUserDTO(repository.save(user));
     }
 
     public UserDTO getUserByUsername(String username) {

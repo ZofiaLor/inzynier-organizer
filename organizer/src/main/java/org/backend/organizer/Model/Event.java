@@ -3,8 +3,10 @@ package org.backend.organizer.Model;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @DiscriminatorValue("1")
@@ -14,6 +16,8 @@ public class Event extends File{
     @Column(name="end_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime endDate;
     private String location;
+    @OneToMany(mappedBy = "event")
+    private List<EventDate> eventDates;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -37,5 +41,13 @@ public class Event extends File{
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public List<EventDate> getEventDates() {
+        return eventDates;
+    }
+
+    public void setEventDates(List<EventDate> eventDates) {
+        this.eventDates = eventDates;
     }
 }

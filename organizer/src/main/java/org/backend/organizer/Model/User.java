@@ -17,6 +17,8 @@ public class User {
     private String role;
     @OneToMany(mappedBy = "owner")
     private List<Directory> directories;
+    @OneToMany(mappedBy = "user")
+    private List<Vote> votes;
 
     public User() {}
 
@@ -80,5 +82,13 @@ public class User {
 
     public void setDirectories(List<Directory> directories) {
         this.directories = directories;
+    }
+
+    public List<Vote> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<Vote> votes) {
+        this.votes = votes;
     }
 }

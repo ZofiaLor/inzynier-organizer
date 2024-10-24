@@ -6,9 +6,13 @@ import org.backend.organizer.DTO.NoteDTO;
 import org.backend.organizer.DTO.TaskDTO;
 import org.backend.organizer.Model.*;
 import org.backend.organizer.Repository.DirectoryRepository;
+import org.backend.organizer.Repository.EventDateRepository;
 import org.backend.organizer.Repository.UserRepository;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public abstract class FileMapper {
@@ -16,6 +20,8 @@ public abstract class FileMapper {
     DirectoryRepository directoryRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    EventDateRepository eventDateRepository;
 
     @SubclassMapping(source = Event.class, target = EventDTO.class)
     @SubclassMapping(source = Note.class, target = NoteDTO.class)
@@ -35,8 +41,19 @@ public abstract class FileMapper {
         return owner.getId();
     }
 
+    @Named("getListOfLongEventDates")
+    List<Long> getListOfLongEventDates(List<EventDate> eventDates) {
+        if (eventDates == null) return null;
+        var result = new ArrayList<Long>();
+        for (var eventDate : eventDates) {
+            result.add(eventDate.getId());
+        }
+        return result;
+    }
+
     @Mapping(source = "parent", target = "parent", qualifiedByName = "getLongParent")
     @Mapping(source = "owner", target = "owner", qualifiedByName = "getLongOwner")
+    @Mapping(source = "eventDates", target = "eventDates", qualifiedByName = "getListOfLongEventDates")
     public abstract EventDTO eventToEventDTO(Event event);
 
     @Mapping(source = "parent", target = "parent", qualifiedByName = "getLongParent")
@@ -65,8 +82,19 @@ public abstract class FileMapper {
         return userRepository.getReferenceById(owner);
     }
 
+    @Named("getListOfEventDates")
+    List<EventDate> getListOfEventDates(List<Long> eventDates) {
+        if (eventDates == null) return null;
+        var result = new ArrayList<EventDate>();
+        for (var eventDate : eventDates) {
+            result.add(eventDateRepository.getReferenceById(eventDate));
+        }
+        return result;
+    }
+
     @Mapping(source = "parent", target = "parent", qualifiedByName = "getParent")
     @Mapping(source = "owner", target = "owner", qualifiedByName = "getOwner")
+    @Mapping(source = "eventDates", target = "eventDates", qualifiedByName = "getListOfEventDates")
     public abstract Event eventDTOToEvent(EventDTO eventDTO);
 
     @Mapping(source = "parent", target = "parent", qualifiedByName = "getParent")
@@ -87,6 +115,7 @@ public abstract class FileMapper {
     @Mapping(source = "parent", target = "parent", qualifiedByName = "getParent")
     @Mapping(target = "owner", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
+    @Mapping(source = "eventDates", target = "eventDates", qualifiedByName = "getListOfEventDates")
     public abstract void updateEventFromEventDTO(EventDTO eventDTO, @MappingTarget Event event);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

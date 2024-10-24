@@ -1,11 +1,13 @@
 package org.backend.organizer.DTO;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class EventDTO extends FileDTO{
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private String location;
+    private List<Long> eventDates;
 
     public LocalDateTime getStartDate() {
         return startDate;
@@ -29,5 +31,13 @@ public class EventDTO extends FileDTO{
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public List<Long> getEventDates() {
+        return eventDates;
+    }
+
+    public void setEventDates(List<Long> eventDates) {
+        this.eventDates = eventDates;
     }
 }

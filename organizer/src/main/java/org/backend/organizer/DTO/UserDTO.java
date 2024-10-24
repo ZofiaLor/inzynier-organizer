@@ -10,6 +10,7 @@ public class UserDTO {
     private String password;
     private String role;
     private List<Long> directories;
+    private List<Long> votes;
 
     public Long getId() {
         return id;
@@ -65,5 +66,13 @@ public class UserDTO {
 
     public void setDirectories(List<Long> directories) {
         this.directories = directories;
+    }
+
+    public List<Long> getVotes() {
+        return votes;
+    }
+
+    public void setVotes(List<Long> votes) {
+        this.votes = votes;
     }
 }

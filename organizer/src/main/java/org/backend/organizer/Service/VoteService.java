@@ -63,9 +63,17 @@ public class VoteService {
         if (voteDTO.getEventDate() == null) throw new NullPointerException();
         EventDate eventDate = eventDateRepository.findById(voteDTO.getEventDate()).orElseThrow(EntityNotFoundException::new);
         User user = userRepository.findByUsername(username);
-        Vote vote = mapper.voteDTOToVote(voteDTO);
-        vote.setUser(user);
-        eventDate.setTotalScore(eventDate.getTotalScore() + vote.getScore());
+        Vote vote;
+        if (repository.findByUserAndEventDate(user, eventDate).isEmpty()){
+            vote = mapper.voteDTOToVote(voteDTO);
+            vote.setUser(user);
+            eventDate.setTotalScore(eventDate.getTotalScore() + vote.getScore());
+        } else {
+            vote = repository.findByUserAndEventDate(user, eventDate).get();
+            eventDate.setTotalScore(eventDate.getTotalScore() - vote.getScore() + voteDTO.getScore()); // total - old + new
+            mapper.updateVoteFromVoteDTO(voteDTO, vote);
+        }
+
         eventDateRepository.save(eventDate);
         return mapper.voteToVoteDTO(repository.save(vote));
     }

@@ -20,6 +20,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Vote> votes;
 
+    @OneToMany(mappedBy = "user")
+    private List<Notification> notifications;
+
     public User() {}
 
     public User(String username, String name, String email) {
@@ -90,5 +93,13 @@ public class User {
 
     public void setVotes(List<Vote> votes) {
         this.votes = votes;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
     }
 }

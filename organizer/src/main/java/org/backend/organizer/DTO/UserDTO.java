@@ -11,6 +11,7 @@ public class UserDTO {
     private String role;
     private List<Long> directories;
     private List<Long> votes;
+    private List<Long> notifications;
 
     public Long getId() {
         return id;
@@ -74,5 +75,13 @@ public class UserDTO {
 
     public void setVotes(List<Long> votes) {
         this.votes = votes;
+    }
+
+    public List<Long> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Long> notifications) {
+        this.notifications = notifications;
     }
 }

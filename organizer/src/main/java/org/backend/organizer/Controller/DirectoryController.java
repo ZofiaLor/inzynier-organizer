@@ -47,13 +47,16 @@ public class DirectoryController {
     }
 
     @GetMapping("/subdirs/{id}")
-    public ResponseEntity<List<DirectoryDTO>> getDirectoryByParentID(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<List<DirectoryDTO>> getDirectoryByParentID(HttpServletRequest request, @PathVariable(name = "id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(service.getAllDirectoriesByParentID(id), HttpStatus.OK);
+            return new ResponseEntity<>(service.getAllDirectoriesByParentID(id, username), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 

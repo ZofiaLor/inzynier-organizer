@@ -29,6 +29,8 @@ public class FileService {
     AccessDirectoryService adService;
     @Autowired
     AccessFileService afService;
+    @Autowired
+    DirectoryService directoryService;
 
     public List<FileDTO> getAllFiles() {
         var result = new ArrayList<FileDTO>();
@@ -47,8 +49,9 @@ public class FileService {
         return result;
     }
 
-    public List<FileDTO> getAllFilesByDirectory(Long parentID) {
+    public List<FileDTO> getAllFilesByDirectory(Long parentID, String username) {
         Directory directory = directoryRepository.findById(parentID).orElseThrow(EntityNotFoundException::new);
+        directoryService.checkAccess(1, parentID, directory.getOwner(), username);
         var result = new ArrayList<FileDTO>();
         for (var file : repository.getAllByParent(directory)) {
             result.add(mapper.fileToFileDTO(file));

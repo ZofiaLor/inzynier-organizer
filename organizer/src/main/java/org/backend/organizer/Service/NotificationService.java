@@ -39,21 +39,21 @@ public class NotificationService {
         return result;
     }
 
-    public List<NotificationDTO> getAllNotificationsByUser(String username) {
+    public List<NotificationDTO> getAllSentNotificationsByUser(String username) {
         if (!userRepository.existsByUsername(username)) throw new EntityNotFoundException();
         User user = userRepository.findByUsername(username);
         var result = new ArrayList<NotificationDTO>();
-        for (var notif : repository.getAllByUser(user)) {
+        for (var notif : repository.getAllSentByUser(user)) {
             result.add(mapper.notificationToNotificationDTO(notif));
         }
         return result;
     }
 
-    public List<NotificationDTO> getAllNotificationsByUserAndRead(String username, boolean isRead) {
+    public List<NotificationDTO> getAllSentNotificationsByUserAndRead(String username, boolean isRead) {
         if (!userRepository.existsByUsername(username)) throw new EntityNotFoundException();
         User user = userRepository.findByUsername(username);
         var result = new ArrayList<NotificationDTO>();
-        for (var notif : repository.getAllByReadAndUser(isRead, user)) {
+        for (var notif : repository.getAllSentByReadAndUser(isRead, user)) {
             result.add(mapper.notificationToNotificationDTO(notif));
         }
         return result;

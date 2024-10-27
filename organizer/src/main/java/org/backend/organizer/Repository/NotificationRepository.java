@@ -15,7 +15,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> getAllBySent(boolean isSent);
     @Query("SELECT n FROM Notification n WHERE n.isSent = :isSent AND n.sendTimeSetting <= :sendTimeSetting")
     List<Notification> getAllBySentAndSendTimeSettingAfter(boolean isSent, LocalDateTime sendTimeSetting);
-    List<Notification> getAllByUser(User user);
-    @Query("SELECT n FROM Notification n WHERE n.isRead = :isRead AND n.user = :user")
-    List<Notification> getAllByReadAndUser(boolean isRead, User user);
+    @Query("SELECT n FROM Notification n WHERE n.user = :user AND n.isSent = TRUE")
+    List<Notification> getAllSentByUser(User user);
+    @Query("SELECT n FROM Notification n WHERE n.isRead = :isRead AND n.user = :user AND n.isSent = TRUE")
+    List<Notification> getAllSentByReadAndUser(boolean isRead, User user);
 }

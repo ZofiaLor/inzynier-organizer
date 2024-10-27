@@ -50,6 +50,7 @@ public class UserService {
     }
 
     public UserDTO register(UserDTO newUser) {
+        if (newUser.getUsername() == null | newUser.getPassword() == null) throw new NullPointerException();
         User user = mapper.userDTOToUser(newUser);
         if (repository.existsByUsername(user.getUsername())) {
             return null;
@@ -94,7 +95,7 @@ public class UserService {
     }
 
     public UserDTO updateUser(UserDTO userUpdates) {
-        if (userUpdates == null) throw new NullPointerException();
+        if (userUpdates == null | userUpdates.getId() == null) throw new NullPointerException();
         User user = repository.findById(userUpdates.getId()).orElseThrow(EntityNotFoundException::new);
         if (repository.existsByUsername(userUpdates.getUsername())) throw new IllegalArgumentException();
         //TODO use mapper to ignore nulls

@@ -23,7 +23,13 @@ public class AuthorizationController {
     //TODO log out currently logged user, maybe log in the new one
     @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user) {
-        return new ResponseEntity<>(service.register(user), HttpStatus.OK);
+        try {
+            UserDTO newUser = service.register(user);
+            if (newUser == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(newUser, HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO user) {

@@ -41,11 +41,14 @@ public class FileController {
     }
 
     @GetMapping("/dir/{id}")
-    public ResponseEntity<List<FileDTO>> getFilesInDirectory(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<List<FileDTO>> getFilesInDirectory(HttpServletRequest request, @PathVariable(name = "id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(fileService.getAllFilesByDirectory(id), HttpStatus.OK);
+            return new ResponseEntity<>(fileService.getAllFilesByDirectory(id, username), HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 

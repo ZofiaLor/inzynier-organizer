@@ -44,9 +44,10 @@ public class DirectoryService {
         return result;
     }
 
-    public List<DirectoryDTO> getAllDirectoriesByParentID(Long parentID) {
+    public List<DirectoryDTO> getAllDirectoriesByParentID(Long parentID, String username) {
         if (parentID == null) throw new NullPointerException();
-        Directory parent = repository.getReferenceById(parentID);
+        Directory parent = repository.findById(parentID).orElseThrow(EntityNotFoundException::new);
+        checkAccess(1, parentID, parent.getOwner(), username);
         var result = new ArrayList<DirectoryDTO>();
         for (var dir : repository.getAllByParent(parent)) {
             result.add(mapper.directoryToDirectoryDTO(dir));
@@ -81,7 +82,7 @@ public class DirectoryService {
         repository.deleteById(id);
     }
 
-    private void checkAccess(int accessLevel, Long id, User owner, String username) {
+    void checkAccess(int accessLevel, Long id, User owner, String username) {
         User user = userRepository.findByUsername(username);
         if (!Objects.equals(owner.getId(), user.getId())) {
             Optional<Directory> dir = repository.findById(id);

@@ -31,10 +31,10 @@ public class NotificationController {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
             if (read == null) {
-                return new ResponseEntity<>(service.getAllNotificationsByUser(username), HttpStatus.OK);
+                return new ResponseEntity<>(service.getAllSentNotificationsByUser(username), HttpStatus.OK);
             }
             else {
-                return new ResponseEntity<>(service.getAllNotificationsByUserAndRead(username, read), HttpStatus.OK);
+                return new ResponseEntity<>(service.getAllSentNotificationsByUserAndRead(username, read), HttpStatus.OK);
             }
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

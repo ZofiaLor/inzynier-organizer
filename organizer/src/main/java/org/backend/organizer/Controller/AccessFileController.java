@@ -44,6 +44,8 @@ public class AccessFileController {
             return new ResponseEntity<>(service.createOrUpdateAccessFile(af), HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

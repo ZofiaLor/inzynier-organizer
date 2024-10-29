@@ -17,7 +17,8 @@ Wymagane w ciele zapytania: nazwa użytkownika (username), hasło (password)
 
 Odpowiedzi:
 - Poprawne zalogowanie: "Success", kod 200 (OK)
-- Niepoprawne hasło/login, brak hasła/loginu: kod 401 (Unauthorized)
+- Niepoprawne hasło/login: kod 401 (Unauthorized)
+- Brak hasła/loginu: "Empty username or password", kod 400 (Bad Request)
 ### Log Out
 ```POST /auth/logout```
 
@@ -66,7 +67,7 @@ Wymagana nazwa użytkownika.
 ```
 Odpowiedzi:
 - Poprawne nadanie/odebranie roli: obiekt użytkownika, kod 200 (OK)
-- Nieistniejąca nazwa użytkownika: kod 401 (Unauthorized)
+- Nieistniejąca nazwa użytkownika: kod 404 (Not Found)
 - Próba nadania/odebrania sobie roli: kod 400 (Bad Request)
 
 ## Users
@@ -169,7 +170,7 @@ Odpowiedzi:
 
 Tworzy nowy katalog.
 
-Brak wymaganych parametrów, można podać nazwę oraz ID rodzica.
+Brak wymaganych parametrów, można podać nazwę oraz ID rodzica. W przypadku niepodania nazwy, domyślnie ustawiana jest ona na "Unnamed Directory".
 ```json
 {
     "name": "Test Directory",
@@ -246,7 +247,9 @@ Odpowiedzi:
 ### Create Event
 ```POST /files/event```
 
-Tworzy nowe wydarzenie.
+Tworzy nowe wydarzenie. 
+
+Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest "Unnamed Event".
 ```json
 {
     "name": "My First Event",
@@ -255,7 +258,9 @@ Tworzy nowe wydarzenie.
     "location": "Katowice"
 }
 ```
-Odpowiedź: obiekt nowego wydarzenia, kod 200 (OK)
+Odpowiedzi: 
+- Pomyślne utworzenie: obiekt nowego wydarzenia, kod 200 (OK)
+- Nie podano ID rodzica: kod 400 (Bad Request)
 
 ### Update Event
 ```PUT /files/event```
@@ -278,7 +283,9 @@ Odpowiedzi:
 ### Create Note
 ```POST /files/note```
 
-Tworzy nową notatkę.
+Tworzy nową notatkę. 
+
+Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest "Unnamed Note".
 ```json
 {
   "name": "My First Note",
@@ -286,7 +293,9 @@ Tworzy nową notatkę.
   "textContent": "Hello World! This is my first note"
 }
 ```
-Odpowiedź: obiekt nowej notatki, kod 200 (OK)
+Odpowiedzi:
+- Pomyślne utworzenie: obiekt nowej notatki, kod 200 (OK)
+- Nie podano ID rodzica: kod 400 (Bad Request)
 
 ### Update Note
 ```PUT /files/note```
@@ -309,7 +318,9 @@ Odpowiedzi:
 ### Create Task
 ```POST /files/task```
 
-Tworzy nowe zadanie.
+Tworzy nowe zadanie. 
+
+Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest "Unnamed Task".
 ```json
 {
   "name": "My First Task",
@@ -318,7 +329,9 @@ Tworzy nowe zadanie.
   "isFinished": false
 }
 ```
-Odpowiedź: obiekt nowego zadania, kod 200 (OK)
+Odpowiedzi:
+- Pomyślne utworzenie: obiekt nowego zadania, kod 200 (OK)
+- Nie podano ID rodzica: kod 400 (Bad Request)
 
 ### Update Task
 ```PUT /files/task```
@@ -385,7 +398,7 @@ Wymagane podanie obydwu ID w ciele zapytania.
 Odpowiedzi:
 - Pomyślne utworzenie/aktualizacja: obiekt AccessDirectory, kod 200 (OK)
 - Nie istnieje któreś z ID: kod 404 (Not Found)
-- Brak ID: kod 401 (Unauthorized)
+- Brak ID: kod 400 (Bad Request)
 
 ### Delete AccessDirectory
 
@@ -434,7 +447,7 @@ Wymagane podanie obydwu ID w ciele zapytania.
 Odpowiedzi:
 - Pomyślne utworzenie/aktualizacja: obiekt AccessFile, kod 200 (OK)
 - Nie istnieje któreś z ID: kod 404 (Not Found)
-- Brak ID: kod 401 (Unauthorized)
+- Brak ID: kod 400 (Bad Request)
 
 ### Delete AccessFile
 
@@ -478,4 +491,223 @@ Odpowiedzi:
 ### Create EventDate
 ```POST /ed```
 
-Tworzy obiekt EventDate
+Tworzy obiekt EventDate. 
+
+Wymagane jest podanie ID wydarzenia, a także początku i końca terminu. Wynik całkowity ustawiany jest na 0.
+```json
+{
+    "event": 2,
+    "start" : "2024-10-18T12:00:00",
+    "end": "2024-10-18T12:30:00"
+}
+```
+Odpowiedzi:
+- Pomyślne utworzenie: nowy obiekt EventDate, kod 200 (OK)
+- Brak ID/terminu początkowego/końcowego: kod 400 (Bad Request)
+
+### Update EventDate
+```PUT /ed```
+
+Aktualizuje obiekt EventDate.
+
+Wymagane podanie ID obiektu w ciele zapytania.
+```json
+{
+    "id": 2,
+    "end": "2024-10-18T12:40:00"
+}
+```
+Odpowiedzi:
+- Pomyślna aktualizacja: obiekt EventDate, kod 200 (OK)
+- Nie podano ID: kod 400 (Bad Request)
+- Nie znaleziono ID: kod 404 (Not Found)
+
+### Delete EventDate
+
+```DELETE /ed/{id}```
+
+Usuwa obiekt EventDate o podanym ID.
+
+Odpowiedzi:
+- ID istnieje: kod 200 (OK)
+- ID nie istnieje: kod 404 (Not Found)
+
+## Votes
+
+### Get All Votes
+
+```GET /votes```
+
+Zwraca wszystkie głosy.
+
+Odpowiedź: lista obiektów głosów, kod 200 (OK)
+
+### Get Votes By User ID
+```GET /votes/user/{id}```
+
+Zwraca głosy użytkownika o podanym ID.
+
+Odpowiedzi:
+- ID istnieje: lista obiektów głosów, kod 200 (OK)
+- ID nie istnieje: kod 404 (Not Found)
+- Nie podano ID: kod 400 (Bad Request)
+
+### Get Votes By EventDate ID
+```GET /votes/ed/{id}```
+
+Zwraca głosy na termin EventDate o podanym ID.
+
+Odpowiedzi:
+- ID istnieje: lista obiektów głosów, kod 200 (OK)
+- ID nie istnieje: kod 404 (Not Found)
+- Nie podano ID: kod 400 (Bad Request)
+
+### Get Vote By ID
+```GET /votes/{id}```
+
+Zwraca głos o podanym ID.
+
+Odpowiedzi:
+- ID istnieje: obiekt głosu, kod 200 (OK)
+- ID nie istnieje: kod 404 (Not Found)
+- Nie podano ID: kod 400 (Bad Request)
+
+### Cast Vote
+```POST /votes```
+
+Sprawdza, czy zalogowany użytkownik oddał głos na dany termin, jeżeli nie, to tworzy nowy głos, jeżeli tak, to aktualizuje istniejący.
+Modyfikuje wynik całkowity dla terminu EventDate.
+
+Wymagane podanie ID EventDate.
+```json
+{
+    "eventDate": 1,
+    "score": 1
+}
+```
+Odpowiedzi:
+- Pomyślne oddanie/modyfikacja głosu: obiekt głosu, kod 200 (OK)
+- Nie podano ID EventDate: kod 400 (Bad Request)
+- Nie istnieje ID EventDate: kod 404 (Not Found)
+
+### Update Vote
+```PUT /votes```
+
+Aktualizuje głos.
+
+Wymagane podanie ID głosu w ciele zapytania.
+```json
+{
+    "id": 1,
+    "score": 1
+}
+```
+Odpowiedzi:
+- Pomyślna aktualizacja: obiekt głosu, kod 200 (OK)
+- Nie podano ID: kod 400 (Bad Request)
+- Nie istnieje ID: kod 404 (Not Found)
+
+### Delete Vote
+
+```DELETE /vote/{id}```
+
+Usuwa głos o podanym ID.
+
+Odpowiedzi:
+- ID istnieje: kod 200 (OK)
+- ID nie istnieje: kod 404 (Not Found)
+
+## Notifications
+
+### Get All Notifications
+
+```GET /notifs```
+
+Zwraca wszystkie powiadomienia.
+
+Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
+
+### Get All My Notifications
+```GET /notifs/mynotifs```
+
+Zwraca wszystkie powiadomienia aktualnie zalogowanego użytkownika.
+
+Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
+
+### Get All My Notifications
+```GET /notifs/mynotifs```
+
+Zwraca wszystkie wysłane powiadomienia aktualnie zalogowanego użytkownika.
+
+Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
+
+### Get All My Read/Unread Notifications
+```GET /notifs/mynotifs?read={read}```
+
+Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w zależności od parametru read (true - odczytane, false - nieodczytane).
+
+Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
+
+### Get Notification By ID
+```GET /notifs/{id}```
+
+Zwraca powiadomienie o podanym ID.
+
+Odpowiedzi:
+- ID istnieje: obiekt powiadomienia, kod 200 (OK)
+- ID nie istnieje: kod 404 (Not Found)
+- Nie podano ID: kod 400 (Bad Request)
+
+### Create Notification
+```POST /notifs```
+
+Tworzy powiadomienie.
+
+Wymagane jest podanie ID użytkownika odbiorcy oraz pliku. Czas wysłania domyślnie ustawiany jest na czas utworzenia, powiadomienie jest domyślnie nieodczytane. Wysłanie odbywa się na podstawie porównania aktualnego czasu z czasem wysłania.
+```json
+{
+  "user": 3,
+  "file": 3,
+  "message": "Test notif",
+  "sendTimeSetting": "2024-10-28T15:30:00"
+}
+```
+Odpowiedzi:
+- Pomyślne utworzenie: nowy obiekt powiadomienia, kod 200 (OK)
+- Brak ID użytkownika/pliku: kod 400 (Bad Request)
+- Nie istnieje ID użytkownika/pliku: kod 404 (Not Found)
+
+### Update Notification
+```PUT /notifs```
+
+Aktualizuje powiadomienie.
+
+Wymagane podanie ID powiadomienia w ciele zapytania.
+```json
+{
+    "id": 1,
+    "read": true
+}
+```
+
+Odpowiedzi:
+- Pomyślna aktualizacja: obiekt powiadomienia, kod 200 (OK)
+- Nie podano ID: kod 400 (Bad Request)
+- Nie znaleziono ID: kod 404 (Not Found)
+
+### Send Notifications
+```PUT /notifs/send```
+
+Wysyła powiadomienia poprzez porównanie ich czasu wysłania z czasem aktualnym.
+
+Odpowiedź: kod 200 (OK)
+
+### Delete Notification
+
+```DELETE /notifs/{id}```
+
+Usuwa powiadomienie o podanym ID.
+
+Odpowiedzi:
+- ID istnieje: kod 200 (OK)
+- ID nie istnieje: kod 404 (Not Found)

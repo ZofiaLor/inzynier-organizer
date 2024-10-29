@@ -73,26 +73,23 @@ public class FileService {
 
     static void checkAccess(int accessLevel, Long id, User owner, String username, Directory parent, UserRepository userRepository, DirectoryRepository directoryRepository, AccessFileService afService, AccessDirectoryService adService) {
         User user = userRepository.findByUsername(username);
-        if (!Objects.equals(owner.getId(), user.getId())) {
+        if (!Objects.equals(owner.getId(), user.getId())) { // current user is the owner -> can always access
             Optional<AccessFile> af = afService.getAccessFile(user.getId(), id);
-            if (af.isEmpty()) {
+            if (af.isEmpty()) { // file privilege not defined -> check parent directory
                 Optional<Directory> dir = directoryRepository.findById(parent.getId());
-                Optional<AccessDirectory> ad;
-                while (true) {
-                    ad = adService.getAccessDirectory(user.getId(), dir.get().getId());
-                    if (ad.isEmpty()) {
-                        if (dir.get().getParent() != null) {
-                            dir = directoryRepository.findById(dir.get().getParent().getId());
-                        } else {
-                            throw new IllegalArgumentException();
-                        }
-                    } else if (ad.get().getAccessPrivilege() < accessLevel) {
-                        throw new IllegalArgumentException();
+                Optional<AccessDirectory> ad = adService.getAccessDirectory(user.getId(), dir.get().getId());
+                while (ad.isEmpty()) { // look for ad
+                    if (dir.get().getParent() != null) {
+                        dir = directoryRepository.findById(dir.get().getParent().getId());
                     } else {
-                        break;
+                        throw new IllegalArgumentException(); // no ad has been defined -> forbid access
                     }
+                    ad = adService.getAccessDirectory(user.getId(), dir.get().getId()); // parent's ad
                 }
-            } else if (af.get().getAccessPrivilege() < accessLevel) {
+                if (ad.get().getAccessPrivilege() < accessLevel) { // dir privilege must be at least accessLevel
+                    throw new IllegalArgumentException();
+                }
+            } else if (af.get().getAccessPrivilege() < accessLevel) { // file privilege must be at least accessLevel
                 throw new IllegalArgumentException();
             }
         }

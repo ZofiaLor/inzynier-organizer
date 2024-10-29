@@ -45,10 +45,12 @@ public class TaskService {
     }
 
     public TaskDTO createTask(TaskDTO newTask, String username) {
+        if (newTask.getParent() == null) throw new NullPointerException();
         Task Task = mapper.taskDTOToTask(newTask);
         User owner = userRepository.findByUsername(username);
         Task.setCreationDate(LocalDateTime.now());
         Task.setOwner(owner);
+        if (newTask.getName() == null) Task.setName("Unnamed Task");
         return mapper.taskToTaskDTO(repository.save(Task));
     }
 

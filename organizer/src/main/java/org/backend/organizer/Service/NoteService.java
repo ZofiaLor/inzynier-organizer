@@ -44,10 +44,12 @@ public class NoteService {
     }
 
     public NoteDTO createNote(NoteDTO newNote, String username) {
+        if (newNote.getParent() == null) throw new NullPointerException();
         Note note = mapper.noteDTOtoNote(newNote);
         User owner = userRepository.findByUsername(username);
         note.setCreationDate(LocalDateTime.now());
         note.setOwner(owner);
+        if (newNote.getName() == null) note.setName("Unnamed Note");
         return mapper.noteToNoteDTO(repository.save(note));
     }
 

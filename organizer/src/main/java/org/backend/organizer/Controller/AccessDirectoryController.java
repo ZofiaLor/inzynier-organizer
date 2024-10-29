@@ -44,6 +44,8 @@ public class AccessDirectoryController {
             return new ResponseEntity<>(service.createOrUpdateAccessDirectory(ad), HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 

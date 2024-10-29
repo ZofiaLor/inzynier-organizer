@@ -61,6 +61,7 @@ public class UserService {
     }
 
     public String login(UserDTO user) {
+        if (user.getUsername() == null | user.getPassword() == null) throw new NullPointerException();
         Authentication authentication = manager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -81,6 +82,7 @@ public class UserService {
         if (jwtService.extractUsername(jwtService.getJwtFromCookies(request)).equals(username)) {
             throw new IllegalArgumentException();
         }
+        if (!repository.existsByUsername(username)) throw new EntityNotFoundException();
         User user = repository.findByUsername(username);
         if (newRole.equals("ROLE_ADMIN") || newRole.equals("ROLE_USER")) {
             user.setRole(newRole);

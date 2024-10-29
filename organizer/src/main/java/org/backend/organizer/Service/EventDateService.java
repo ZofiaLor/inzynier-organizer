@@ -46,6 +46,7 @@ public class EventDateService {
     }
 
     public EventDateDTO createEventDate(EventDateDTO eventDateDTO) {
+        if (eventDateDTO.getEvent() == null | eventDateDTO.getStart() == null | eventDateDTO.getEnd() == null) throw new NullPointerException();
         EventDate eventDate = mapper.eventDateDTOToEventDate(eventDateDTO);
         eventDate.setTotalScore(0);
         return mapper.eventDateToEventDateDTO(repository.save(eventDate));

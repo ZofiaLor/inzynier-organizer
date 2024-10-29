@@ -44,10 +44,12 @@ public class EventService {
     }
 
     public EventDTO createEvent(EventDTO newEvent, String username) {
+        if (newEvent.getParent() == null) throw new NullPointerException();
         Event Event = mapper.eventDTOToEvent(newEvent);
         User owner = userRepository.findByUsername(username);
         Event.setCreationDate(LocalDateTime.now());
         Event.setOwner(owner);
+        if (newEvent.getName() == null) Event.setName("Unnamed Event");
         return mapper.eventToEventDTO(repository.save(Event));
     }
 

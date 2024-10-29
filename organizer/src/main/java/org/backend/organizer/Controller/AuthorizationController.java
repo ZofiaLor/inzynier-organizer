@@ -1,5 +1,6 @@
 package org.backend.organizer.Controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.backend.organizer.DTO.UserDTO;
 import org.backend.organizer.Model.User;
@@ -33,9 +34,14 @@ public class AuthorizationController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO user) {
-        String loginResult = service.login(user);
-        if (loginResult.equals("fail")) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Fail");
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, service.login(user)).body("Success");
+        try {
+            String loginResult = service.login(user);
+            if (loginResult.equals("fail")) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Fail");
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, service.login(user)).body("Success");
+        } catch (NullPointerException ex) {
+            return ResponseEntity.badRequest().body("Empty username or password");
+        }
+
     }
 
     @PostMapping("/logout")
@@ -50,6 +56,8 @@ public class AuthorizationController {
             return new ResponseEntity<>(service.changePrivilege("ROLE_ADMIN", user.getUsername(), request), HttpStatus.OK);
         } catch (IllegalArgumentException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
     }

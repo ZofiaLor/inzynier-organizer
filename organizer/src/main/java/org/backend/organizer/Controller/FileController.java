@@ -69,7 +69,11 @@ public class FileController {
     @PostMapping("/event")
     public ResponseEntity<EventDTO> createEvent(HttpServletRequest request, @RequestBody EventDTO event) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
-        return new ResponseEntity<>(eventService.createEvent(event, username), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(eventService.createEvent(event, username), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
     @PutMapping("/event")
     public ResponseEntity<EventDTO> updateEvent(HttpServletRequest request, @RequestBody EventDTO event) {
@@ -88,7 +92,11 @@ public class FileController {
     @PostMapping("/note")
     public ResponseEntity<NoteDTO> createNote(HttpServletRequest request, @RequestBody NoteDTO note) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
-        return new ResponseEntity<>(noteService.createNote(note, username), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(noteService.createNote(note, username), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
     @PutMapping("/note")
     public ResponseEntity<NoteDTO> updateNote(HttpServletRequest request, @RequestBody NoteDTO note) {
@@ -107,7 +115,11 @@ public class FileController {
     @PostMapping("/task")
     public ResponseEntity<TaskDTO> createTask(HttpServletRequest request, @RequestBody TaskDTO task) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
-        return new ResponseEntity<>(taskService.createTask(task, username), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(taskService.createTask(task, username), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
     @PutMapping("/task")
     public ResponseEntity<TaskDTO> updateTask(HttpServletRequest request, @RequestBody TaskDTO task) {

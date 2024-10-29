@@ -30,6 +30,7 @@ public class AccessDirectoryService {
     }
 
     public AccessDirectory createOrUpdateAccessDirectory(AccessDirectory ad) {
+        if (ad.getId().getUserId() == null | ad.getId().getDirectoryId() == null) throw new NullPointerException();
         if (userRepository.existsById(ad.getId().getUserId()) && directoryRepository.existsById(ad.getId().getDirectoryId())) {
             return repository.save(ad);
         } else {

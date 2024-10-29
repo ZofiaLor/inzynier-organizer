@@ -30,6 +30,7 @@ public class AccessFileService {
     }
 
     public AccessFile createOrUpdateAccessFile(AccessFile af) {
+        if (af.getId().getUserId() == null | af.getId().getFileId() == null) throw new NullPointerException();
         if (userRepository.existsById(af.getId().getUserId()) && fileRepository.existsById(af.getId().getFileId())) {
             return repository.save(af);
         } else {

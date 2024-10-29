@@ -66,6 +66,7 @@ public class DirectoryService {
         Directory directory = mapper.directoryDTOToDirectory(newDirectory);
         User owner = userRepository.findByUsername(username);
         directory.setOwner(owner);
+        if (newDirectory.getName() == null) directory.setName("Unnamed Directory");
         return mapper.directoryToDirectoryDTO(repository.save(directory));
     }
 
@@ -87,23 +88,15 @@ public class DirectoryService {
         if (!Objects.equals(owner.getId(), user.getId())) {
             Optional<Directory> dir = repository.findById(id);
             Optional<AccessDirectory> ad = adService.getAccessDirectory(user.getId(), dir.get().getId());
-            if (ad.isEmpty()) {
-                dir = repository.findById(dir.get().getParent().getId());
-                while (true) {
-                    ad = adService.getAccessDirectory(user.getId(), dir.get().getId());
-                    if (ad.isEmpty()) {
-                        if (dir.get().getParent() != null) {
-                            dir = repository.findById(dir.get().getParent().getId());
-                        } else {
-                            throw new IllegalArgumentException();
-                        }
-                    } else if (ad.get().getAccessPrivilege() < accessLevel) {
-                        throw new IllegalArgumentException();
-                    } else {
-                        break;
-                    }
+            while (ad.isEmpty()) { // look for ad
+                if (dir.get().getParent() != null) {
+                    dir = repository.findById(dir.get().getParent().getId());
+                } else {
+                    throw new IllegalArgumentException(); // no ad has been defined -> forbid access
                 }
-            } else if (ad.get().getAccessPrivilege() < accessLevel) {
+                ad = adService.getAccessDirectory(user.getId(), dir.get().getId()); // parent's ad
+            }
+            if (ad.get().getAccessPrivilege() < accessLevel) { // dir privilege must be at least accessLevel
                 throw new IllegalArgumentException();
             }
 

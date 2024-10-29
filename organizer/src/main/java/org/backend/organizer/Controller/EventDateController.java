@@ -44,7 +44,11 @@ public class EventDateController {
 
     @PostMapping("")
     public ResponseEntity<EventDateDTO> createEventDate(@RequestBody EventDateDTO eventDateDTO) {
-        return new ResponseEntity<>(service.createEventDate(eventDateDTO), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(service.createEventDate(eventDateDTO), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("")

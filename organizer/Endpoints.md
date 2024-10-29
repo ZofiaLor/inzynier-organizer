@@ -110,6 +110,9 @@ Wymagane podanie ID użytkownika w ciele zapytania.
     "name": "New User 2"
 }
 ```
+Parametry brane pod uwagę:
+- name
+- email
 
 Odpowiedzi:
 - Pomyślna aktualizacja: obiekt użytkownika, kod 200 (OK)
@@ -191,6 +194,9 @@ Wymagane podanie ID katalogu w ciele zapytania.
     "name": "Some Directory"
 }
 ```
+Parametry brane pod uwagę:
+- name
+
 Odpowiedzi:
 - Pomyślna aktualizacja: obiekt katalogu, kod 200 (OK)
 - Brak obiektu: kod 400 (Bad Request)
@@ -274,6 +280,13 @@ Wymagane podanie ID wydarzenia w ciele zapytania.
     "location": "Gliwice"
 }
 ```
+Parametry brane pod uwagę:
+- name
+- textContent
+- startDate
+- endDate
+- location
+
 Odpowiedzi:
 - Pomyślna aktualizacja: obiekt wydarzenia, kod 200 (OK)
 - Brak obiektu: kod 400 (Bad Request)
@@ -309,6 +322,10 @@ Wymagane podanie ID notatki w ciele zapytania.
   "name": "My Note"
 }
 ```
+Parametry brane pod uwagę:
+- name
+- textContent
+
 Odpowiedzi:
 - Pomyślna aktualizacja: obiekt notatki, kod 200 (OK)
 - Brak obiektu: kod 400 (Bad Request)
@@ -345,6 +362,12 @@ Wymagane podanie ID zadania w ciele zapytania.
   "isFinished": true
 }
 ```
+Parametry brane pod uwagę:
+- name
+- textContent
+- isFinished
+- deadline
+
 Odpowiedzi:
 - Pomyślna aktualizacja: obiekt zadania, kod 200 (OK)
 - Brak obiektu: kod 400 (Bad Request)
@@ -517,6 +540,10 @@ Wymagane podanie ID obiektu w ciele zapytania.
     "end": "2024-10-18T12:40:00"
 }
 ```
+Parametry brane pod uwagę:
+- start
+- end
+
 Odpowiedzi:
 - Pomyślna aktualizacja: obiekt EventDate, kod 200 (OK)
 - Nie podano ID: kod 400 (Bad Request)
@@ -602,6 +629,9 @@ Wymagane podanie ID głosu w ciele zapytania.
     "score": 1
 }
 ```
+Parametry brane pod uwagę:
+- score
+
 Odpowiedzi:
 - Pomyślna aktualizacja: obiekt głosu, kod 200 (OK)
 - Nie podano ID: kod 400 (Bad Request)
@@ -689,6 +719,10 @@ Wymagane podanie ID powiadomienia w ciele zapytania.
     "read": true
 }
 ```
+Parametry brane pod uwagę:
+- message
+- sendTimeSetting
+- isRead
 
 Odpowiedzi:
 - Pomyślna aktualizacja: obiekt powiadomienia, kod 200 (OK)

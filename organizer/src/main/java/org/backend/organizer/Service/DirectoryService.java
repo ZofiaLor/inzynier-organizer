@@ -2,6 +2,8 @@ package org.backend.organizer.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.backend.organizer.DTO.DirectoryDTO;
+import org.backend.organizer.Exception.DirectoryAccessForbiddenException;
+import org.backend.organizer.Exception.UndefinedAccessException;
 import org.backend.organizer.Mapper.DirectoryMapper;
 import org.backend.organizer.Model.AccessDirectory;
 import org.backend.organizer.Model.Directory;
@@ -92,12 +94,12 @@ public class DirectoryService {
                 if (dir.get().getParent() != null) {
                     dir = repository.findById(dir.get().getParent().getId());
                 } else {
-                    throw new IllegalArgumentException(); // no ad has been defined -> forbid access
+                    throw new UndefinedAccessException(); // no ad has been defined -> forbid access
                 }
                 ad = adService.getAccessDirectory(user.getId(), dir.get().getId()); // parent's ad
             }
             if (ad.get().getAccessPrivilege() < accessLevel) { // dir privilege must be at least accessLevel
-                throw new IllegalArgumentException();
+                throw new DirectoryAccessForbiddenException();
             }
 
         }

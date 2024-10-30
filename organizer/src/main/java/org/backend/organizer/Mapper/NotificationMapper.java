@@ -51,6 +51,6 @@ public abstract class NotificationMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "file", ignore = true)
-    @Mapping(target = "isSent", ignore = true)
+    @Mapping(target = "sent", ignore = true)
     public abstract void updateNotificationFromNotificationDTO(NotificationDTO notificationDTO, @MappingTarget Notification notification);
 }

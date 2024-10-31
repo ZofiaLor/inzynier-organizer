@@ -13,6 +13,13 @@ public class UserDTO {
     private List<Long> votes;
     private List<Long> notifications;
 
+    public UserDTO() {}
+    public UserDTO(Long id, String username, String role) {
+        this.id = id;
+        this.username = username;
+        this.role = role;
+    }
+
     public Long getId() {
         return id;
     }

@@ -60,17 +60,15 @@ public class UserService {
         return mapper.userToUserDTO(repository.save(user));
     }
 
-    public String login(UserDTO user) {
+    public UserPrincipal login(UserDTO user) {
         if (user.getUsername() == null | user.getPassword() == null) throw new NullPointerException();
         Authentication authentication = manager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         if (authentication.isAuthenticated()) {
-            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-            ResponseCookie jwtCookie = jwtService.generateJwtCookie(userPrincipal);
-            return jwtCookie.toString();
+            return (UserPrincipal) authentication.getPrincipal();
         } else {
-            return "fail"; // request is 401 unauthorized anyway
+            return null;
         }
     }
 

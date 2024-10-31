@@ -1,0 +1,78 @@
+<mat-card class="login-box">
+    <mat-card-header>
+      <mat-card-title><h2>Login</h2></mat-card-title>
+    </mat-card-header>
+  
+    <mat-card-content>
+      @if (!isLoggedIn) {
+      <form [formGroup]="form">
+        <mat-form-field appearance="outline">
+          <mat-label><b>Nazwa Użytkownika</b></mat-label>
+          <input
+            matInput
+            type="text"
+            class="form-control"
+            name="username"
+            formControlName="username"
+            required
+            #username
+            [ngClass]="{
+              'is-invalid': form.controls.username.hasError('required')
+            }"
+          />
+          @if (form.controls.username.hasError('required')) {
+          <mat-error>Nazwa użytkownika jest wymagana!</mat-error>
+          }
+        </mat-form-field>
+        <br />
+        <!--uh-->
+        <br />
+        <!--uh-->
+        <mat-form-field appearance="outline">
+          <mat-label><b>Hasło</b></mat-label>
+          <input
+            matInput
+            type="password"
+            class="form-control"
+            formControlName="password"
+            required
+            minlength="6"
+            [ngClass]="{
+              'is-invalid': form.controls.password.hasError('required')
+            }"
+          />
+          <mat-error>
+            @if (!form.controls.password.valid) { @if
+            (form.controls.password.hasError('required')) { Hasło jest wymagane! }
+            @if (form.controls.password.value!.length! < 6) { Hasło jest za
+            krótkie! } }
+          </mat-error>
+        </mat-form-field>
+        <br />
+        <!--uh-->
+        <br />
+        <!--uh-->
+        <div>
+          <a href="/auth/register" class="global-accent"
+            >Nie masz konta? Zarejestruj się.</a
+          >
+        </div>
+        <br />
+        <div>
+          <button
+            mat-raised-button
+            color="primary"
+            class="btn btn-primary btn-block"
+            [disabled]="!form.valid"
+            (click)="onSubmit()"
+          >
+            Zaloguj się
+          </button>
+        </div>
+      </form>
+      } @else {
+      <p>Użytkownik już zalogowany.</p>
+      <br />
+      }
+    </mat-card-content>
+  </mat-card>

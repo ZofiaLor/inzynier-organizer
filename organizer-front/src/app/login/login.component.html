@@ -7,7 +7,7 @@
       @if (!isLoggedIn) {
       <form [formGroup]="form">
         <mat-form-field appearance="outline">
-          <mat-label><b>Nazwa Użytkownika</b></mat-label>
+          <mat-label><b>Username</b></mat-label>
           <input
             matInput
             type="text"
@@ -21,7 +21,7 @@
             }"
           />
           @if (form.controls.username.hasError('required')) {
-          <mat-error>Nazwa użytkownika jest wymagana!</mat-error>
+          <mat-error>The username is required!</mat-error>
           }
         </mat-form-field>
         <br />
@@ -29,7 +29,7 @@
         <br />
         <!--uh-->
         <mat-form-field appearance="outline">
-          <mat-label><b>Hasło</b></mat-label>
+          <mat-label><b>Password</b></mat-label>
           <input
             matInput
             type="password"
@@ -43,9 +43,8 @@
           />
           <mat-error>
             @if (!form.controls.password.valid) { @if
-            (form.controls.password.hasError('required')) { Hasło jest wymagane! }
-            @if (form.controls.password.value!.length! < 6) { Hasło jest za
-            krótkie! } }
+            (form.controls.password.hasError('required')) { The password is required! }
+            @if (form.controls.password.value!.length! < 6) { The password is too short! } }
           </mat-error>
         </mat-form-field>
         <br />
@@ -54,7 +53,7 @@
         <!--uh-->
         <div>
           <a href="/auth/register" class="global-accent"
-            >Nie masz konta? Zarejestruj się.</a
+            >New here? Register!</a
           >
         </div>
         <br />
@@ -66,12 +65,12 @@
             [disabled]="!form.valid"
             (click)="onSubmit()"
           >
-            Zaloguj się
+            Log In
           </button>
         </div>
       </form>
       } @else {
-      <p>Użytkownik już zalogowany.</p>
+      <p>The user has already logged in.</p>
       <br />
       }
     </mat-card-content>

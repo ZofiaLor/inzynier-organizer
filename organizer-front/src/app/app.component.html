@@ -1,4 +1,30 @@
 
+<mat-toolbar>
+    <div class="left-toolbar">
+        <button mat-icon-button class="toolbar-icon" aria-label="Toolbar icon-button with menu icon">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <span>Organizer</span>
+    </div>
+    <div class="right-toolbar">
+        @if(isLoggedIn) {
+            @if(currentUser?.name != null) {
+                Hello, {{currentUser?.name}}
+            } @else {
+                Hello, {{currentUser?.username}}
+            }
+            <button (click)="onLogout()" mat-raised-button color="primary" aria-label="Logout">
+                <mat-icon>logout</mat-icon> LOG OUT
+            </button>
+        } @else {
 
+            <button (click)="onLogin()" mat-raised-button color="primary" aria-label="Login">
+                <mat-icon>login</mat-icon> LOG IN
+            </button>
+        }
+    </div>
+    
+</mat-toolbar>
+  
 
 <router-outlet />

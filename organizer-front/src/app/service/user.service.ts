@@ -7,6 +7,7 @@ const USER_URL = 'http://localhost:8080/api/user/';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  withCredentials: true
 };
 
 @Injectable({

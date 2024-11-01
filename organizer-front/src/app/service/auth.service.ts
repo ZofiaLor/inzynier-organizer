@@ -6,7 +6,9 @@ import { User } from '../model/user';
 const AUTH_URL = 'http://localhost:8080/api/auth/';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  headers: new HttpHeaders({ 'Content-Type': 'application/json'}),
+  observe: 'response' as 'body',
+  withCredentials: true
 };
 
 @Injectable({
@@ -24,15 +26,10 @@ export class AuthService {
     );
   }
 
-  register(username: string, name: string | null, email: string | null, password: string): Observable<any> {
+  register(user: User): Observable<any> {
     return this.http.post(
       AUTH_URL + 'register',
-      {
-        username,
-        name,
-        email,
-        password,
-      },
+      user,
       httpOptions
     );
   }

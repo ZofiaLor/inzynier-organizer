@@ -27,7 +27,7 @@ import { User } from '../model/user';
   styleUrl: './login.component.scss'
 })
 export class LoginComponent implements OnInit {
-  form = this._fb.group({
+  form = this.fb.group({
     username: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
   });
@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   user: User = {id: 0, username: "", role: "ROLE_USER"};
 
-  constructor (private authService: AuthService, private storageService: StorageService, private readonly _fb: FormBuilder,) {}
+  constructor (private authService: AuthService, private storageService: StorageService, private readonly fb: FormBuilder,) {}
 
   ngOnInit(): void {
     if (this.storageService.isLoggedIn()) {
@@ -45,8 +45,6 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    console.log(this.form.controls.username.value!);
-    console.log(this.form.controls.password.value!);
     this.user.username = this.form.controls.username.value!;
     this.user.password = this.form.controls.password.value!;
 

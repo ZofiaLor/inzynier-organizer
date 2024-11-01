@@ -3,6 +3,7 @@ package org.backend.organizer.Controller;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.backend.organizer.DTO.UserDTO;
+import org.backend.organizer.Mapper.UserMapper;
 import org.backend.organizer.Model.User;
 import org.backend.organizer.Model.UserPrincipal;
 import org.backend.organizer.Service.JWTService;
@@ -16,12 +17,14 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true") // allowCredentials is not possible for origins *
 @Controller
 @RequestMapping("/api/auth")
 public class AuthorizationController {
     @Autowired
     UserService service;
+    @Autowired
+    UserMapper mapper;
 
     @Autowired
     JWTService jwtService;
@@ -41,8 +44,7 @@ public class AuthorizationController {
         try {
             UserPrincipal userPrincipal = service.login(user);
             ResponseCookie jwtCookie = jwtService.generateJwtCookie(userPrincipal);
-            String role = userPrincipal.getAuthorities().toArray()[0].toString();
-            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new UserDTO(userPrincipal.getId(), userPrincipal.getUsername(), role));
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(mapper.userToUserDTO(userPrincipal.getUser()));
         } catch (NullPointerException ex) {
             return ResponseEntity.badRequest().body("Empty username or password " + user.getUsername() + user.getPassword());
         }

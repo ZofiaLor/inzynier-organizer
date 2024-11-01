@@ -59,6 +59,10 @@ public class UserPrincipal implements UserDetails {
         return id;
     }
 
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

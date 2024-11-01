@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/files")
+@RequestMapping("/api/files")
 public class FileController {
     @Autowired
     FileService fileService;

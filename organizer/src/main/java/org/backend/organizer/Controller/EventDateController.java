@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/ed")
+@RequestMapping("/api/ed")
 public class EventDateController {
     @Autowired
     EventDateService service;

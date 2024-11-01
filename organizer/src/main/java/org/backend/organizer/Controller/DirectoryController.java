@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/directories")
+@RequestMapping("/api/directories")
 public class DirectoryController {
     @Autowired
     DirectoryService service;

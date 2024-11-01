@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthorizationController {
     @Autowired
     UserService service;

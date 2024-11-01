@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/ad")
+@RequestMapping("/api/ad")
 public class AccessDirectoryController {
     @Autowired
     AccessDirectoryService service;

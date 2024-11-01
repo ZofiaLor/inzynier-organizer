@@ -34,7 +34,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable) // it is needed in POST requests when enabled
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(request -> request
-                .requestMatchers("/", "/auth/*").permitAll()
+                .requestMatchers("/api/", "/api/auth/*").permitAll()
                 .anyRequest().authenticated()) // blocks guests from accessing any page
             .formLogin(Customizer.withDefaults()) // shows login form in browser
             .httpBasic(Customizer.withDefaults()) // enables login from e.g. Postman

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/notifs")
+@RequestMapping("/api/notifs")
 public class NotificationController {
     @Autowired
     NotificationService service;

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/af")
+@RequestMapping("/api/af")
 public class AccessFileController {
     @Autowired
     AccessFileService service;

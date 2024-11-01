@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HomePageController {
-    @GetMapping("/")
+    @GetMapping("/api/")
     public String greet() {
         return "Hello World!";
     }

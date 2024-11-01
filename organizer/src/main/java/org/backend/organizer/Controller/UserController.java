@@ -1,8 +1,10 @@
 package org.backend.organizer.Controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.backend.organizer.DTO.UserDTO;
 import org.backend.organizer.Model.User;
+import org.backend.organizer.Service.JWTService;
 import org.backend.organizer.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,10 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
     @Autowired
     UserService service;
+    @Autowired
+    JWTService jwtService;
 
     @GetMapping("")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -40,6 +44,17 @@ public class UserController {
     @GetMapping("/name/{username}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable("username") String username) {
+        try {
+            UserDTO user = service.getUserByUsername(username);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (EntityNotFoundException ex){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/myuser")
+    public ResponseEntity<UserDTO> getMyUser(HttpServletRequest request) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
             UserDTO user = service.getUserByUsername(username);
             return new ResponseEntity<>(user, HttpStatus.OK);

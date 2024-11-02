@@ -24,7 +24,7 @@ public class UserController {
     JWTService jwtService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
     }
@@ -65,7 +65,6 @@ public class UserController {
     }
 
     @PutMapping("")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO user) {
         try {
             return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);

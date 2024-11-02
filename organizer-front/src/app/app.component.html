@@ -1,18 +1,16 @@
 
 <mat-toolbar>
     <div class="left-toolbar">
-        <button mat-icon-button class="toolbar-icon" aria-label="Toolbar icon-button with menu icon">
-            <mat-icon>menu</mat-icon>
-        </button>
-        <span>Organizer</span>
+        <a class="title" routerLink=""><span>Organizer</span></a>
     </div>
     <div class="right-toolbar">
         @if(isLoggedIn) {
-            @if(currentUser?.name != null) {
+            @if(currentUser?.name != undefined && currentUser?.name != '') {
                 Hello, {{currentUser?.name}}
             } @else {
                 Hello, {{currentUser?.username}}
             }
+            <a mat-icon-button routerLink="profile"><mat-icon>account_circle</mat-icon></a>
             <button (click)="onLogout()" mat-raised-button color="primary" aria-label="Logout">
                 <mat-icon>logout</mat-icon> LOG OUT
             </button>

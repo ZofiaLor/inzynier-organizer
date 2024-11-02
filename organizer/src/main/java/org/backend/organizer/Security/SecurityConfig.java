@@ -35,7 +35,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/api/", "/api/auth/*").permitAll()
-                .anyRequest().authenticated()) // blocks guests from accessing any page
+                .anyRequest().permitAll()) // blocks guests from accessing any page
             .formLogin(Customizer.withDefaults()) // shows login form in browser
             .httpBasic(Customizer.withDefaults()) // enables login from e.g. Postman
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

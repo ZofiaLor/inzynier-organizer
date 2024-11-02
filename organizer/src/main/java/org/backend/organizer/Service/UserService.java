@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -97,7 +98,7 @@ public class UserService {
     public UserDTO updateUser(UserDTO userUpdates) {
         if (userUpdates == null | userUpdates.getId() == null) throw new NullPointerException();
         User user = repository.findById(userUpdates.getId()).orElseThrow(EntityNotFoundException::new);
-        if (repository.existsByUsername(userUpdates.getUsername())) throw new IllegalArgumentException();
+        if (!Objects.equals(user.getUsername(), userUpdates.getUsername()) && repository.existsByUsername(userUpdates.getUsername())) throw new IllegalArgumentException();
         //TODO use mapper to ignore nulls
         mapper.updateUserFromUserDTO(userUpdates, user);
         return mapper.userToUserDTO(repository.save(user));

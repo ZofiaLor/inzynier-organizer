@@ -10,6 +10,7 @@ import { FormsModule, FormBuilder,
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { User } from '../model/user';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -33,14 +34,14 @@ export class LoginComponent implements OnInit {
   });
   isLoggedIn = false;
   isLoginFailed = false;
-  errorMessage = '';
   user: User = {id: 0, username: "", role: "ROLE_USER"};
 
-  constructor (private authService: AuthService, private storageService: StorageService, private readonly fb: FormBuilder,) {}
+  constructor (private authService: AuthService, private storageService: StorageService, private readonly fb: FormBuilder, private snackBar: MatSnackBar,) {}
 
   ngOnInit(): void {
     if (this.storageService.isLoggedIn()) {
       this.isLoggedIn = true;
+      this.user = this.storageService.getUser()!;
     }
   }
 
@@ -49,15 +50,18 @@ export class LoginComponent implements OnInit {
     this.user.password = this.form.controls.password.value!;
 
     this.authService.login(this.user).subscribe({
-      next: data => {
-        this.storageService.saveUser(data);
-
+      next: resp => {
+        this.storageService.saveUser(resp.body);
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.reloadPage();
       },
       error: err => {
-        this.errorMessage = err.error.message;
+        if (err.status == 403) {
+          this.snackBar.open("Incorrect username or password", undefined, {duration: 3000});
+        } else {
+          this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+        }
         this.isLoginFailed = true;
       }
     });

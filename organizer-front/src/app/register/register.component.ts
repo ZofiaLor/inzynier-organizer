@@ -46,8 +46,7 @@ export class RegisterComponent {
     }
 
     this.authService.register(user).subscribe({
-      next: data => {
-        console.log(data);
+      next: resp => {
         this.snackBar.open("You have successfully registered!", undefined, {duration: 3000});
       },
       error: err => {

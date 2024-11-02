@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,7 +48,9 @@ public class AuthorizationController {
             ResponseCookie jwtCookie = jwtService.generateJwtCookie(userPrincipal);
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(mapper.userToUserDTO(userPrincipal.getUser()));
         } catch (NullPointerException ex) {
-            return ResponseEntity.badRequest().body("Empty username or password " + user.getUsername() + user.getPassword());
+            return ResponseEntity.badRequest().body("Empty username or password");
+        } catch (AuthenticationException ex) {
+            return ResponseEntity.status(403).body("Incorrect credentials");
         }
 
     }

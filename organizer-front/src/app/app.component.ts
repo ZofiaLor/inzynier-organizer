@@ -3,6 +3,8 @@ import { RouterOutlet, RouterModule, Router } from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatMenuModule} from '@angular/material/menu';
 import { User } from './model/user';
 import { StorageService } from './service/storage.service';
 import { AuthService } from './service/auth.service';
@@ -10,7 +12,7 @@ import { AuthService } from './service/auth.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterModule, MatIconModule, MatButtonModule, MatToolbarModule],
+  imports: [RouterOutlet, RouterModule, MatIconModule, MatButtonModule, MatToolbarModule, MatTooltipModule, MatMenuModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
@@ -35,12 +37,14 @@ export class AppComponent implements OnInit{
       next: () => {
         this.storageService.clean();
         window.location.reload();
+        this.router.navigate(['']);
       },
       error: (err) => {
         console.log(err);
         if(err?.error?.text === 'Success'){
           this.storageService.clean();
           window.location.reload();
+          this.router.navigate(['']);
         }
       }
     })

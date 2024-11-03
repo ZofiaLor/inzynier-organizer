@@ -11,6 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Subject, takeUntil } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-profile',
@@ -35,7 +36,7 @@ export class ProfileComponent implements OnInit {
   user?: User;
   private readonly _destroy$ = new Subject<void>();
 
-  constructor (private storageService: StorageService, private userService: UserService, private readonly fb: FormBuilder) {}
+  constructor (private storageService: StorageService, private userService: UserService, private readonly fb: FormBuilder, private snackBar: MatSnackBar,) {}
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
@@ -45,9 +46,6 @@ export class ProfileComponent implements OnInit {
   }
 
   onSubmit() {
-    this.userService.getAllUsers().pipe(takeUntil(this._destroy$)).subscribe((elements) => {
-      console.log(elements);
-    })
     this.user!.username = this.form.controls.username.value!;
     this.user!.name = this.form.controls.name.value!;
     this.user!.email = this.form.controls.email.value!;
@@ -55,9 +53,19 @@ export class ProfileComponent implements OnInit {
     this.userService.updateUser(this.user!).subscribe({
       next: resp => {
         console.log(resp);
+        this.storageService.saveUser(resp.body!);
+        this.user = resp.body!;
+        window.location.reload();
       },
       error: err => {
         console.log(err);
+        if (err.status == 403) {
+          this.snackBar.open("This username is already taken!", undefined, {duration: 3000});
+        } else if (err.status == 404 || err.status == 400) {
+          this.snackBar.open("The user could not be found", undefined, {duration: 3000});
+        } else {
+          this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+        }
       }
     })
   }

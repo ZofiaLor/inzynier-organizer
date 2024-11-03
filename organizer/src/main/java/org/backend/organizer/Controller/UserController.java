@@ -70,8 +70,10 @@ public class UserController {
             return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        } catch (NullPointerException | IllegalArgumentException ex){
+        } catch (NullPointerException ex){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException ex){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 

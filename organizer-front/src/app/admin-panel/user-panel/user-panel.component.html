@@ -1,0 +1,32 @@
+<div class="layoutBox-v" fxLayout="column" fxLayoutGap="50px">
+    <div
+      class="layoutBox-h"
+      fxLayout="row"
+      fxLayout.xs="column"
+      fxLayoutGap="10px"
+      fxLayoutAlign="space-evenly stretch"
+    >
+    <mat-card fxFlex="70" fxFlexOrder="1" fxFlexOrder.xs="2">
+        <mat-card-header><h2>Users</h2></mat-card-header>
+        <mat-card-content>
+            <app-table-base [columns]="columns" [data]="userData" (selectEmitter)="selectUser($event)"></app-table-base>
+        </mat-card-content>
+    </mat-card>
+    <mat-card fxFlex="30" fxFlexOrder="2" fxFlexOrder.xs="1">
+        <mat-card-header><h2>Selected User</h2></mat-card-header>
+        <mat-card-content>
+            <h3>ID</h3>
+            {{user?.id}}
+            <h3>Username</h3>
+            {{user?.username}}
+            <h3>Name</h3>
+            {{user?.name}}
+            <h3>Email</h3>
+            {{user?.email}}
+            <h3>Role</h3>
+            {{user?.role}}
+        </mat-card-content>
+    </mat-card>
+
+    </div>
+</div>

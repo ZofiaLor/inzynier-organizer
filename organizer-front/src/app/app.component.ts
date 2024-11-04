@@ -36,15 +36,20 @@ export class AppComponent implements OnInit{
     this.authService.logout().subscribe({
       next: () => {
         this.storageService.clean();
-        window.location.reload();
-        this.router.navigate(['']);
+        this.router.navigate(['auth/login']).then(() => {
+          window.location.reload();
+        });
+        // https://stackoverflow.com/questions/53569884/angular-router-navigate-then-reload
+        
       },
       error: (err) => {
         console.log(err);
         if(err?.error?.text === 'Success'){
           this.storageService.clean();
-          window.location.reload();
-          this.router.navigate(['']);
+          this.router.navigate(['auth/login']).then(() => {
+            window.location.reload();
+          });
+          
         }
       }
     })

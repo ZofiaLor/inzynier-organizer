@@ -25,6 +25,28 @@
             {{user?.email}}
             <h3>Role</h3>
             {{user?.role}}
+            <br/><br/>
+            @if (user && !isCurrentUser) {
+                @if (isAdminSelected) {
+                    <button mat-raised-button color="accent" (click)="revokeAdmin()" aria-label="Revoke Admin Privilege">
+                        <mat-icon>remove_moderator</mat-icon> Revoke Admin Privilege
+                    </button>
+                } @else {
+                    <button mat-raised-button color="primary" (click)="grantAdmin()" aria-label="Grant Admin Privilege">
+                        <mat-icon>add_moderator</mat-icon> Grant Admin Privilege
+                    </button>
+                }
+                <br/><br/>
+                <mat-expansion-panel hideToggle>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title><mat-icon>person_remove</mat-icon>&nbsp; Delete User </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <button mat-raised-button color="warn" (click)="deleteUser()" aria-label="Delete User">
+                        <mat-icon>check</mat-icon> CONFIRM
+                    </button>
+                  </mat-expansion-panel>
+                
+            }
         </mat-card-content>
     </mat-card>
 

@@ -3,7 +3,7 @@
 ## Authorization
 
 ### Log In
-```POST /auth/login```
+```POST /api/auth/login```
 
 Logowanie użytkownika.
 
@@ -17,10 +17,10 @@ Wymagane w ciele zapytania: nazwa użytkownika (username), hasło (password)
 
 Odpowiedzi:
 - Poprawne zalogowanie: "Success", kod 200 (OK)
-- Niepoprawne hasło/login: kod 401 (Unauthorized)
+- Niepoprawne hasło/login: kod 403 (Forbidden)
 - Brak hasła/loginu: "Empty username or password", kod 400 (Bad Request)
 ### Log Out
-```POST /auth/logout```
+```POST /api/auth/logout```
 
 Wylogowanie użytkownika.
 
@@ -35,7 +35,7 @@ Odpowiedź: "Success", kod 200 (OK)
 Success
 ```
 ### Register
-```POST /auth/register```
+```POST /api/auth/register```
 
 Rejestracja nowego użytkownika.
 
@@ -54,8 +54,8 @@ Odpowiedzi:
 - Brak nazwy użytkownika lub hasła: kod 400 (Bad Request)
 
 ### Grant/Revoke Admin Privilege
-```PUT /auth/grant```
-```PUT /auth/revoke```
+```PUT /api/auth/grant```
+```PUT /api/auth/revoke```
 
 Nadanie/odebranie roli Administratora użytkownikowi.
 
@@ -73,14 +73,14 @@ Odpowiedzi:
 ## Users
 
 ### Get All Users
-```GET /users```
+```GET /api/users```
 
 Zwraca wszystkich użytkowników.
 
 Odpowiedź: lista obiektów użytkowników, kod 200 (OK)
 
 ### Get User By Username
-```GET /users/name/{username}```
+```GET /api/users/name/{username}```
 
 Zwraca użytkownika o podanej nazwie.
 
@@ -89,7 +89,7 @@ Odpowiedzi:
 - Użytkownik nie istnieje: kod 404 (Not Found)
 
 ### Get User By ID
-```GET /users/{id}```
+```GET /api/users/{id}```
 
 Zwraca użytkownika o podanym ID.
 
@@ -99,7 +99,7 @@ Odpowiedzi:
 - Brak ID: kod 400 (Bad Request)
 
 ### Update User
-```PUT /users```
+```PUT /api/users```
 
 Aktualizuje użytkownika.
 
@@ -121,7 +121,7 @@ Odpowiedzi:
 
 ### Delete User
 
-```DELETE /users/{id}```
+```DELETE /api/users/{id}```
 
 Usuwa użytkownika o podanym ID.
 
@@ -133,21 +133,21 @@ Odpowiedzi:
 
 ### Get All Directories
 
-```GET /directories```
+```GET /api/directories```
 
 Zwraca wszystkie katalogi.
 
 Odpowiedź: lista obiektów katalogów, kod 200 (OK)
 
 ### Get All My Directories
-```GET /directories/mydirs```
+```GET /api/directories/mydirs```
 
 Zwraca wszystkie katalogi aktualnie zalogowanego użytkownika.
 
 Odpowiedź: lista obiektów katalogów, kod 200 (OK)
 
 ### Get Directories By Parent ID
-```GET /directories/subdirs/{id}```
+```GET /api/directories/subdirs/{id}```
 
 Zwraca katalogi podrzędne katalogu o podanym ID.
 
@@ -158,7 +158,7 @@ Odpowiedzi:
 - Brak dostępu: kod 403 (Forbidden)
 
 ### Get Directory By ID
-```GET /directories/{id}```
+```GET /api/directories/{id}```
 
 Zwraca katalog o podanym ID.
 
@@ -169,7 +169,7 @@ Odpowiedzi:
 - Brak dostępu: kod 403 (Forbidden)
 
 ### Create Directory
-```POST /directories```
+```POST /api/directories```
 
 Tworzy nowy katalog.
 
@@ -183,7 +183,7 @@ Brak wymaganych parametrów, można podać nazwę oraz ID rodzica. W przypadku n
 Odpowiedź: obiekt nowego katalogu, kod 200 (OK)
 
 ### Update Directory
-```PUT /directories```
+```PUT /api/directories```
 
 Aktualizuje katalog.
 
@@ -205,7 +205,7 @@ Odpowiedzi:
 
 ### Delete Directory
 
-```DELETE /directories/{id}```
+```DELETE /api/directories/{id}```
 
 Usuwa katalog o podanym ID.
 
@@ -216,21 +216,21 @@ Odpowiedzi:
 ## Files
 
 ### Get All Files
-```GET /files```
+```GET /api/files```
 
 Zwraca wszystkie pliki.
 
 Odpowiedź: lista obiektów plików, kod 200 (OK)
 
 ### Get All My Files
-```GET /files/myfiles```
+```GET /api/files/myfiles```
 
 Zwraca wszystkie pliki aktualnie zalogowanego użytkownika.
 
 Odpowiedź: lista obiektów plików, kod 200 (OK)
 
 ### Get Files In Directory
-```GET /files/dir/{id}```
+```GET /api/files/dir/{id}```
 
 Zwraca wszystkie pliki w katalogu o podanym ID.
 
@@ -240,7 +240,7 @@ Odpowiedzi:
 - Brak dostępu: kod 403 (Forbidden)
 
 ### Get File By ID
-```GET /files/{id}```
+```GET /api/files/{id}```
 
 Zwraca katalog o podanym ID.
 
@@ -251,7 +251,7 @@ Odpowiedzi:
 - Brak dostępu: kod 403 (Forbidden)
 
 ### Create Event
-```POST /files/event```
+```POST /api/files/event```
 
 Tworzy nowe wydarzenie. 
 
@@ -269,7 +269,7 @@ Odpowiedzi:
 - Nie podano ID rodzica: kod 400 (Bad Request)
 
 ### Update Event
-```PUT /files/event```
+```PUT /api/files/event```
 
 Aktualizuje wydarzenie.
 
@@ -294,7 +294,7 @@ Odpowiedzi:
 - Brak dostępu do edycji: kod 403 (Forbidden)
 
 ### Create Note
-```POST /files/note```
+```POST /api/files/note```
 
 Tworzy nową notatkę. 
 
@@ -311,7 +311,7 @@ Odpowiedzi:
 - Nie podano ID rodzica: kod 400 (Bad Request)
 
 ### Update Note
-```PUT /files/note```
+```PUT /api/files/note```
 
 Aktualizuje notatkę.
 
@@ -333,7 +333,7 @@ Odpowiedzi:
 - Brak dostępu do edycji: kod 403 (Forbidden)
 
 ### Create Task
-```POST /files/task```
+```POST /api/files/task```
 
 Tworzy nowe zadanie. 
 
@@ -351,7 +351,7 @@ Odpowiedzi:
 - Nie podano ID rodzica: kod 400 (Bad Request)
 
 ### Update Task
-```PUT /files/task```
+```PUT /api/files/task```
 
 Aktualizuje zadanie.
 
@@ -376,7 +376,7 @@ Odpowiedzi:
 
 ### Delete File
 
-```DELETE /files/{id}```
+```DELETE /api/files/{id}```
 
 Usuwa plik o podanym ID.
 
@@ -387,14 +387,14 @@ Odpowiedzi:
 ## Access Directory
 
 ### Get All AccessDirectories
-```GET /ad```
+```GET /api/ad```
 
 Zwraca wszystkie obiekty AccessDirectory.
 
 Odpowiedź: lista obiektów AccessDirectory, kod 200 (OK)
 
 ### Get AccessDirectory By User And Directory
-```GET /ad/{user}/{dir}```
+```GET /api/ad/{user}/{dir}```
 
 Zwraca obiekt AccessDirectory dla podanego ID użytkownika i katalogu.
 
@@ -404,7 +404,7 @@ Odpowiedzi:
 - Brak ID: kod 400 (Bad Request)
 
 ### Modify AccessDirectory
-```POST /ad```
+```POST /api/ad```
 
 Tworzy lub aktualizuje obiekt AccessDirectory o podanych ID użytkownika i katalogu.
 
@@ -425,7 +425,7 @@ Odpowiedzi:
 
 ### Delete AccessDirectory
 
-```DELETE /ad/{user}/{dir}```
+```DELETE /api/ad/{user}/{dir}```
 
 Usuwa obiekt AccessDirectory o podanych ID użytkownika i katalogu.
 
@@ -436,14 +436,14 @@ Odpowiedzi:
 ## Access File
 
 ### Get All AccessFiles
-```GET /af```
+```GET /api/af```
 
 Zwraca wszystkie obiekty AccessFile.
 
 Odpowiedź: lista obiektów AccessFile, kod 200 (OK)
 
 ### Get AccessFile By User And File
-```GET /af/{user}/{file}```
+```GET /api/af/{user}/{file}```
 
 Zwraca obiekt AccessFile dla podanego ID użytkownika i pliku.
 
@@ -453,7 +453,7 @@ Odpowiedzi:
 - Brak ID: kod 400 (Bad Request)
 
 ### Modify AccessFile
-```POST /af```
+```POST /api/af```
 
 Tworzy lub aktualizuje obiekt AccessFile o podanych ID użytkownika i pliku.
 
@@ -474,7 +474,7 @@ Odpowiedzi:
 
 ### Delete AccessFile
 
-```DELETE /af/{user}/{file}```
+```DELETE /api/af/{user}/{file}```
 
 Usuwa obiekt AccessFile o podanych ID użytkownika i pliku.
 
@@ -485,14 +485,14 @@ Odpowiedzi:
 ## Event Dates
 
 ### Get All EventDates
-```GET /ed```
+```GET /api/ed```
 
 Zwraca wszystkie obiekty EventDate.
 
 Odpowiedź: lista obiektów EventDate, kod 200 (OK)
 
 ### Get EventDates By Event ID
-```GET /ed?id={eventId}```
+```GET /api/ed?id={eventId}```
 
 Zwraca obiekty EventDate dotyczące wydarzenia o podanym ID.
 
@@ -502,7 +502,7 @@ Odpowiedzi:
 - Nie podano ID: kod 400 (Bad Request)
 
 ### Get EventDate By ID
-```GET /ed/{id}```
+```GET /api/ed/{id}```
 
 Zwraca obiekt EventDate o podanym ID.
 
@@ -512,7 +512,7 @@ Odpowiedzi:
 - Nie podano ID: kod 400 (Bad Request)
 
 ### Create EventDate
-```POST /ed```
+```POST /api/ed```
 
 Tworzy obiekt EventDate. 
 
@@ -529,7 +529,7 @@ Odpowiedzi:
 - Brak ID/terminu początkowego/końcowego: kod 400 (Bad Request)
 
 ### Update EventDate
-```PUT /ed```
+```PUT /api/ed```
 
 Aktualizuje obiekt EventDate.
 
@@ -551,7 +551,7 @@ Odpowiedzi:
 
 ### Delete EventDate
 
-```DELETE /ed/{id}```
+```DELETE /api/ed/{id}```
 
 Usuwa obiekt EventDate o podanym ID.
 
@@ -563,14 +563,14 @@ Odpowiedzi:
 
 ### Get All Votes
 
-```GET /votes```
+```GET /api/votes```
 
 Zwraca wszystkie głosy.
 
 Odpowiedź: lista obiektów głosów, kod 200 (OK)
 
 ### Get Votes By User ID
-```GET /votes/user/{id}```
+```GET /api/votes/user/{id}```
 
 Zwraca głosy użytkownika o podanym ID.
 
@@ -580,7 +580,7 @@ Odpowiedzi:
 - Nie podano ID: kod 400 (Bad Request)
 
 ### Get Votes By EventDate ID
-```GET /votes/ed/{id}```
+```GET /api/votes/ed/{id}```
 
 Zwraca głosy na termin EventDate o podanym ID.
 
@@ -590,7 +590,7 @@ Odpowiedzi:
 - Nie podano ID: kod 400 (Bad Request)
 
 ### Get Vote By ID
-```GET /votes/{id}```
+```GET /api/votes/{id}```
 
 Zwraca głos o podanym ID.
 
@@ -600,7 +600,7 @@ Odpowiedzi:
 - Nie podano ID: kod 400 (Bad Request)
 
 ### Cast Vote
-```POST /votes```
+```POST /api/votes```
 
 Sprawdza, czy zalogowany użytkownik oddał głos na dany termin, jeżeli nie, to tworzy nowy głos, jeżeli tak, to aktualizuje istniejący.
 Modyfikuje wynik całkowity dla terminu EventDate.
@@ -618,7 +618,7 @@ Odpowiedzi:
 - Nie istnieje ID EventDate: kod 404 (Not Found)
 
 ### Update Vote
-```PUT /votes```
+```PUT /api/votes```
 
 Aktualizuje głos.
 
@@ -639,7 +639,7 @@ Odpowiedzi:
 
 ### Delete Vote
 
-```DELETE /vote/{id}```
+```DELETE /api/vote/{id}```
 
 Usuwa głos o podanym ID.
 
@@ -651,35 +651,35 @@ Odpowiedzi:
 
 ### Get All Notifications
 
-```GET /notifs```
+```GET /api/notifs```
 
 Zwraca wszystkie powiadomienia.
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
 ### Get All My Notifications
-```GET /notifs/mynotifs```
+```GET /api/notifs/mynotifs```
 
 Zwraca wszystkie powiadomienia aktualnie zalogowanego użytkownika.
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
 ### Get All My Notifications
-```GET /notifs/mynotifs```
+```GET /api/notifs/mynotifs```
 
 Zwraca wszystkie wysłane powiadomienia aktualnie zalogowanego użytkownika.
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
 ### Get All My Read/Unread Notifications
-```GET /notifs/mynotifs?read={read}```
+```GET /api/notifs/mynotifs?read={read}```
 
 Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w zależności od parametru read (true - odczytane, false - nieodczytane).
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
 ### Get Notification By ID
-```GET /notifs/{id}```
+```GET /api/notifs/{id}```
 
 Zwraca powiadomienie o podanym ID.
 
@@ -689,7 +689,7 @@ Odpowiedzi:
 - Nie podano ID: kod 400 (Bad Request)
 
 ### Create Notification
-```POST /notifs```
+```POST /api/notifs```
 
 Tworzy powiadomienie.
 
@@ -708,7 +708,7 @@ Odpowiedzi:
 - Nie istnieje ID użytkownika/pliku: kod 404 (Not Found)
 
 ### Update Notification
-```PUT /notifs```
+```PUT /api/notifs```
 
 Aktualizuje powiadomienie.
 
@@ -730,7 +730,7 @@ Odpowiedzi:
 - Nie znaleziono ID: kod 404 (Not Found)
 
 ### Send Notifications
-```PUT /notifs/send```
+```PUT /api/notifs/send```
 
 Wysyła powiadomienia poprzez porównanie ich czasu wysłania z czasem aktualnym.
 
@@ -738,7 +738,7 @@ Odpowiedź: kod 200 (OK)
 
 ### Delete Notification
 
-```DELETE /notifs/{id}```
+```DELETE /api/notifs/{id}```
 
 Usuwa powiadomienie o podanym ID.
 

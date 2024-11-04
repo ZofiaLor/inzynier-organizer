@@ -8,3 +8,10 @@
   mat-card-content {
     overflow-y: scroll;
   }
+
+  mat-expansion-panel {
+    width: 50%;
+  }
+  mat-panel-title {
+    color: #F44336;
+  }

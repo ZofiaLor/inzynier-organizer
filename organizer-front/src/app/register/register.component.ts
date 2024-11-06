@@ -39,13 +39,12 @@ export class RegisterComponent {
     const user: User = {
       id: 0,
       username: this.form.controls.username.value!,
-      password: this.form.controls.password.value!,
       name: this.form.controls.name.value ?? undefined,
       email: this.form.controls.email.value ?? undefined,
       role: ""
     }
 
-    this.authService.register(user).subscribe({
+    this.authService.register(user, this.form.controls.password.value!).subscribe({
       next: resp => {
         this.snackBar.open("You have successfully registered!", undefined, {duration: 3000});
       },

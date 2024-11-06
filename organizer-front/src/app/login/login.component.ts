@@ -46,12 +46,11 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.user.username = this.form.controls.username.value!;
-    this.user.password = this.form.controls.password.value!;
 
-    this.authService.login(this.user).subscribe({
+    this.authService.login(this.form.controls.username.value!, this.form.controls.password.value!).subscribe({
       next: resp => {
         this.storageService.saveUser(resp.body);
+        this.user = this.storageService.getUser()!;
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.reloadPage();

@@ -1,0 +1,16 @@
+<mat-action-list>
+    @for(file of files; track file) {
+        <button mat-list-item>
+            @if (isEvent(file)) {
+                <mat-icon>event</mat-icon>
+            } @else {
+                @if (isTask(file)) {
+                    <mat-icon>task</mat-icon>
+                } @else {
+                    <mat-icon>sticky_note_2</mat-icon>
+                }
+            }
+            {{file.name}}
+        </button>
+    }
+</mat-action-list>

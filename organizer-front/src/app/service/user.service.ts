@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../model/user';
+import { File } from '../model/file';
 
 const USER_URL = 'http://localhost:8080/api/users';
 
@@ -28,6 +29,10 @@ export class UserService {
 
   getUserByUsername(username: string): Observable<HttpResponse<User | null>> {
     return this._http.get<HttpResponse<User | null>>(`${USER_URL}/name/${username}`, httpOptions);
+  }
+
+  getMyUser(): Observable<HttpResponse<User | null>> {
+    return this._http.get<HttpResponse<User | null>>(USER_URL + '/myuser', httpOptions);
   }
 
   createUser(user: User): Observable<HttpResponse<User | null>> {

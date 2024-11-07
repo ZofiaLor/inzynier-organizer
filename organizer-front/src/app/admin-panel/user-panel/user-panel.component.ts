@@ -3,7 +3,6 @@ import { TableBaseComponent } from '../table-base/table-base.component';
 import { MatCardModule } from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
-import {MatGridListModule} from '@angular/material/grid-list';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { UserService } from '../../service/user.service';
@@ -15,7 +14,7 @@ import { AuthService } from '../../service/auth.service';
 @Component({
   selector: 'app-user-panel',
   standalone: true,
-  imports: [TableBaseComponent, MatCardModule, MatIconModule, MatButtonModule, MatGridListModule, FlexLayoutModule, MatExpansionModule],
+  imports: [TableBaseComponent, MatCardModule, MatIconModule, MatButtonModule, FlexLayoutModule, MatExpansionModule],
   templateUrl: './user-panel.component.html',
   styleUrl: './user-panel.component.scss'
 })

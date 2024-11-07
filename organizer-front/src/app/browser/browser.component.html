@@ -1,0 +1,29 @@
+@if(user) {
+    <div class="layoutBox-v" fxLayout="column" fxLayoutGap="50px">
+        <div
+          class="layoutBox-h"
+          fxLayout="row"
+          fxLayout.xs="column"
+          fxLayoutGap="10px"
+          fxLayoutAlign="space-evenly stretch"
+        >
+        <mat-card fxFlex="20" fxFlexOrder="1" fxFlexOrder.xs="2">
+            <mat-card-header><h2>Files</h2></mat-card-header>
+            <mat-card-content>
+                <app-file-tree></app-file-tree>
+            </mat-card-content>
+        </mat-card>
+        <mat-card fxFlex="80" fxFlexOrder="2" fxFlexOrder.xs="1">
+            <mat-card-header><h2>Selected File</h2></mat-card-header>
+            <mat-card-content>
+                <app-file-view></app-file-view>
+            </mat-card-content>
+        </mat-card>
+    
+        </div>
+    </div>
+} @else {
+    <h1>Welcome!</h1>
+    Please <a href="/auth/login">log in</a> to start creating events, notes and tasks!
+}
+

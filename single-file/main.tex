@@ -648,7 +648,7 @@ Istotna również jest intuicyjność interfejsu użytkownika.
 \section{Narzędzia}
 
 Do implementacji back-endu wybrano framework Spring, pozwalający m.in. na pisanie aplikacji z wykorzystaniem Java Persistence API (Spring Data JPA) oraz proste zaimplementowanie autentykacji i autoryzacji użytkowników (Spring Security). Za wybraniem tego frameworku zamiast np. Entity Framework przemawiała również posiadana już wiedza o REST API oraz chęć pogłębienia znajomości samego Springa.
-Wspieraną przez Spring bazę danych MySQL oraz sam back-end postanowiono uruchomić w kontenerze Dockera. Rozwiązanie takie pozwala na uruchomienie całego back-endu jednym poleceniem i lepsze zaznajomienie się z programem.
+Wspieraną przez Spring bazę danych MySQL oraz sam back-end postanowiono uruchomić w kontenerze Dockera.
 
 Do wykonania front-endu posłużył framework Angular. Podobnie jak w przypadku Springa, za tym wyborem przemawiało pragnienie pogłębienia wstępnej wiedzy o frameworku. Subiektywną zaletą jest też, w przeciwieństwie do popularniejszego \footnote{https://trends.stackoverflow.co/?tags=reactjs,vue.js,angular,svelte,angularjs,vuejs3, dostęp 08.11.2024} Reacta, wyraźny rozdział na pliki HTML, CSS (SCSS) oraz TypeScript w ramach danego komponentu. 
 Wykorzystano również komponenty Angular Material, dzięki którym w prosty sposób uzyskać można estetycznie wyglądający interfejs graficzny, pozwalając na skupienie się na samej logice programu. Angular Material zawiera większość potrzebnych w projekcie komponentów, jednak brakuje w nim komponentu do wizualizacji wydarzeń w kalendarzu. W tym celu wykorzystano otwartoźródłowy (Apache License 2.0) pakiet DayPilot.

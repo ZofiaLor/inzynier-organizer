@@ -33,6 +33,13 @@ public class DirectoryController {
         return new ResponseEntity<>(service.getAllDirectoriesByUsername(username), HttpStatus.OK);
     }
 
+    //TODO ensure only one base dir exists per user (maybe create it at registration), make this method return one dir
+    @GetMapping("/basedirs")
+    public ResponseEntity<List<DirectoryDTO>> getCurrentUsersBaseDirectories(HttpServletRequest request) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
+        return new ResponseEntity<>(service.getAllBaseDirectoriesByOwner(username), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<DirectoryDTO> getDirectoryByID(HttpServletRequest request, @PathVariable(name = "id") Long id) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));

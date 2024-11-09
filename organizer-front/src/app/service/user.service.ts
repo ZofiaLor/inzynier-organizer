@@ -2,15 +2,9 @@ import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../model/user';
-import { File } from '../model/file';
+import { API_URL, httpOptions } from './service-utils';
 
-const USER_URL = 'http://localhost:8080/api/users';
-
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json'}),
-  observe: 'response' as 'body',
-  withCredentials: true
-};
+const USER_URL = API_URL + 'users';
 
 @Injectable({
   providedIn: 'any'

@@ -11,4 +11,5 @@ import java.util.List;
 public interface DirectoryRepository extends JpaRepository<Directory, Long> {
     List<Directory> getAllByOwner(User owner);
     List<Directory> getAllByParent(Directory parent);
+    List<Directory> getAllByOwnerAndParentIsNull(User owner);
 }

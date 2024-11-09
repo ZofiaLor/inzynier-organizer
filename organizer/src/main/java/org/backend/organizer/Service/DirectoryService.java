@@ -57,6 +57,15 @@ public class DirectoryService {
         return result;
     }
 
+    public List<DirectoryDTO> getAllBaseDirectoriesByOwner(String username) {
+        User user = userRepository.findByUsername(username);
+        var result = new ArrayList<DirectoryDTO>();
+        for (var dir : repository.getAllByOwnerAndParentIsNull(user)) {
+            result.add(mapper.directoryToDirectoryDTO(dir));
+        }
+        return result;
+    }
+
     public DirectoryDTO getByID(Long id, String username) {
         if (id == null) throw new NullPointerException();
         Directory dir = repository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -76,6 +85,8 @@ public class DirectoryService {
         if (directoryUpdates == null) throw new NullPointerException();
         Directory directory = repository.findById(directoryUpdates.getId()).orElseThrow(EntityNotFoundException::new);
         checkAccess(2, directoryUpdates.getId(), directory.getOwner(), username);
+        //TODO consider whether this solution (effectively ignoring) is better, or if it should throw IllegalArgumentException
+        if (Objects.equals(directoryUpdates.getId(), directoryUpdates.getParent())) directoryUpdates.setParent(directory.getParent().getId());
         mapper.updateDirectoryFromDirectoryDTO(directoryUpdates, directory);
         return mapper.directoryToDirectoryDTO(repository.save(directory));
     }

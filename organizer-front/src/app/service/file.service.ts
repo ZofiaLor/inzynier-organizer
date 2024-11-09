@@ -1,14 +1,9 @@
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { API_URL, httpOptions } from './service-utils';
 
-const FILE_URL = 'http://localhost:8080/api/files';
-
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json'}),
-  observe: 'response' as 'body',
-  withCredentials: true
-};
+const FILE_URL = API_URL + 'files';
 
 @Injectable({
   providedIn: 'root'
@@ -23,5 +18,9 @@ export class FileService {
 
   getCurrentUsersFiles(): Observable<HttpResponse<File[]>> {
     return this._http.get<HttpResponse<File[]>>(FILE_URL + '/myfiles', httpOptions);
+  }
+
+  getFilesInDirectory(id: number): Observable<HttpResponse<File[]>> {
+    return this._http.get<HttpResponse<File[]>>(`${FILE_URL}/dir/${id}`, httpOptions);
   }
 }

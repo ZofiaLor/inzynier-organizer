@@ -1,4 +1,12 @@
+@if(currentDir) {
+    <button mat-icon-button (click)="clickUpDir()" [disabled]="!hasParent"><mat-icon>drive_folder_upload</mat-icon></button>
+    <span class="dirName">{{currentDir.name}}</span>
+}
+
 <mat-action-list>
+    @for (dir of dirs; track dir) {
+        <button mat-list-item (click)="clickDir(dir.id)"><mat-icon>folder</mat-icon>{{dir.name}}</button>
+    }
     @for(file of files; track file) {
         <button mat-list-item>
             @if (isEvent(file)) {

@@ -55,11 +55,12 @@ export class FileTreeComponent implements OnInit{
   }
 
   fetchBaseDirs(): void {
-    this.dirService.getCurrentUsersBaseDirs().pipe(takeUntil(this._destroy$)).subscribe({
+    this.dirService.getCurrentUsersBaseDir().pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        this.dirs = resp.body!;
+        this.currentDir = resp.body!;
         this.hasParent = false;
-        this.files = [];
+        this.fetchFilesInDir();
+        this.fetchSubdirsInDir();
       },
       error: err => {
         console.log(err);

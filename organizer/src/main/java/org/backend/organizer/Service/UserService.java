@@ -2,6 +2,7 @@ package org.backend.organizer.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.backend.organizer.DTO.DirectoryDTO;
 import org.backend.organizer.DTO.UserDTO;
 import org.backend.organizer.Mapper.UserMapper;
 import org.backend.organizer.Model.User;
@@ -27,6 +28,9 @@ public class UserService {
 
     @Autowired
     JWTService jwtService;
+
+    @Autowired
+    DirectoryService directoryService;
 
     @Autowired
     AuthenticationManager manager;
@@ -58,7 +62,11 @@ public class UserService {
         }
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
-        return mapper.userToUserDTO(repository.save(user));
+        user = repository.save(user);
+        DirectoryDTO dir = new DirectoryDTO();
+        dir.setName("Base Directory");
+        directoryService.createDirectory(dir, user.getUsername(), true);
+        return mapper.userToUserDTO(user);
     }
 
     public UserPrincipal login(UserDTO user) {

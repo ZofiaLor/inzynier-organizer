@@ -33,11 +33,10 @@ public class DirectoryController {
         return new ResponseEntity<>(service.getAllDirectoriesByUsername(username), HttpStatus.OK);
     }
 
-    //TODO ensure only one base dir exists per user (maybe create it at registration), make this method return one dir
     @GetMapping("/basedirs")
-    public ResponseEntity<List<DirectoryDTO>> getCurrentUsersBaseDirectories(HttpServletRequest request) {
+    public ResponseEntity<DirectoryDTO> getCurrentUsersBaseDirectory(HttpServletRequest request) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
-        return new ResponseEntity<>(service.getAllBaseDirectoriesByOwner(username), HttpStatus.OK);
+        return new ResponseEntity<>(service.getBaseDirectoryByOwner(username), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -71,7 +70,11 @@ public class DirectoryController {
     @PostMapping("")
     public ResponseEntity<DirectoryDTO> createDirectory(HttpServletRequest request, @RequestBody DirectoryDTO directory) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
-        return new ResponseEntity<>(service.createDirectory(directory, username), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(service.createDirectory(directory, username, false), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("")

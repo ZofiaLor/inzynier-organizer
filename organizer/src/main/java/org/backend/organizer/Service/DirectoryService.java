@@ -57,13 +57,9 @@ public class DirectoryService {
         return result;
     }
 
-    public List<DirectoryDTO> getAllBaseDirectoriesByOwner(String username) {
+    public DirectoryDTO getBaseDirectoryByOwner(String username) {
         User user = userRepository.findByUsername(username);
-        var result = new ArrayList<DirectoryDTO>();
-        for (var dir : repository.getAllByOwnerAndParentIsNull(user)) {
-            result.add(mapper.directoryToDirectoryDTO(dir));
-        }
-        return result;
+        return mapper.directoryToDirectoryDTO(repository.getByOwnerAndParentIsNull(user));
     }
 
     public DirectoryDTO getByID(Long id, String username) {
@@ -73,7 +69,8 @@ public class DirectoryService {
         return mapper.directoryToDirectoryDTO(dir);
     }
 
-    public DirectoryDTO createDirectory(DirectoryDTO newDirectory, String username) {
+    public DirectoryDTO createDirectory(DirectoryDTO newDirectory, String username, boolean isNewUser) {
+        if (!isNewUser && newDirectory.getParent() == null) throw new NullPointerException();
         Directory directory = mapper.directoryDTOToDirectory(newDirectory);
         User owner = userRepository.findByUsername(username);
         directory.setOwner(owner);

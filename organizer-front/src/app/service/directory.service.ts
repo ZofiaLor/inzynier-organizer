@@ -17,8 +17,8 @@ export class DirectoryService {
     return this._http.get<HttpResponse<Directory[]>>(DIR_URL + '/mydirs', httpOptions);
   }
 
-  getCurrentUsersBaseDirs(): Observable<HttpResponse<Directory[]>> {
-    return this._http.get<HttpResponse<Directory[]>>(DIR_URL + '/basedirs', httpOptions);
+  getCurrentUsersBaseDir(): Observable<HttpResponse<Directory>> {
+    return this._http.get<HttpResponse<Directory>>(DIR_URL + '/basedirs', httpOptions);
   }
 
   getDirsByParentId(id: number): Observable<HttpResponse<Directory[]>> {

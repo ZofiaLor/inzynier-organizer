@@ -13,7 +13,7 @@ public class File {
     private Long id;
     private String name;
     @Lob
-    @Column(name="text_content")
+    @Column(name="text_content", columnDefinition = "TEXT")
     private String textContent;
     @Column(name="creation_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime creationDate;

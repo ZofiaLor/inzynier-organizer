@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import { FileService } from '../service/file.service';
 import { Subject, takeUntil } from 'rxjs';
+import { File } from '../model/file';
 import { EventFile } from '../model/event';
 import { TaskFile } from '../model/task';
 import { DirectoryService } from '../service/directory.service';
@@ -12,11 +14,13 @@ import { Directory } from '../model/directory';
 @Component({
   selector: 'app-file-tree',
   standalone: true,
-  imports: [MatListModule, MatIconModule, MatButtonModule],
+  imports: [MatListModule, MatIconModule, MatButtonModule, MatTooltipModule],
   templateUrl: './file-tree.component.html',
   styleUrl: './file-tree.component.scss'
 })
 export class FileTreeComponent implements OnInit{
+
+  @Output() fileSelectEmitter = new EventEmitter<File>();
 
   constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService) {}
 
@@ -39,17 +43,20 @@ export class FileTreeComponent implements OnInit{
   }
 
   clickDir(dirId: number): void {
-    this.fetchById(dirId);
+    this.fetchDirById(dirId);
   }
 
   clickUpDir(): void {
     this.fetchParent();
   }
 
+  clickFile(fileId: number): void {
+    this.fetchFileById(fileId);
+  }
+
   fetchBaseDirs(): void {
     this.dirService.getCurrentUsersBaseDirs().pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        console.log(resp);
         this.dirs = resp.body!;
         this.hasParent = false;
         this.files = [];
@@ -60,10 +67,9 @@ export class FileTreeComponent implements OnInit{
     });
   }
 
-  fetchById(id: number): void {
+  fetchDirById(id: number): void {
     this.dirService.getDirById(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        console.log(resp);
         this.currentDir = resp.body!;
         this.hasParent = this.currentDir!.parent !== null;
         this.fetchFilesInDir();
@@ -75,11 +81,21 @@ export class FileTreeComponent implements OnInit{
     });
   }
 
+  fetchFileById(id: number): void {
+    this.fileService.getFileById(id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.fileSelectEmitter.emit(resp.body!);
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
   fetchParent(): void {
     if (this.hasParent) {
       this.dirService.getDirById(this.currentDir!.parent!).pipe(takeUntil(this._destroy$)).subscribe({
         next: resp => {
-          console.log(resp);
           this.currentDir = resp.body!;
           this.hasParent = this.currentDir!.parent !== null;
           this.fetchFilesInDir();
@@ -96,7 +112,6 @@ export class FileTreeComponent implements OnInit{
     if (this.currentDir === undefined) return;
     this.fileService.getFilesInDirectory(this.currentDir!.id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        console.log(resp);
         this.files = resp.body!;
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
         this.files.sort((a, b) => {
@@ -121,7 +136,6 @@ export class FileTreeComponent implements OnInit{
     if (this.currentDir === undefined) return;
     this.dirService.getDirsByParentId(this.currentDir!.id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        console.log(resp);
         this.dirs = resp.body!;
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
         this.dirs.sort((a, b) => {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { StorageService } from '../service/storage.service';
 import { User } from '../model/user';
+import { File } from '../model/file';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { FileTreeComponent } from '../file-tree/file-tree.component';
@@ -18,9 +19,14 @@ export class BrowserComponent implements OnInit{
   constructor (private readonly storageService: StorageService) {}
   
   user?: User;
+  currentFile?: File;
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
+  }
+
+  fileSelected(file: File): void {
+    this.currentFile = file;
   }
 
 }

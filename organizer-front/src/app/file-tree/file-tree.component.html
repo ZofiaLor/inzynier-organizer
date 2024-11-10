@@ -1,5 +1,5 @@
 @if(currentDir) {
-    <button mat-icon-button (click)="clickUpDir()" [disabled]="!hasParent"><mat-icon>drive_folder_upload</mat-icon></button>
+    <button mat-icon-button (click)="clickUpDir()" [disabled]="!hasParent" matTooltip="View Parent Folder" [matTooltipShowDelay]="1000"><mat-icon>drive_folder_upload</mat-icon></button>
     <span class="dirName">{{currentDir.name}}</span>
 }
 
@@ -8,7 +8,7 @@
         <button mat-list-item (click)="clickDir(dir.id)"><mat-icon>folder</mat-icon>{{dir.name}}</button>
     }
     @for(file of files; track file) {
-        <button mat-list-item>
+        <button mat-list-item (click)="clickFile(file.id)">
             @if (isEvent(file)) {
                 <mat-icon>event</mat-icon>
             } @else {

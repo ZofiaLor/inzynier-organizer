@@ -1,9 +1,6 @@
 package org.backend.organizer.Model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +13,7 @@ public class Event extends File{
     @Column(name="end_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime endDate;
     private String location;
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<EventDate> eventDates;
 
     public LocalDateTime getStartDate() {

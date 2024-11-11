@@ -15,7 +15,7 @@
         </mat-card>
         <mat-card fxFlex="80" fxFlexOrder="2" fxFlexOrder.xs="1">
             <mat-card-content>
-                <app-file-view [file]="currentFile" [typeToCreate]="createdType" [currentDir]="currentDirId"></app-file-view>
+                <app-file-view [file]="currentFile" [typeToCreate]="createdType" [currentDir]="currentDirId" (refreshDirs)="refreshDirs()"></app-file-view>
             </mat-card-content>
         </mat-card>
     

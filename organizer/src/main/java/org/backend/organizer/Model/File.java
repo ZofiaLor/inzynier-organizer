@@ -17,7 +17,7 @@ public class File {
     private String textContent;
     @Column(name="creation_date", columnDefinition = "TIMESTAMP")
     private LocalDateTime creationDate;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Directory parent;
     @ManyToOne
     private User owner;

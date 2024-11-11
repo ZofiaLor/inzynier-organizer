@@ -1,5 +1,4 @@
 @if(note) {
-    <br/>
     <form [formGroup]="noteForm">
         <div>
             <button
@@ -19,6 +18,15 @@
             >
               <mat-icon>undo</mat-icon>Discard changes
             </button>
+            <mat-expansion-panel hideToggle>
+              <mat-expansion-panel-header>
+                <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete File </mat-panel-title>
+              </mat-expansion-panel-header>
+              Are you sure? This action cannot be undone.
+              <button mat-raised-button color="warn" (click)="deleteFile()" aria-label="Delete File">
+                  <mat-icon>check</mat-icon> CONFIRM
+              </button>
+            </mat-expansion-panel>
           </div>
           <br/><br/>
         <mat-form-field appearance="outline">
@@ -45,7 +53,6 @@
     
 } @else {
     @if(event) {
-        <br/>
         <form [formGroup]="eventForm">
             <div>
                 <button
@@ -65,6 +72,15 @@
                 >
                 <mat-icon>undo</mat-icon>Discard changes
                 </button>
+                <mat-expansion-panel hideToggle>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete File </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  Are you sure? This action cannot be undone.
+                  <button mat-raised-button color="warn" (click)="deleteFile()" aria-label="Delete File">
+                      <mat-icon>check</mat-icon> CONFIRM
+                  </button>
+                </mat-expansion-panel>
               </div>
               <br/><br/>
             <mat-form-field appearance="outline">
@@ -114,7 +130,6 @@
         
     } @else {
         @if (task) {
-            <br/>
             <form [formGroup]="taskForm">
                 <div>
                     <button
@@ -134,6 +149,15 @@
                     >
                     <mat-icon>undo</mat-icon>Discard changes
                     </button>
+                    <mat-expansion-panel hideToggle>
+                      <mat-expansion-panel-header>
+                        <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete File </mat-panel-title>
+                      </mat-expansion-panel-header>
+                      Are you sure? This action cannot be undone.
+                      <button mat-raised-button color="warn" (click)="deleteFile()" aria-label="Delete File">
+                          <mat-icon>check</mat-icon> CONFIRM
+                      </button>
+                    </mat-expansion-panel>
                   </div>
                   <br/><br/>
                 <mat-form-field appearance="outline">

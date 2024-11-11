@@ -55,4 +55,8 @@ export class FileService {
   updateTask(task: TaskFile): Observable<HttpResponse<TaskFile>> {
     return this._http.put<HttpResponse<TaskFile>>(FILE_URL + '/task', task, httpOptions);
   }
+
+  deleteFile(id: number): Observable<HttpResponse<null>> {
+    return this._http.delete<HttpResponse<null>>(`${FILE_URL}/${id}`, httpOptions);
+  }
 }

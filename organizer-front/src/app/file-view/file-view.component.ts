@@ -1,9 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatInputModule} from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import {MatExpansionModule} from '@angular/material/expansion';
 import { FormsModule, FormBuilder,
   FormControl,Validators, ReactiveFormsModule } from '@angular/forms';
 import { File } from '../model/file';
@@ -18,7 +19,7 @@ import { StorageService } from '../service/storage.service';
 @Component({
   selector: 'app-file-view',
   standalone: true,
-  imports: [MatFormFieldModule, CommonModule, FormsModule, ReactiveFormsModule, MatInputModule, MatIconModule, MatCheckboxModule, MatButtonModule],
+  imports: [MatFormFieldModule, CommonModule, FormsModule, ReactiveFormsModule, MatInputModule, MatIconModule, MatCheckboxModule, MatButtonModule, MatExpansionModule],
   templateUrl: './file-view.component.html',
   styleUrl: './file-view.component.scss'
 })
@@ -27,8 +28,10 @@ export class FileViewComponent{
   private _file?: File;
   @Input() set file(value: File | undefined) {
     this._file = value;
-    this.inferFileType();
-    this.onChange();
+    if (value !== undefined){
+      this.inferFileType();
+      this.onChange();
+    }
   }
   get file(): File | undefined {
     return this._file;
@@ -36,13 +39,16 @@ export class FileViewComponent{
   private _typeToCreate?: number;
   @Input() set typeToCreate(value: number | undefined){
     this._typeToCreate = value;
-    this.setUpNewFile();
-    this.onChange();
+    if (value !== undefined){
+      this.setUpNewFile();
+      this.onChange();
+    }
   }
   get typeToCreate(): number | undefined {
     return this._typeToCreate;
   }
   @Input() currentDir?: number;
+  @Output() refreshDirs = new EventEmitter();
   event?: EventFile;
   note?: NoteFile;
   task?: TaskFile;
@@ -114,6 +120,21 @@ export class FileViewComponent{
     }
   }
 
+  deleteFile(): void {
+    this.fileService.deleteFile(this._file!.id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this._file = undefined;
+        this.event = undefined;
+        this.note = undefined;
+        this.task = undefined;
+        this.refreshDirs.emit();
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
   saveNote(): void {
     if (this.createMode) this.createNote();
     else this.updateNote();
@@ -135,6 +156,7 @@ export class FileViewComponent{
     this.fileService.updateNote(this.note!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.note = resp.body!;
+        this.refreshDirs.emit();
       },
       error: err => {
         console.log(err);
@@ -148,6 +170,7 @@ export class FileViewComponent{
     this.fileService.createNote(this.note!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.note = resp.body!;
+        this.refreshDirs.emit();
       },
       error: err => {
         console.log(err);
@@ -164,6 +187,7 @@ export class FileViewComponent{
     this.fileService.updateEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.event = resp.body!;
+        this.refreshDirs.emit();
       },
       error: err => {
         console.log(err);
@@ -180,6 +204,7 @@ export class FileViewComponent{
     this.fileService.createEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.event = resp.body!;
+        this.refreshDirs.emit();
       },
       error: err => {
         console.log(err);
@@ -195,6 +220,7 @@ export class FileViewComponent{
     this.fileService.updateTask(this.task!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.task = resp.body!;
+        this.refreshDirs.emit();
       },
       error: err => {
         console.log(err);
@@ -210,6 +236,7 @@ export class FileViewComponent{
     this.fileService.createTask(this.task!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.task = resp.body!;
+        this.refreshDirs.emit();
       },
       error: err => {
         console.log(err);

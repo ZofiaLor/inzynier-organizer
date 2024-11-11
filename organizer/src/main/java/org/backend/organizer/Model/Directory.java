@@ -14,7 +14,7 @@ public class Directory {
     private User owner;
     @ManyToOne(cascade = CascadeType.DETACH)
     private Directory parent;
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent")
     private List<File> files;
 
     public Long getId() {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { StorageService } from '../service/storage.service';
 import { User } from '../model/user';
 import { File } from '../model/file';
@@ -17,6 +17,8 @@ import { FileViewComponent } from '../file-view/file-view.component';
 export class BrowserComponent implements OnInit{
 
   constructor (private readonly storageService: StorageService) {}
+
+  @ViewChild(FileTreeComponent) fileTreeComponent!: FileTreeComponent;
   
   user?: User;
   currentFile?: File;
@@ -39,6 +41,11 @@ export class BrowserComponent implements OnInit{
   createNewSelected(typeId: number): void {
     this.currentFile = undefined;
     this.createdType = typeId;
+  }
+
+  refreshDirs(): void {
+    this.fileTreeComponent.fetchSubdirsInDir();
+    this.fileTreeComponent.fetchFilesInDir();
   }
 
 }

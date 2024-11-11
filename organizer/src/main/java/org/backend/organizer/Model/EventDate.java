@@ -14,7 +14,7 @@ public class EventDate {
 
     @ManyToOne
     private Event event;
-    @OneToMany(mappedBy = "eventDate")
+    @OneToMany(mappedBy = "eventDate", cascade = CascadeType.ALL)
     private List<Vote> votes;
     private int totalScore;
     @Column(columnDefinition = "TIMESTAMP")

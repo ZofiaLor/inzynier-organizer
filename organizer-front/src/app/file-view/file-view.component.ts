@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
@@ -14,12 +14,12 @@ import { TaskFile } from '../model/task';
 import { FileService } from '../service/file.service';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
-import { StorageService } from '../service/storage.service';
+import { MoveDirComponent } from '../move-dir/move-dir.component';
 
 @Component({
   selector: 'app-file-view',
   standalone: true,
-  imports: [MatFormFieldModule, CommonModule, FormsModule, ReactiveFormsModule, MatInputModule, MatIconModule, MatCheckboxModule, MatButtonModule, MatExpansionModule],
+  imports: [MatFormFieldModule, CommonModule, FormsModule, ReactiveFormsModule, MatInputModule, MatIconModule, MatCheckboxModule, MatButtonModule, MatExpansionModule, MoveDirComponent],
   templateUrl: './file-view.component.html',
   styleUrl: './file-view.component.scss'
 })
@@ -53,6 +53,8 @@ export class FileViewComponent{
   note?: NoteFile;
   task?: TaskFile;
   createMode = false;
+  movingElement = false;
+  parentId?: number;
   private readonly _destroy$ = new Subject<void>();
 
   noteForm = this.fb.group({
@@ -135,6 +137,12 @@ export class FileViewComponent{
     })
   }
 
+  saveFile(): void {
+    if (this.event) this.saveEvent();
+      else if (this.note) this.saveNote();
+      else this.saveTask();
+  }
+
   saveNote(): void {
     if (this.createMode) this.createNote();
     else this.updateNote();
@@ -148,6 +156,22 @@ export class FileViewComponent{
   saveTask(): void {
     if (this.createMode) this.createTask();
     else this.updateTask();
+  }
+
+  moveDirs(): void {
+    this.movingElement = true;
+    this.parentId = this._file?.parent;
+  }
+
+  onFinishMoving(newParentId: number | undefined) {
+    this.movingElement = false;
+    if (newParentId !== undefined) {
+      this._file!.parent = newParentId;
+      this.inferFileType();
+      if (this.event) this.updateEvent();
+      else if (this.note) this.updateNote();
+      else this.updateTask();
+    }
   }
 
   updateNote(): void {
@@ -169,8 +193,9 @@ export class FileViewComponent{
     this.note!.textContent = this.noteForm.controls.content.value!;
     this.fileService.createNote(this.note!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        this.note = resp.body!;
+        this._file = resp.body!;
         this.refreshDirs.emit();
+        this.createMode = false;
       },
       error: err => {
         console.log(err);
@@ -203,8 +228,9 @@ export class FileViewComponent{
     this.event!.location = this.eventForm.controls.location.value!;
     this.fileService.createEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        this.event = resp.body!;
+        this._file = resp.body!;
         this.refreshDirs.emit();
+        this.createMode = false;
       },
       error: err => {
         console.log(err);
@@ -235,13 +261,20 @@ export class FileViewComponent{
     this.task!.finished = this.taskForm.controls.isFinished.value!;
     this.fileService.createTask(this.task!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        this.task = resp.body!;
+        this._file = resp.body!;
+        this.createMode = false;
         this.refreshDirs.emit();
       },
       error: err => {
         console.log(err);
       }
     });
+  }
+
+  setUpForm(): void {
+    if (this.event) this.setUpEventForm();
+      else if (this.note) this.setUpNoteForm();
+      else this.setUpTaskForm();
   }
 
   setUpNoteForm(): void {

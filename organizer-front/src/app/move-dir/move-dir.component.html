@@ -1,0 +1,25 @@
+@if (currentDir) {
+    <button mat-icon-button (click)="clickUpDir()" [disabled]="!hasParent" matTooltip="View Parent Folder" [matTooltipShowDelay]="1000"><mat-icon>drive_folder_upload</mat-icon></button>
+    <span class="dirName">Selected: {{currentDir.name}}</span>
+    <mat-action-list>
+        @for (dir of dirs; track dir) {
+            <button mat-list-item (click)="clickDir(dir.id)"><mat-icon>folder</mat-icon>{{dir.name}}</button>
+        }
+    </mat-action-list>
+    <button
+        mat-raised-button
+        color="primary"
+        class="btn btn-primary btn-block"
+        (click)="confirmMove()"
+      >
+        <mat-icon>check</mat-icon>Move to selected folder
+      </button>
+      <button
+        mat-raised-button
+        color="warn"
+        class="btn btn-primary btn-block"
+        (click)="cancelMove()"
+      >
+        <mat-icon>close</mat-icon>Cancel
+      </button>
+}

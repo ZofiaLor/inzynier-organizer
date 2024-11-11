@@ -18,6 +18,7 @@ export class BrowserComponent implements OnInit{
 
   constructor (private readonly storageService: StorageService) {}
 
+  // https://www.digitalocean.com/community/tutorials/angular-viewchild-access-component
   @ViewChild(FileTreeComponent) fileTreeComponent!: FileTreeComponent;
   
   user?: User;

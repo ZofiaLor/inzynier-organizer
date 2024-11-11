@@ -7,3 +7,14 @@ mat-icon {
     font-size: 1.3em;
     font-weight: bold;
 }
+
+.addNew {
+    position:absolute;
+    right:5px;
+    margin-top:15px;
+}
+
+.addNew mat-icon {
+    margin-right: 0px;
+    margin-top: 0px;
+}

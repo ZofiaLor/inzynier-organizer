@@ -3,6 +3,6 @@ export interface File {
     name: string,
     textContent: string,
     creationDate: string,
-    parent?: number,
+    parent: number,
     owner: number
 }

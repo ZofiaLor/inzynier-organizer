@@ -32,12 +32,24 @@ export class FileService {
     return this._http.get<HttpResponse<File>>(`${FILE_URL}/${id}`, httpOptions);
   }
 
+  createEvent(event: EventFile): Observable<HttpResponse<EventFile>> {
+    return this._http.post<HttpResponse<EventFile>>(FILE_URL + '/event', event, httpOptions);
+  }
+
   updateEvent(event: EventFile): Observable<HttpResponse<EventFile>> {
     return this._http.put<HttpResponse<EventFile>>(FILE_URL + '/event', event, httpOptions);
   }
 
+  createNote(note: NoteFile): Observable<HttpResponse<NoteFile>> {
+    return this._http.post<HttpResponse<NoteFile>>(FILE_URL + '/note', note, httpOptions);
+  }
+
   updateNote(note: NoteFile): Observable<HttpResponse<NoteFile>> {
     return this._http.put<HttpResponse<NoteFile>>(FILE_URL + '/note', note, httpOptions);
+  }
+
+  createTask(task: TaskFile): Observable<HttpResponse<TaskFile>> {
+    return this._http.post<HttpResponse<TaskFile>>(FILE_URL + '/task', task, httpOptions);
   }
 
   updateTask(task: TaskFile): Observable<HttpResponse<TaskFile>> {

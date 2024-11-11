@@ -20,13 +20,25 @@ export class BrowserComponent implements OnInit{
   
   user?: User;
   currentFile?: File;
+  currentDirId?: number;
+  createdType?: number;
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
   }
 
   fileSelected(file: File): void {
+    this.createdType = undefined;
     this.currentFile = file;
+  }
+
+  dirSelected(dirId: number): void {
+    this.currentDirId = dirId;
+  }
+
+  createNewSelected(typeId: number): void {
+    this.currentFile = undefined;
+    this.createdType = typeId;
   }
 
 }

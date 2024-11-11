@@ -10,12 +10,12 @@
         <mat-card fxFlex="20" fxFlexOrder="1" fxFlexOrder.xs="2">
             <mat-card-header><h2>Browse</h2></mat-card-header>
             <mat-card-content>
-                <app-file-tree (fileSelectEmitter)="fileSelected($event)"></app-file-tree>
+                <app-file-tree (fileSelectEmitter)="fileSelected($event)" (fileCreateEmitter)="createNewSelected($event)" (dirSelectEmitter)="dirSelected($event)"></app-file-tree>
             </mat-card-content>
         </mat-card>
         <mat-card fxFlex="80" fxFlexOrder="2" fxFlexOrder.xs="1">
             <mat-card-content>
-                <app-file-view [file]="currentFile"></app-file-view>
+                <app-file-view [file]="currentFile" [typeToCreate]="createdType" [currentDir]="currentDirId"></app-file-view>
             </mat-card-content>
         </mat-card>
     

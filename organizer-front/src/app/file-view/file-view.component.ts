@@ -13,6 +13,7 @@ import { TaskFile } from '../model/task';
 import { FileService } from '../service/file.service';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
+import { StorageService } from '../service/storage.service';
 
 @Component({
   selector: 'app-file-view',
@@ -21,12 +22,31 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './file-view.component.html',
   styleUrl: './file-view.component.scss'
 })
-export class FileViewComponent implements OnChanges{
+export class FileViewComponent{
 
-  @Input() file?: File;
+  private _file?: File;
+  @Input() set file(value: File | undefined) {
+    this._file = value;
+    this.inferFileType();
+    this.onChange();
+  }
+  get file(): File | undefined {
+    return this._file;
+  }
+  private _typeToCreate?: number;
+  @Input() set typeToCreate(value: number | undefined){
+    this._typeToCreate = value;
+    this.setUpNewFile();
+    this.onChange();
+  }
+  get typeToCreate(): number | undefined {
+    return this._typeToCreate;
+  }
+  @Input() currentDir?: number;
   event?: EventFile;
   note?: NoteFile;
   task?: TaskFile;
+  createMode = false;
   private readonly _destroy$ = new Subject<void>();
 
   noteForm = this.fb.group({
@@ -51,8 +71,7 @@ export class FileViewComponent implements OnChanges{
 
   constructor (private readonly fileService: FileService, private readonly fb: FormBuilder) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.inferFileType();
+  onChange(): void {
     if (this.event) this.setUpEventForm();
     else if (this.note) this.setUpNoteForm();
     else this.setUpTaskForm();
@@ -62,23 +81,72 @@ export class FileViewComponent implements OnChanges{
     this.event = undefined;
     this.note = undefined;
     this.task = undefined;
-    if (this.file === undefined) return;
-    if (this.isEvent(this.file)) {
-      this.event = this.file as EventFile;
-    } else if (this.isTask(this.file)) {
-      this.task = this.file as TaskFile;
+    if (this._file === undefined) return;
+    this.createMode = false;
+    if (this.isEvent(this._file)) {
+      this.event = this._file as EventFile;
+    } else if (this.isTask(this._file)) {
+      this.task = this._file as TaskFile;
     } else {
-      this.note = this.file as NoteFile;
+      this.note = this._file as NoteFile;
     }
   }
 
+  setUpNewFile(): void {
+    if (this._typeToCreate === undefined) return;
+    this.createMode = true;
+    this.event = undefined;
+    this.note = undefined;
+    this.task = undefined;
+    switch(this._typeToCreate) {
+      case 1:
+        this.event = {id: 0, name: "Unnamed Event", textContent: "", eventDates: [], creationDate: "", owner: 0, parent: this.currentDir!};
+        break;
+      case 2:
+        this.note = {id: 0, name: "Unnamed Note", textContent: "", creationDate: "", owner: 0, parent: this.currentDir!};
+        break;
+      case 3:
+        this.task = {id: 0, name: "Unnamed Task", textContent: "", finished: false, creationDate: "", owner: 0, parent: this.currentDir!};
+        break;
+      default:
+        console.log("Incorrect type");
+        break;
+    }
+  }
+
+  saveNote(): void {
+    if (this.createMode) this.createNote();
+    else this.updateNote();
+  }
+
+  saveEvent(): void {
+    if (this.createMode) this.createEvent();
+    else this.updateEvent();
+  }
+
+  saveTask(): void {
+    if (this.createMode) this.createTask();
+    else this.updateTask();
+  }
+
   updateNote(): void {
-    console.log("update note");
     this.note!.name = this.noteForm.controls.filename.value!;
     this.note!.textContent = this.noteForm.controls.content.value!;
     this.fileService.updateNote(this.note!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        console.log(resp);
+        this.note = resp.body!;
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
+  createNote(): void {
+    this.note!.name = this.noteForm.controls.filename.value!;
+    this.note!.textContent = this.noteForm.controls.content.value!;
+    this.fileService.createNote(this.note!).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
         this.note = resp.body!;
       },
       error: err => {
@@ -88,7 +156,6 @@ export class FileViewComponent implements OnChanges{
   }
 
   updateEvent(): void {
-    console.log("update event");
     this.event!.name = this.eventForm.controls.filename.value!;
     this.event!.textContent = this.eventForm.controls.content.value!;
     this.event!.startDate = this.eventForm.controls.startDate.value!
@@ -96,7 +163,22 @@ export class FileViewComponent implements OnChanges{
     this.event!.location = this.eventForm.controls.location.value!;
     this.fileService.updateEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        console.log(resp);
+        this.event = resp.body!;
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
+  createEvent(): void {
+    this.event!.name = this.eventForm.controls.filename.value!;
+    this.event!.textContent = this.eventForm.controls.content.value!;
+    this.event!.startDate = this.eventForm.controls.startDate.value!
+    this.event!.endDate = this.eventForm.controls.endDate.value!
+    this.event!.location = this.eventForm.controls.location.value!;
+    this.fileService.createEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
         this.event = resp.body!;
       },
       error: err => {
@@ -106,14 +188,27 @@ export class FileViewComponent implements OnChanges{
   }
 
   updateTask(): void {
-    console.log("update task");
     this.task!.name = this.taskForm.controls.filename.value!;
     this.task!.textContent = this.taskForm.controls.content.value!;
     this.task!.deadline = this.taskForm.controls.deadline.value!;
     this.task!.finished = this.taskForm.controls.isFinished.value!;
     this.fileService.updateTask(this.task!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        console.log(resp);
+        this.task = resp.body!;
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
+  createTask(): void {
+    this.task!.name = this.taskForm.controls.filename.value!;
+    this.task!.textContent = this.taskForm.controls.content.value!;
+    this.task!.deadline = this.taskForm.controls.deadline.value!;
+    this.task!.finished = this.taskForm.controls.isFinished.value!;
+    this.fileService.createTask(this.task!).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
         this.task = resp.body!;
       },
       error: err => {
@@ -143,7 +238,6 @@ export class FileViewComponent implements OnChanges{
     this.taskForm.controls.content.setValue(this.task?.textContent!);
     if (this.task?.deadline !== undefined) this.taskForm.controls.deadline.setValue(this.task?.deadline!);
     this.taskForm.controls.isFinished.setValue(this.task?.finished);
-    console.log(this.task?.finished);
   }
 
   isEvent(file: any): file is EventFile {

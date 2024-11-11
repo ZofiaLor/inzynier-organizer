@@ -3,6 +3,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatMenuModule} from '@angular/material/menu';
 import { FileService } from '../service/file.service';
 import { Subject, takeUntil } from 'rxjs';
 import { File } from '../model/file';
@@ -14,13 +15,15 @@ import { Directory } from '../model/directory';
 @Component({
   selector: 'app-file-tree',
   standalone: true,
-  imports: [MatListModule, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [MatListModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule],
   templateUrl: './file-tree.component.html',
   styleUrl: './file-tree.component.scss'
 })
 export class FileTreeComponent implements OnInit{
 
   @Output() fileSelectEmitter = new EventEmitter<File>();
+  @Output() dirSelectEmitter = new EventEmitter<number>();
+  @Output() fileCreateEmitter = new EventEmitter<number>();
 
   constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService) {}
 
@@ -54,10 +57,15 @@ export class FileTreeComponent implements OnInit{
     this.fetchFileById(fileId);
   }
 
+  clickNewElement(typeId: number): void {
+    this.fileCreateEmitter.emit(typeId);
+  }
+
   fetchBaseDirs(): void {
     this.dirService.getCurrentUsersBaseDir().pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.currentDir = resp.body!;
+        this.dirSelectEmitter.emit(this.currentDir!.id);
         this.hasParent = false;
         this.fetchFilesInDir();
         this.fetchSubdirsInDir();
@@ -72,6 +80,7 @@ export class FileTreeComponent implements OnInit{
     this.dirService.getDirById(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.currentDir = resp.body!;
+        this.dirSelectEmitter.emit(this.currentDir!.id);
         this.hasParent = this.currentDir!.parent !== null;
         this.fetchFilesInDir();
         this.fetchSubdirsInDir();
@@ -98,6 +107,7 @@ export class FileTreeComponent implements OnInit{
       this.dirService.getDirById(this.currentDir!.parent!).pipe(takeUntil(this._destroy$)).subscribe({
         next: resp => {
           this.currentDir = resp.body!;
+          this.dirSelectEmitter.emit(this.currentDir!.id);
           this.hasParent = this.currentDir!.parent !== null;
           this.fetchFilesInDir();
           this.fetchSubdirsInDir();

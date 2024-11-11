@@ -7,7 +7,6 @@
         mat-raised-button
         color="primary"
         class="btn btn-primary btn-block"
-        [disabled]="!noteForm.valid"
         (click)="saveFile()"
       >
         <mat-icon>check</mat-icon>Save changes
@@ -80,14 +79,14 @@
               <br/>
               <div class="created">Created on {{event.creationDate | date: 'medium'}}</div>
               <br/><br/>
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" class="longDate">
                   <mat-label>Start Date</mat-label>
                   <input matInput type="datetime-local"
                   class="form-control"
                   name="startDate"
                   formControlName="startDate"/>
               </mat-form-field>
-              <mat-form-field appearance="outline">
+              <mat-form-field appearance="outline" class="longDate">
                   <mat-label>End Date</mat-label>
                   <input matInput type="datetime-local"
                   class="form-control"
@@ -131,7 +130,7 @@
                   <br/><br/>
                   <mat-checkbox [formControl]="taskForm.controls.isFinished">Done</mat-checkbox>
                   <br/><br/>
-                  <mat-form-field appearance="outline">
+                  <mat-form-field appearance="outline" class="longDate">
                       <mat-label>Deadline</mat-label>
                       <input matInput type="datetime-local"
                       class="form-control"

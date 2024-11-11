@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatCheckboxModule} from '@angular/material/checkbox';
@@ -15,6 +15,8 @@ import { FileService } from '../service/file.service';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { MoveDirComponent } from '../move-dir/move-dir.component';
+import { DirectoryService } from '../service/directory.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-file-view',
@@ -23,19 +25,19 @@ import { MoveDirComponent } from '../move-dir/move-dir.component';
   templateUrl: './file-view.component.html',
   styleUrl: './file-view.component.scss'
 })
-export class FileViewComponent{
+export class FileViewComponent implements OnInit{
 
   private _file?: File;
-  @Input() set file(value: File | undefined) {
-    this._file = value;
-    if (value !== undefined){
-      this.inferFileType();
-      this.onChange();
-    }
-  }
-  get file(): File | undefined {
-    return this._file;
-  }
+  // @Input() set file(value: File | undefined) {
+  //   this._file = value;
+  //   if (value !== undefined){
+  //     this.inferFileType();
+  //     this.onChange();
+  //   }
+  // }
+  // get file(): File | undefined {
+  //   return this._file;
+  // }
   private _typeToCreate?: number;
   @Input() set typeToCreate(value: number | undefined){
     this._typeToCreate = value;
@@ -77,12 +79,29 @@ export class FileViewComponent{
     isFinished: new FormControl(false),
   });
 
-  constructor (private readonly fileService: FileService, private readonly fb: FormBuilder) {}
+  //https://stackoverflow.com/questions/45997369/how-to-get-param-from-url-in-angular-4
+  constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly fb: FormBuilder, private route: ActivatedRoute, private readonly router: Router) {}
+  ngOnInit(): void {
+    if (this.router.url.includes('/file')) 
+      {  
+        this.onSelect();
+      }
+    
+  }
 
   onChange(): void {
     if (this.event) this.setUpEventForm();
     else if (this.note) this.setUpNoteForm();
     else this.setUpTaskForm();
+  }
+
+  onSelect(): void {
+    let id = this.route.snapshot.paramMap.get('id');
+    if (id === null) return;
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+    let intId = parseInt(id);
+    if (Number.isNaN(intId)) return;
+    this.fetchFileById(intId);
   }
 
   inferFileType(): void {
@@ -306,6 +325,19 @@ export class FileViewComponent{
 
   isTask(file: any): file is TaskFile {
     return (file as TaskFile).deadline !== undefined;
+  }
+
+  fetchFileById(id: number): void {
+    this.fileService.getFileById(id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this._file = resp.body!;
+        this.inferFileType();
+        this.onChange();
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
   }
 
 }

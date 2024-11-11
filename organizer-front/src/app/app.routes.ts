@@ -10,5 +10,6 @@ export const routes: Routes = [
     {path: 'auth/register', component: RegisterComponent},
     {path: 'profile', component: ProfileComponent},
     {path: 'admin/users', component: UserPanelComponent},
-    {path: '', component: BrowserComponent}
+    {path: '', component: BrowserComponent},
+    {path: 'file/:id', component: BrowserComponent},
 ];

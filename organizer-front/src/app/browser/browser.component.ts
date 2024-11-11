@@ -20,6 +20,7 @@ export class BrowserComponent implements OnInit{
 
   // https://www.digitalocean.com/community/tutorials/angular-viewchild-access-component
   @ViewChild(FileTreeComponent) fileTreeComponent!: FileTreeComponent;
+  @ViewChild(FileViewComponent) fileViewComponent!: FileViewComponent;
   
   user?: User;
   currentFile?: File;
@@ -30,9 +31,9 @@ export class BrowserComponent implements OnInit{
     this.user = this.storageService.getUser();
   }
 
-  fileSelected(file: File): void {
+  fileSelected(): void {
     this.createdType = undefined;
-    this.currentFile = file;
+    this.fileViewComponent.onSelect();
   }
 
   dirSelected(dirId: number): void {

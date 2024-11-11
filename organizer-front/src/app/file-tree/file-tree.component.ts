@@ -11,6 +11,7 @@ import { EventFile } from '../model/event';
 import { TaskFile } from '../model/task';
 import { DirectoryService } from '../service/directory.service';
 import { Directory } from '../model/directory';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-file-tree',
@@ -21,11 +22,11 @@ import { Directory } from '../model/directory';
 })
 export class FileTreeComponent implements OnInit{
 
-  @Output() fileSelectEmitter = new EventEmitter<File>();
+  @Output() fileSelectEmitter = new EventEmitter();
   @Output() dirSelectEmitter = new EventEmitter<number>();
   @Output() fileCreateEmitter = new EventEmitter<number>();
 
-  constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService) {}
+  constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly router: Router) {}
 
   files: File[] = [];
   dirs: Directory[] = [];
@@ -94,7 +95,9 @@ export class FileTreeComponent implements OnInit{
   fetchFileById(id: number): void {
     this.fileService.getFileById(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        this.fileSelectEmitter.emit(resp.body!);
+        this.router.navigate([`file/${id}`]).then(() => {
+          this.fileSelectEmitter.emit();
+        });
       },
       error: err => {
         console.log(err);

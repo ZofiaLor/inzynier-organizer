@@ -29,6 +29,11 @@ public class AccessDirectoryService {
         return repository.findAccessDirectoryByUser(userId);
     }
 
+    public List<AccessDirectory> getAccessDirectoryByDirectory(Long dirId) {
+        if (dirId == null) throw new NullPointerException();
+        return repository.findAccessDirectoryByDirectory(dirId);
+    }
+
     public Optional<AccessDirectory> getAccessDirectory(Long userId, Long directoryId) {
         if (userId == null || directoryId == null) throw new NullPointerException();
         return repository.findAccessDirectory(userId, directoryId);

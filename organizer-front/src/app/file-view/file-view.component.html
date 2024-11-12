@@ -1,72 +1,80 @@
 @if (movingElement) {
   <app-move-dir [origParentId]="parentId" [movedDirId]="movedDirId" (moveEmitter)="onFinishMoving($event)"></app-move-dir>
-} @else {
-  @if (note || event || task || dir) {
-    <div>
+} @else if (sharingElement) {
+  <app-manage-access [sharedItemId]="sharedItemId" [isSharedFile]="isSharedFile"></app-manage-access>
+}
+@else if (note || event || task || dir){
+  <div>
+    <button
+      mat-raised-button
+      color="primary"
+      class="btn btn-primary btn-block"
+      (click)="saveItem()"
+    >
+      <mat-icon>check</mat-icon>Save changes
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      class="btn btn-primary btn-block"
+      (click)="setUpForm()"
+    >
+      <mat-icon>undo</mat-icon>Discard changes
+    </button>
+    @if(!createMode && isOwner) {
+      <button
+        mat-raised-button
+        color="accent"
+        class="btn btn-primary btn-block"
+        (click)="moveDirs()"
+      >
+        <mat-icon>drive_file_move</mat-icon>Move to a different folder
+      </button>
       <button
         mat-raised-button
         color="primary"
         class="btn btn-primary btn-block"
-        (click)="saveItem()"
+        (click)="shareItem()"
       >
-        <mat-icon>check</mat-icon>Save changes
+        <mat-icon>groups</mat-icon>Share
       </button>
-      <button
-        mat-raised-button
-        color="warn"
-        class="btn btn-primary btn-block"
-        (click)="setUpForm()"
-      >
-        <mat-icon>undo</mat-icon>Discard changes
-      </button>
-      @if(!createMode && isOwner) {
-        <button
-          mat-raised-button
-          color="accent"
-          class="btn btn-primary btn-block"
-          (click)="moveDirs()"
-        >
-          <mat-icon>drive_file_move</mat-icon>Move to a different folder
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete</mat-panel-title>
+        </mat-expansion-panel-header>
+        Are you sure? This action cannot be undone.
+        <button mat-raised-button color="warn" (click)="deleteFile()" aria-label="Delete File">
+            <mat-icon>check</mat-icon> CONFIRM
         </button>
-        <mat-expansion-panel hideToggle>
-          <mat-expansion-panel-header>
-            <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete</mat-panel-title>
-          </mat-expansion-panel-header>
-          Are you sure? This action cannot be undone.
-          <button mat-raised-button color="warn" (click)="deleteFile()" aria-label="Delete File">
-              <mat-icon>check</mat-icon> CONFIRM
-          </button>
-        </mat-expansion-panel>
-      }
-    </div>
-  }
+      </mat-expansion-panel>
+    }
+  </div>
   @if(note) {
-      <form [formGroup]="noteForm">
-            <br/><br/>
-          <mat-form-field appearance="outline">
-              <mat-label>Name</mat-label>
-              <input matInput type="text"
-              class="form-control"
-              name="filename"
-              formControlName="filename" placeholder="Unnamed File"/>
-          </mat-form-field>
-          <br/>
-          <div class="created">Created on {{note.creationDate | date: 'medium'}}</div>
+    <form [formGroup]="noteForm">
           <br/><br/>
-          <mat-form-field appearance="outline" style="width: 100%;">
-              <mat-label>Content</mat-label>
-              <textarea matInput type="text"
-              class="form-control content"
-              name="content"
-              #content
-              [maxlength]="65000"
-              formControlName="content" placeholder="Write something..." rows="20" style="resize: none;"></textarea>
-              <mat-hint align="end">{{content.value.length}} / 65000</mat-hint>
-            </mat-form-field>
-      </form>
-      
-  } @else {
-      @if(event) {
+        <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput type="text"
+            class="form-control"
+            name="filename"
+            formControlName="filename" placeholder="Unnamed File"/>
+        </mat-form-field>
+        <br/>
+        <div class="created">Created on {{note.creationDate | date: 'medium'}}</div>
+        <br/><br/>
+        <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Content</mat-label>
+            <textarea matInput type="text"
+            class="form-control content"
+            name="content"
+            #content
+            [maxlength]="65000"
+            formControlName="content" placeholder="Write something..." rows="20" style="resize: none;"></textarea>
+            <mat-hint align="end">{{content.value.length}} / 65000</mat-hint>
+          </mat-form-field>
+    </form>
+    
+  } @else if(event){
           <form [formGroup]="eventForm">
                 <br/><br/>
               <mat-form-field appearance="outline">
@@ -114,62 +122,57 @@
                 </mat-form-field>
           </form>
           
-      } @else {
-          @if (task) {
-              <form [formGroup]="taskForm">
-                    <br/><br/>
-                  <mat-form-field appearance="outline">
-                      <mat-label>Name</mat-label>
-                      <input matInput type="text"
-                      class="form-control"
-                      name="filename"
-                      formControlName="filename" placeholder="Unnamed File"/>
-                  </mat-form-field>
-                  <br/>
-                  <div class="created">Created on {{task.creationDate | date: 'medium'}}</div>
-                  <br/><br/>
-                  <mat-checkbox [formControl]="taskForm.controls.isFinished">Done</mat-checkbox>
-                  <br/><br/>
-                  <mat-form-field appearance="outline" class="longDate">
-                      <mat-label>Deadline</mat-label>
-                      <input matInput type="datetime-local"
-                      class="form-control"
-                      name="deadline"
-                      formControlName="deadline"/>
-                  </mat-form-field>
-                  <br/><br/>
-                  <mat-form-field appearance="outline" style="width: 100%;">
-                      <mat-label>Content</mat-label>
-                      <textarea matInput type="text"
-                      class="form-control content"
-                      name="content"
-                      #content
-                      [maxlength]="65000"
-                      formControlName="content" placeholder="Write something..." rows="10" style="resize: none;"></textarea>
-                      <mat-hint align="end">{{content.value.length}} / 65000</mat-hint>
-                  </mat-form-field>
-              </form>
-          } @else {
-            @if (dir) {
-              <form [formGroup]="dirForm">
+  } @else if (task){
+          <form [formGroup]="taskForm">
                 <br/><br/>
               <mat-form-field appearance="outline">
                   <mat-label>Name</mat-label>
                   <input matInput type="text"
                   class="form-control"
-                  name="dirname"
-                  formControlName="dirname" placeholder="Unnamed Directory"/>
+                  name="filename"
+                  formControlName="filename" placeholder="Unnamed File"/>
+              </mat-form-field>
+              <br/>
+              <div class="created">Created on {{task.creationDate | date: 'medium'}}</div>
+              <br/><br/>
+              <mat-checkbox [formControl]="taskForm.controls.isFinished">Done</mat-checkbox>
+              <br/><br/>
+              <mat-form-field appearance="outline" class="longDate">
+                  <mat-label>Deadline</mat-label>
+                  <input matInput type="datetime-local"
+                  class="form-control"
+                  name="deadline"
+                  formControlName="deadline"/>
+              </mat-form-field>
+              <br/><br/>
+              <mat-form-field appearance="outline" style="width: 100%;">
+                  <mat-label>Content</mat-label>
+                  <textarea matInput type="text"
+                  class="form-control content"
+                  name="content"
+                  #content
+                  [maxlength]="65000"
+                  formControlName="content" placeholder="Write something..." rows="10" style="resize: none;"></textarea>
+                  <mat-hint align="end">{{content.value.length}} / 65000</mat-hint>
               </mat-form-field>
           </form>
-            } @else {
-              <div class="noneSelected">
-                  Select a file in the browser on the left!
-              </div>
-            }
-              
-          }
-          
-      }
+  } @else if (dir){
+      <form [formGroup]="dirForm">
+        <br/><br/>
+      <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput type="text"
+          class="form-control"
+          name="dirname"
+          formControlName="dirname" placeholder="Unnamed Directory"/>
+      </mat-form-field>
+  </form>
   }
 }
+ @else {
+    <div class="noneSelected">
+        Select a file in the browser on the left!
+    </div>
+  }
+            
 

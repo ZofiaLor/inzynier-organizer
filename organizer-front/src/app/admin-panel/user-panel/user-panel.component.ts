@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TableBaseComponent } from '../table-base/table-base.component';
+import { TableBaseComponent } from '../../table-base/table-base.component';
 import { MatCardModule } from '@angular/material/card';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';

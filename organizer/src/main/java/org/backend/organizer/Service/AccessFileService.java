@@ -28,6 +28,11 @@ public class AccessFileService {
         return repository.findAccessFileByUser(userId);
     }
 
+    public List<AccessFile> getAccessFileByFile(Long fileId) {
+        if (fileId == null) throw new NullPointerException();
+        return repository.findAccessFileByFile(fileId);
+    }
+
     public Optional<AccessFile> getAccessFile(Long userId, Long fileId) {
         if (userId == null || fileId == null) throw new NullPointerException();
         return repository.findAccessFile(userId, fileId);

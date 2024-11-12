@@ -15,4 +15,6 @@ public interface AccessFileRepository extends JpaRepository<AccessFile, UserFile
     Optional<AccessFile> findAccessFile(Long userId, Long fileId);
     @Query("SELECT af FROM AccessFile af WHERE af.id.userId = :userId")
     List<AccessFile> findAccessFileByUser(Long userId);
+    @Query("SELECT af FROM AccessFile af WHERE af.id.fileId = :fileId")
+    List<AccessFile> findAccessFileByFile(Long fileId);
 }

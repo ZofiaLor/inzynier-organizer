@@ -17,6 +17,10 @@ export class UserService {
     return this._http.get<HttpResponse<User[]>>(USER_URL, httpOptions);
   }
 
+  getAllUsersSafe(): Observable<HttpResponse<User[]>> {
+    return this._http.get<HttpResponse<User[]>>(USER_URL + '/safe', httpOptions);
+  }
+
   getUserById(id: number): Observable<HttpResponse<User | null>> {
     return this._http.get<HttpResponse<User | null>>(`${USER_URL}/${id}`, httpOptions);
   }

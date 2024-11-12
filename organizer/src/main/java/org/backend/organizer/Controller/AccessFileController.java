@@ -36,6 +36,15 @@ public class AccessFileController {
         }
     }
 
+    @GetMapping("file/{file}")
+    public ResponseEntity<List<AccessFile>> getAccessFileByFile(@PathVariable(name = "file") Long file) {
+        try {
+            return new ResponseEntity<>(service.getAccessFileByFile(file), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("{user}/{file}")
     public ResponseEntity<AccessFile> getAccessFile(@PathVariable(name = "user") Long user, @PathVariable(name = "file") Long file) {
         try {

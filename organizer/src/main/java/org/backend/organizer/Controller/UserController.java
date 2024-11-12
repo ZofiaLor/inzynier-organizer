@@ -24,9 +24,15 @@ public class UserController {
     JWTService jwtService;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/safe")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<List<UserDTO>> getAllUsersSafe() {
+        return new ResponseEntity<>(service.getAllUsersSafe(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

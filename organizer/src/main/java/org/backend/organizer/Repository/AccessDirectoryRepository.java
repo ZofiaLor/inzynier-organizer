@@ -15,4 +15,6 @@ public interface AccessDirectoryRepository extends JpaRepository<AccessDirectory
     Optional<AccessDirectory> findAccessDirectory(Long userId, Long directoryId);
     @Query("SELECT ad FROM AccessDirectory ad WHERE ad.id.userId = :userId")
     List<AccessDirectory> findAccessDirectoryByUser(Long userId);
+    @Query("SELECT ad FROM AccessDirectory ad WHERE ad.id.directoryId = :directoryId")
+    List<AccessDirectory> findAccessDirectoryByDirectory(Long directoryId);
 }

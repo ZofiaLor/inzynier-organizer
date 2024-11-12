@@ -22,4 +22,12 @@ export class AccessService {
   getAFsByUserId(userId: number): Observable<HttpResponse<AccessFile[]>> {
     return this._http.get<HttpResponse<AccessFile[]>>(`${AF_URL}/user/${userId}`, httpOptions);
   }
+
+  getADsByDirId(dirId: number): Observable<HttpResponse<AccessDir[]>> {
+    return this._http.get<HttpResponse<AccessDir[]>>(`${AD_URL}/dir/${dirId}`, httpOptions);
+  }
+
+  getAFsByFileId(fileId: number): Observable<HttpResponse<AccessFile[]>> {
+    return this._http.get<HttpResponse<AccessFile[]>>(`${AF_URL}/file/${fileId}`, httpOptions);
+  }
 }

@@ -15,6 +15,7 @@ import { FileService } from '../service/file.service';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { MoveDirComponent } from '../move-dir/move-dir.component';
+import { ManageAccessComponent } from '../manage-access/manage-access.component';
 import { DirectoryService } from '../service/directory.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../service/storage.service';
@@ -23,7 +24,8 @@ import { Directory } from '../model/directory';
 @Component({
   selector: 'app-file-view',
   standalone: true,
-  imports: [MatFormFieldModule, CommonModule, FormsModule, ReactiveFormsModule, MatInputModule, MatIconModule, MatCheckboxModule, MatButtonModule, MatExpansionModule, MoveDirComponent],
+  imports: [MatFormFieldModule, CommonModule, FormsModule, ReactiveFormsModule, MatInputModule, MatIconModule, MatCheckboxModule, MatButtonModule, 
+    MatExpansionModule, MoveDirComponent, ManageAccessComponent],
   templateUrl: './file-view.component.html',
   styleUrl: './file-view.component.scss'
 })
@@ -59,6 +61,9 @@ export class FileViewComponent implements OnInit{
   dir?: Directory;
   createMode = false;
   movingElement = false;
+  sharingElement = false;
+  sharedItemId?: number;
+  isSharedFile = false;
   isOwner = false;
   parentId?: number;
   movedDirId?: number;
@@ -262,6 +267,17 @@ export class FileViewComponent implements OnInit{
       }
       
     }
+  }
+
+  shareItem(): void {
+    if (this.dir) {
+      this.isSharedFile = false;
+      this.sharedItemId = this.dir.id;
+    } else {
+      this.isSharedFile = true;
+      this.sharedItemId = this._file?.id;
+    }
+    this.sharingElement = true;
   }
 
   createDir(): void {

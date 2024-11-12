@@ -49,6 +49,16 @@ public class UserService {
         return result;
     }
 
+    public List<UserDTO> getAllUsersSafe() {
+        var result = new ArrayList<UserDTO>();
+        for (var user : repository.findAll()) {
+            User safeUser = new User(user.getUsername(), user.getName(), "");
+            safeUser.setId(user.getId());
+            result.add(mapper.userToUserDTO(safeUser));
+        }
+        return result;
+    }
+
     public UserDTO getUserById(Long id) {
         if(id == null) throw new NullPointerException();
         return mapper.userToUserDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));

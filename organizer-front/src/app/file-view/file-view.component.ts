@@ -17,6 +17,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { MoveDirComponent } from '../move-dir/move-dir.component';
 import { DirectoryService } from '../service/directory.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { StorageService } from '../service/storage.service';
+import { Directory } from '../model/directory';
 
 @Component({
   selector: 'app-file-view',
@@ -39,25 +41,32 @@ export class FileViewComponent implements OnInit{
   //   return this._file;
   // }
   private _typeToCreate?: number;
-  @Input() set typeToCreate(value: number | undefined){
-    this._typeToCreate = value;
-    if (value !== undefined){
-      this.setUpNewFile();
-      this.onChange();
-    }
-  }
-  get typeToCreate(): number | undefined {
-    return this._typeToCreate;
-  }
+  // @Input() set typeToCreate(value: number | undefined){
+  //   this._typeToCreate = value;
+  //   if (value !== undefined){
+  //     this.setUpNewFile();
+  //     this.onChange();
+  //   }
+  // }
+  // get typeToCreate(): number | undefined {
+  //   return this._typeToCreate;
+  // }
   @Input() currentDir?: number;
   @Output() refreshDirs = new EventEmitter();
   event?: EventFile;
   note?: NoteFile;
   task?: TaskFile;
+  dir?: Directory;
   createMode = false;
   movingElement = false;
+  isOwner = false;
   parentId?: number;
+  movedDirId?: number;
   private readonly _destroy$ = new Subject<void>();
+
+  dirForm = this.fb.group({
+    dirname: new FormControl('')
+  });
 
   noteForm = this.fb.group({
     filename: new FormControl(''),
@@ -80,9 +89,14 @@ export class FileViewComponent implements OnInit{
   });
 
   //https://stackoverflow.com/questions/45997369/how-to-get-param-from-url-in-angular-4
-  constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly fb: FormBuilder, private route: ActivatedRoute, private readonly router: Router) {}
+  constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly storageService: StorageService, 
+    private readonly fb: FormBuilder, private route: ActivatedRoute, private readonly router: Router) {}
   ngOnInit(): void {
-    if (this.router.url.includes('/file')) 
+    if (this.router.url.includes('/new')) 
+      {  
+        this.onNew();
+      }
+    else if (this.router.url.includes('/file') || this.router.url.includes('/dir')) 
       {  
         this.onSelect();
       }
@@ -90,7 +104,8 @@ export class FileViewComponent implements OnInit{
   }
 
   onChange(): void {
-    if (this.event) this.setUpEventForm();
+    if (this.dir) this.setUpDirForm();
+    else if (this.event) this.setUpEventForm();
     else if (this.note) this.setUpNoteForm();
     else this.setUpTaskForm();
   }
@@ -101,7 +116,35 @@ export class FileViewComponent implements OnInit{
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
     let intId = parseInt(id);
     if (Number.isNaN(intId)) return;
-    this.fetchFileById(intId);
+    if (this.router.url.includes('/file')) this.fetchFileById(intId);
+    else if (this.router.url.includes('/dir')) this.fetchDirById(intId);
+    
+  }
+
+  onNew(): void {
+    let type = this.route.snapshot.paramMap.get('type');
+    let dir = this.route.snapshot.paramMap.get('dir');
+    if (type === null || dir === null) return;
+    let typeId = parseInt(type);
+    let dirId = parseInt(dir);
+    if (Number.isNaN(typeId) || Number.isNaN(dirId)) return;
+    // only the owner can create
+    this.dirService.getDirById(dirId).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        if (resp.body!.owner == this.storageService.getUser()!.id) {
+          this._typeToCreate = typeId;
+          this.currentDir = dirId;
+          this.setUpNewFile();
+          this.onChange();
+        } else {
+          console.log(resp);
+        }
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+    
   }
 
   inferFileType(): void {
@@ -122,10 +165,14 @@ export class FileViewComponent implements OnInit{
   setUpNewFile(): void {
     if (this._typeToCreate === undefined) return;
     this.createMode = true;
+    this.dir = undefined;
     this.event = undefined;
     this.note = undefined;
     this.task = undefined;
     switch(this._typeToCreate) {
+      case 0:
+        this.dir = {id: 0, name: "Unnamed Directory", owner: 0, parent: this.currentDir!, files: []};
+        break;
       case 1:
         this.event = {id: 0, name: "Unnamed Event", textContent: "", eventDates: [], creationDate: "", owner: 0, parent: this.currentDir!};
         break;
@@ -142,6 +189,10 @@ export class FileViewComponent implements OnInit{
   }
 
   deleteFile(): void {
+    if (this.dir) {
+      console.log("TBA");
+      return;
+    }
     this.fileService.deleteFile(this._file!.id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this._file = undefined;
@@ -156,10 +207,16 @@ export class FileViewComponent implements OnInit{
     })
   }
 
-  saveFile(): void {
-    if (this.event) this.saveEvent();
+  saveItem(): void {
+    if (this.dir) this.saveDir();
+    else if (this.event) this.saveEvent();
       else if (this.note) this.saveNote();
       else this.saveTask();
+  }
+
+  saveDir(): void {
+    if (this.createMode) this.createDir();
+    else this.updateDir();
   }
 
   saveNote(): void {
@@ -178,19 +235,59 @@ export class FileViewComponent implements OnInit{
   }
 
   moveDirs(): void {
+    if (this.dir) {
+      if (this.dir.parent === null) return;
+      this.parentId = this.dir.parent!;
+      this.movedDirId = this.dir.id;
+    }
+    else {
+      this.parentId = this._file?.parent;
+      this.movedDirId = undefined;
+    }
     this.movingElement = true;
-    this.parentId = this._file?.parent;
   }
 
   onFinishMoving(newParentId: number | undefined) {
     this.movingElement = false;
     if (newParentId !== undefined) {
-      this._file!.parent = newParentId;
-      this.inferFileType();
-      if (this.event) this.updateEvent();
-      else if (this.note) this.updateNote();
-      else this.updateTask();
+      if (this.dir) {
+        this.dir.parent = newParentId;
+        this.updateDir();
+      } else {
+        this._file!.parent = newParentId;
+        this.inferFileType();
+        if (this.event) this.updateEvent();
+        else if (this.note) this.updateNote();
+        else this.updateTask();
+      }
+      
     }
+  }
+
+  createDir(): void {
+    this.dir!.name = this.dirForm.controls.dirname.value!;
+    this.dirService.createDir(this.dir!).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.dir = resp.body!;
+        this.refreshDirs.emit();
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
+  updateDir(): void {
+    this.dir!.name = this.dirForm.controls.dirname.value!;
+    this.dirService.updateDir(this.dir!).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.dir = resp.body!;
+        this.refreshDirs.emit();
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
   }
 
   updateNote(): void {
@@ -291,9 +388,15 @@ export class FileViewComponent implements OnInit{
   }
 
   setUpForm(): void {
-    if (this.event) this.setUpEventForm();
+    if (this.dir) this.setUpDirForm();
+    else if (this.event) this.setUpEventForm();
       else if (this.note) this.setUpNoteForm();
       else this.setUpTaskForm();
+  }
+
+  setUpDirForm(): void {
+    if (this.dir === undefined) return;
+    this.dirForm.controls.dirname.setValue(this.dir?.name!);
   }
 
   setUpNoteForm(): void {
@@ -331,7 +434,23 @@ export class FileViewComponent implements OnInit{
     this.fileService.getFileById(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this._file = resp.body!;
+        this.isOwner = this._file!.owner == this.storageService.getUser()!.id;
+        this.dir = undefined;
         this.inferFileType();
+        this.onChange();
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
+  fetchDirById(id: number): void {
+    this.dirService.getDirById(id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.dir = resp.body!;
+        this.isOwner = this.dir!.owner == this.storageService.getUser()!.id;
+        this._file = undefined;
         this.onChange();
       },
       error: err => {

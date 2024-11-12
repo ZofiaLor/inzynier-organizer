@@ -4,6 +4,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatMenuModule} from '@angular/material/menu';
+import {MatTabsModule} from '@angular/material/tabs';
 import { FileService } from '../service/file.service';
 import { Subject, takeUntil } from 'rxjs';
 import { File } from '../model/file';
@@ -12,30 +13,43 @@ import { TaskFile } from '../model/task';
 import { DirectoryService } from '../service/directory.service';
 import { Directory } from '../model/directory';
 import { Router } from '@angular/router';
+import { AccessFile } from '../model/access-file';
+import { AccessDir } from '../model/access-dir';
+import { AccessService } from '../service/access.service';
+import { StorageService } from '../service/storage.service';
 
 @Component({
   selector: 'app-file-tree',
   standalone: true,
-  imports: [MatListModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule],
+  imports: [MatListModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule, MatTabsModule],
   templateUrl: './file-tree.component.html',
   styleUrl: './file-tree.component.scss'
 })
 export class FileTreeComponent implements OnInit{
 
-  @Output() fileSelectEmitter = new EventEmitter();
+  @Output() itemSelectEmitter = new EventEmitter();
   @Output() dirSelectEmitter = new EventEmitter<number>();
-  @Output() fileCreateEmitter = new EventEmitter<number>();
+  @Output() fileCreateEmitter = new EventEmitter();
 
-  constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly router: Router) {}
+  constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly accessService: AccessService,
+    private readonly storageService: StorageService, private readonly router: Router) {}
 
   files: File[] = [];
   dirs: Directory[] = [];
+  afs: AccessFile[] = [];
+  ads: AccessDir[] = [];
+  sharedDirs: Directory[] = [];
+  sharedFiles: File[] = [];
+  sharedLocalBaseId?: number;
+  sharedCurrentDir?: Directory;
   currentDir?: Directory;
   hasParent: boolean = false;
   private readonly _destroy$ = new Subject<void>();
 
   ngOnInit(): void {
     this.fetchBaseDirs();
+    this.fetchADs();
+    this.fetchAFs();
   }
 
   isEvent(file: any): file is EventFile {
@@ -50,16 +64,35 @@ export class FileTreeComponent implements OnInit{
     this.fetchDirById(dirId);
   }
 
+  clickSharedDir(dirId: number): void {
+    if (this.sharedLocalBaseId === undefined) this.sharedLocalBaseId = dirId;
+    this.fetchSharedDirById(dirId);
+  }
+
   clickUpDir(): void {
     this.fetchParent();
+  }
+
+  clickUpSharedDir(): void {
+    this.fetchSharedParent();
   }
 
   clickFile(fileId: number): void {
     this.fetchFileById(fileId);
   }
 
+  clickEditDir(): void {
+    console.log(this.currentDir);
+    if (this.currentDir === undefined) return;
+    this.router.navigate([`dir/${this.currentDir!.id}`]).then(() => {
+      this.itemSelectEmitter.emit();
+    });
+  }
+
   clickNewElement(typeId: number): void {
-    this.fileCreateEmitter.emit(typeId);
+    this.router.navigate([`new/${typeId}/${this.currentDir!.id}`]).then(() => {
+      this.fileCreateEmitter.emit();
+    });
   }
 
   fetchBaseDirs(): void {
@@ -92,11 +125,24 @@ export class FileTreeComponent implements OnInit{
     });
   }
 
+  fetchSharedDirById(id: number): void {
+    this.dirService.getDirById(id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.sharedCurrentDir = resp.body!;
+        this.fetchSharedSubdirsInDir();
+        this.fetchSharedFilesInDir();
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
   fetchFileById(id: number): void {
     this.fileService.getFileById(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.router.navigate([`file/${id}`]).then(() => {
-          this.fileSelectEmitter.emit();
+          this.itemSelectEmitter.emit();
         });
       },
       error: err => {
@@ -122,6 +168,26 @@ export class FileTreeComponent implements OnInit{
     }
   }
 
+  fetchSharedParent(): void {
+    if (this.sharedCurrentDir!.id == this.sharedLocalBaseId) {
+      this.sharedCurrentDir = undefined;
+      this.sharedLocalBaseId = undefined;
+      this.fetchADs();
+      this.fetchAFs();
+    } else {
+      this.dirService.getDirById(this.sharedCurrentDir!.parent!).pipe(takeUntil(this._destroy$)).subscribe({
+        next: resp => {
+          this.sharedCurrentDir = resp.body!;
+          this.fetchSharedFilesInDir();
+          this.fetchSharedSubdirsInDir();
+        },
+        error: err => {
+          console.log(err);
+        }
+      });
+    }
+  }
+
   fetchFilesInDir(): void {
     if (this.currentDir === undefined) return;
     this.fileService.getFilesInDirectory(this.currentDir!.id).pipe(takeUntil(this._destroy$)).subscribe({
@@ -129,6 +195,31 @@ export class FileTreeComponent implements OnInit{
         this.files = resp.body!;
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
         this.files.sort((a, b) => {
+          const nameA = a.name.toUpperCase();
+          const nameB = b.name.toUpperCase();
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          return 0;
+        });
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
+  //TODO for some reason, passing the file array as parameter doesnt seem to modify it by reference
+  fetchSharedFilesInDir(): void {
+    if (this.sharedCurrentDir === undefined) return;
+    this.fileService.getFilesInDirectory(this.sharedCurrentDir!.id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.sharedFiles = resp.body!;
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+        this.sharedFiles.sort((a, b) => {
           const nameA = a.name.toUpperCase();
           const nameB = b.name.toUpperCase();
           if (nameA < nameB) {
@@ -168,6 +259,86 @@ export class FileTreeComponent implements OnInit{
         console.log(err);
       }
     });
+  }
+
+  fetchSharedSubdirsInDir(): void {
+    if (this.sharedCurrentDir === undefined) return;
+    this.dirService.getDirsByParentId(this.sharedCurrentDir!.id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.sharedDirs = resp.body!;
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+        this.sharedDirs.sort((a, b) => {
+          const nameA = a.name.toUpperCase();
+          const nameB = b.name.toUpperCase();
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          return 0;
+        });
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
+  fetchAFs(): void {
+    let user = this.storageService.getUser();
+    if (user === undefined) return;
+    this.accessService.getAFsByUserId(user.id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.afs = resp.body!;
+        this.fetchFilesFromAF();
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
+  fetchFilesFromAF(): void {
+    this.sharedFiles = [];
+    for (var af of this.afs) {
+      this.fileService.getFileById(af.id.fileId).pipe(takeUntil(this._destroy$)).subscribe({
+        next: resp => {
+          this.sharedFiles.push(resp.body!);
+        },
+        error: err => {
+          console.log(err);
+        }
+      })
+    }
+  }
+
+  fetchADs(): void {
+    let user = this.storageService.getUser();
+    if (user === undefined) return;
+    this.accessService.getADsByUserId(user.id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.ads = resp.body!;
+        this.fetchDirsFromAD();
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
+  fetchDirsFromAD(): void {
+    this.sharedDirs = [];
+    for (var ad of this.ads) {
+      this.dirService.getDirById(ad.id.directoryId).pipe(takeUntil(this._destroy$)).subscribe({
+        next: resp => {
+          this.sharedDirs.push(resp.body!);
+        },
+        error: err => {
+          console.log(err);
+        }
+      })
+    }
   }
 
 }

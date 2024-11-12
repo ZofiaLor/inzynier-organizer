@@ -12,4 +12,6 @@ export const routes: Routes = [
     {path: 'admin/users', component: UserPanelComponent},
     {path: '', component: BrowserComponent},
     {path: 'file/:id', component: BrowserComponent},
+    {path: 'new/:type/:dir', component: BrowserComponent},
+    {path: 'dir/:id', component: BrowserComponent},
 ];

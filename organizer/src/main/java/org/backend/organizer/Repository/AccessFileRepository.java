@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface AccessFileRepository extends JpaRepository<AccessFile, UserFileId> {
     @Query("SELECT af FROM AccessFile af WHERE af.id.userId = :userId AND af.id.fileId = :fileId")
     Optional<AccessFile> findAccessFile(Long userId, Long fileId);
+    @Query("SELECT af FROM AccessFile af WHERE af.id.userId = :userId")
+    List<AccessFile> findAccessFileByUser(Long userId);
 }

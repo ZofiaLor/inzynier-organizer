@@ -1,31 +1,62 @@
-@if(currentDir) {
-    <button mat-icon-button (click)="clickUpDir()" [disabled]="!hasParent" matTooltip="View Parent Folder" [matTooltipShowDelay]="1000"><mat-icon>drive_folder_upload</mat-icon></button>
-    <button mat-button class="dirName">{{currentDir.name}}</button>
-    <button mat-flat-button matTooltip="Add Element" [matMenuTriggerFor]="menu" color="primary" class="addNew" [matTooltipShowDelay]="1000"><mat-icon>add</mat-icon>Add</button>
-    <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="clickNewElement(0)"><mat-icon>create_new_folder</mat-icon>New Folder</button>
-        <button mat-menu-item (click)="clickNewElement(1)"><mat-icon>event</mat-icon>New Event</button>
-        <button mat-menu-item (click)="clickNewElement(2)"><mat-icon>sticky_note_2</mat-icon>New Note</button>
-        <button mat-menu-item (click)="clickNewElement(3)"><mat-icon>task</mat-icon>New Task</button>
-      </mat-menu>
-}
+<mat-tab-group>
+    <mat-tab label="My Files">
+        @if(currentDir) {
+            <button mat-icon-button (click)="clickUpDir()" [disabled]="!hasParent" matTooltip="View Parent Folder" [matTooltipShowDelay]="1000"><mat-icon>drive_folder_upload</mat-icon></button>
+            <button mat-button (click)="clickEditDir()" class="dirName">{{currentDir.name}}</button>
+            <button mat-flat-button matTooltip="Add Element" [matMenuTriggerFor]="menu" color="primary" class="addNew" [matTooltipShowDelay]="1000"><mat-icon>add</mat-icon>Add</button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="clickNewElement(0)"><mat-icon>create_new_folder</mat-icon>New Folder</button>
+                <button mat-menu-item (click)="clickNewElement(1)"><mat-icon>event</mat-icon>New Event</button>
+                <button mat-menu-item (click)="clickNewElement(2)"><mat-icon>sticky_note_2</mat-icon>New Note</button>
+                <button mat-menu-item (click)="clickNewElement(3)"><mat-icon>task</mat-icon>New Task</button>
+            </mat-menu>
+        }
 
-<mat-action-list>
-    @for (dir of dirs; track dir) {
-        <button mat-list-item (click)="clickDir(dir.id)"><mat-icon>folder</mat-icon>{{dir.name}}</button>
-    }
-    @for(file of files; track file) {
-        <button mat-list-item (click)="clickFile(file.id)">
-            @if (isEvent(file)) {
-                <mat-icon>event</mat-icon>
-            } @else {
-                @if (isTask(file)) {
-                    <mat-icon>task</mat-icon>
-                } @else {
-                    <mat-icon>sticky_note_2</mat-icon>
-                }
+        <mat-action-list>
+            @for (dir of dirs; track dir) {
+                <button mat-list-item (click)="clickDir(dir.id)"><mat-icon>folder</mat-icon>{{dir.name}}</button>
             }
-            {{file.name}}
-        </button>
-    }
-</mat-action-list>
+            @for(file of files; track file) {
+                <button mat-list-item (click)="clickFile(file.id)">
+                    @if (isEvent(file)) {
+                        <mat-icon>event</mat-icon>
+                    } @else {
+                        @if (isTask(file)) {
+                            <mat-icon>task</mat-icon>
+                        } @else {
+                            <mat-icon>sticky_note_2</mat-icon>
+                        }
+                    }
+                    {{file.name}}
+                </button>
+            }
+        </mat-action-list>
+    </mat-tab>
+    <mat-tab label="Shared Files">
+        @if(sharedCurrentDir) {
+            <button mat-icon-button (click)="clickUpSharedDir()" matTooltip="View Parent Folder" [matTooltipShowDelay]="1000"><mat-icon>drive_folder_upload</mat-icon></button>
+            <button mat-button class="dirName">{{sharedCurrentDir.name}}</button>
+        }
+        <mat-action-list>
+            @for (dir of sharedDirs; track dir) {
+                <button mat-list-item (click)="clickSharedDir(dir.id)"><mat-icon>folder</mat-icon>{{dir.name}}</button>
+            }
+            @for(file of sharedFiles; track file) {
+                <button mat-list-item (click)="clickFile(file.id)">
+                    @if (isEvent(file)) {
+                        <mat-icon>event</mat-icon>
+                    } @else {
+                        @if (isTask(file)) {
+                            <mat-icon>task</mat-icon>
+                        } @else {
+                            <mat-icon>sticky_note_2</mat-icon>
+                        }
+                    }
+                    {{file.name}}
+                </button>
+            }
+        </mat-action-list>
+    </mat-tab>
+  </mat-tab-group>
+  
+

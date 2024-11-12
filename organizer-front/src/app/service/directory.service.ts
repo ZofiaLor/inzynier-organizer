@@ -28,4 +28,12 @@ export class DirectoryService {
   getDirById(id: number): Observable<HttpResponse<Directory>> {
     return this._http.get<HttpResponse<Directory>>(`${DIR_URL}/${id}`, httpOptions);
   }
+
+  createDir(dir: Directory): Observable<HttpResponse<Directory>> {
+    return this._http.post<HttpResponse<Directory>>(DIR_URL, dir, httpOptions);
+  }
+
+  updateDir(dir: Directory): Observable<HttpResponse<Directory>> {
+    return this._http.put<HttpResponse<Directory>>(DIR_URL, dir, httpOptions);
+  }
 }

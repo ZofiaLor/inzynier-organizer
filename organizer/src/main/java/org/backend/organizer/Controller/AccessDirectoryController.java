@@ -27,6 +27,15 @@ public class AccessDirectoryController {
         return new ResponseEntity<>(service.getAllAccessDirectories(), HttpStatus.OK);
     }
 
+    @GetMapping("user/{user}")
+    public ResponseEntity<List<AccessDirectory>> getAccessDirectoryByUser(@PathVariable(name = "user") Long user) {
+        try {
+            return new ResponseEntity<>(service.getAccessDirectoryByUser(user), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping("{user}/{dir}")
     public ResponseEntity<AccessDirectory> getAccessDirectory(@PathVariable(name = "user") Long user, @PathVariable(name = "dir") Long dir) {
         try {

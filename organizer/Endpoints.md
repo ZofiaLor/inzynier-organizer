@@ -37,7 +37,7 @@ Success
 ### Register
 ```POST /api/auth/register```
 
-Rejestracja nowego użytkownika.
+Rejestracja nowego użytkownika i założenie jego katalogu bazowego Base Directory.
 
 Wymagana nazwa użytkownika i hasło, opcjonalny adres email oraz imię (name). Pozostałe parametry są ignorowane.
 ```json
@@ -123,7 +123,7 @@ Odpowiedzi:
 
 ```DELETE /api/users/{id}```
 
-Usuwa użytkownika o podanym ID.
+Usuwa użytkownika o podanym ID, wraz z jego katalogami, głosami i powiadomieniami.
 
 Odpowiedzi:
 - ID istnieje: kod 200 (OK)
@@ -145,6 +145,13 @@ Odpowiedź: lista obiektów katalogów, kod 200 (OK)
 Zwraca wszystkie katalogi aktualnie zalogowanego użytkownika.
 
 Odpowiedź: lista obiektów katalogów, kod 200 (OK)
+
+### Get All My Base Directory
+```GET /api/directories/basedirs```
+
+Zwraca katalog bazowy aktualnie zalogowanego użytkownika.
+
+Odpowiedź: obiekt katalogu bazowego, kod 200 (OK)
 
 ### Get Directories By Parent ID
 ```GET /api/directories/subdirs/{id}```
@@ -173,14 +180,16 @@ Odpowiedzi:
 
 Tworzy nowy katalog.
 
-Brak wymaganych parametrów, można podać nazwę oraz ID rodzica. W przypadku niepodania nazwy, domyślnie ustawiana jest ona na "Unnamed Directory".
+Wymagane ID rodzica, można podać nazwę. W przypadku niepodania nazwy, domyślnie ustawiana jest ona na "Unnamed Directory".
 ```json
 {
     "name": "Test Directory",
     "parent": 3
 }
 ```
-Odpowiedź: obiekt nowego katalogu, kod 200 (OK)
+Odpowiedzi: 
+- Poprawne utworzenie katalogu: obiekt nowego katalogu, kod 200 (OK)
+- Brak ID rodzica: kod 400 (Bad Request)
 
 ### Update Directory
 ```PUT /api/directories```
@@ -207,7 +216,7 @@ Odpowiedzi:
 
 ```DELETE /api/directories/{id}```
 
-Usuwa katalog o podanym ID.
+Usuwa katalog o podanym ID, wraz z jego plikami.
 
 Odpowiedzi:
 - ID istnieje: kod 200 (OK)
@@ -378,7 +387,7 @@ Odpowiedzi:
 
 ```DELETE /api/files/{id}```
 
-Usuwa plik o podanym ID.
+Usuwa plik o podanym ID, w przypadku wydarzenia - wraz z jego obiektami EventDate.
 
 Odpowiedzi:
 - ID istnieje: kod 200 (OK)
@@ -392,6 +401,15 @@ Odpowiedzi:
 Zwraca wszystkie obiekty AccessDirectory.
 
 Odpowiedź: lista obiektów AccessDirectory, kod 200 (OK)
+
+### Get AccessDirectory By User
+```GET /api/ad/user/{user}```
+
+Zwraca listę obiektów AccessDirectory dla podanego ID użytkownika.
+
+Odpowiedzi:
+- ID istnieje: lista obiektów AccessDirectory, kod 200 (OK)
+- Brak ID: kod 400 (Bad Request)
 
 ### Get AccessDirectory By User And Directory
 ```GET /api/ad/{user}/{dir}```
@@ -441,6 +459,15 @@ Odpowiedzi:
 Zwraca wszystkie obiekty AccessFile.
 
 Odpowiedź: lista obiektów AccessFile, kod 200 (OK)
+
+### Get AccessFile By User
+```GET /api/af/user/{user}```
+
+Zwraca listę obiektów AccessFile dla podanego ID użytkownika.
+
+Odpowiedzi:
+- ID istnieje: lista obiektów AccessFile, kod 200 (OK)
+- Brak ID: kod 400 (Bad Request)
 
 ### Get AccessFile By User And File
 ```GET /api/af/{user}/{file}```
@@ -553,7 +580,7 @@ Odpowiedzi:
 
 ```DELETE /api/ed/{id}```
 
-Usuwa obiekt EventDate o podanym ID.
+Usuwa obiekt EventDate o podanym ID, wraz z jego głosami.
 
 Odpowiedzi:
 - ID istnieje: kod 200 (OK)

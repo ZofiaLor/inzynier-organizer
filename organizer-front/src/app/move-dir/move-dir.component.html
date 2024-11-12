@@ -3,7 +3,7 @@
     <span class="dirName">Selected: {{currentDir.name}}</span>
     <mat-action-list>
         @for (dir of dirs; track dir) {
-            <button mat-list-item (click)="clickDir(dir.id)"><mat-icon>folder</mat-icon>{{dir.name}}</button>
+            <button mat-list-item (click)="clickDir(dir.id)" [disabled]="movedDirId == dir.id"><mat-icon>folder</mat-icon>{{dir.name}}</button>
         }
     </mat-action-list>
     <button

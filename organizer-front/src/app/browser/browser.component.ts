@@ -31,7 +31,7 @@ export class BrowserComponent implements OnInit{
     this.user = this.storageService.getUser();
   }
 
-  fileSelected(): void {
+  itemSelected(): void {
     this.createdType = undefined;
     this.fileViewComponent.onSelect();
   }
@@ -40,9 +40,9 @@ export class BrowserComponent implements OnInit{
     this.currentDirId = dirId;
   }
 
-  createNewSelected(typeId: number): void {
+  createNewSelected(): void {
     this.currentFile = undefined;
-    this.createdType = typeId;
+    this.fileViewComponent.onNew();
   }
 
   refreshDirs(): void {

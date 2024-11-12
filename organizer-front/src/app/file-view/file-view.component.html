@@ -1,13 +1,13 @@
 @if (movingElement) {
-  <app-move-dir [origParentId]="parentId" (moveEmitter)="onFinishMoving($event)"></app-move-dir>
+  <app-move-dir [origParentId]="parentId" [movedDirId]="movedDirId" (moveEmitter)="onFinishMoving($event)"></app-move-dir>
 } @else {
-  @if (note || event || task) {
+  @if (note || event || task || dir) {
     <div>
       <button
         mat-raised-button
         color="primary"
         class="btn btn-primary btn-block"
-        (click)="saveFile()"
+        (click)="saveItem()"
       >
         <mat-icon>check</mat-icon>Save changes
       </button>
@@ -19,7 +19,7 @@
       >
         <mat-icon>undo</mat-icon>Discard changes
       </button>
-      @if(!createMode) {
+      @if(!createMode && isOwner) {
         <button
           mat-raised-button
           color="accent"
@@ -30,7 +30,7 @@
         </button>
         <mat-expansion-panel hideToggle>
           <mat-expansion-panel-header>
-            <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete File </mat-panel-title>
+            <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete</mat-panel-title>
           </mat-expansion-panel-header>
           Are you sure? This action cannot be undone.
           <button mat-raised-button color="warn" (click)="deleteFile()" aria-label="Delete File">
@@ -150,9 +150,23 @@
                   </mat-form-field>
               </form>
           } @else {
+            @if (dir) {
+              <form [formGroup]="dirForm">
+                <br/><br/>
+              <mat-form-field appearance="outline">
+                  <mat-label>Name</mat-label>
+                  <input matInput type="text"
+                  class="form-control"
+                  name="dirname"
+                  formControlName="dirname" placeholder="Unnamed Directory"/>
+              </mat-form-field>
+          </form>
+            } @else {
               <div class="noneSelected">
                   Select a file in the browser on the left!
               </div>
+            }
+              
           }
           
       }

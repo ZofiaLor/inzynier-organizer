@@ -18,6 +18,7 @@ export class MoveDirComponent implements OnChanges {
   private readonly _destroy$ = new Subject<void>();
 
   @Input() origParentId?: number;
+  @Input() movedDirId?: number;
   @Output() moveEmitter = new EventEmitter<number | undefined>();
   origDir?: Directory;
   currentDir?: Directory;

@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule, FormBuilder,
   FormControl,Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { User } from '../model/user';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
   isLoginFailed = false;
   user: User = {id: 0, username: "", role: "ROLE_USER"};
 
-  constructor (private authService: AuthService, private storageService: StorageService, private readonly fb: FormBuilder, private snackBar: MatSnackBar,) {}
+  constructor (private authService: AuthService, private storageService: StorageService, private readonly fb: FormBuilder, private snackBar: MatSnackBar, private location: Location) {}
 
   ngOnInit(): void {
     if (this.storageService.isLoggedIn()) {
@@ -54,6 +54,7 @@ export class LoginComponent implements OnInit {
         this.isLoginFailed = false;
         this.isLoggedIn = true;
         this.reloadPage();
+        // this.location.back();
       },
       error: err => {
         if (err.status == 403) {

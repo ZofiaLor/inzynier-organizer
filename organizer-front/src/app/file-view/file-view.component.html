@@ -57,6 +57,7 @@
             <input matInput type="text"
             class="form-control"
             name="filename"
+            [readonly]="!isOwner"
             formControlName="filename" placeholder="Unnamed File"/>
         </mat-form-field>
         <br/>
@@ -82,6 +83,7 @@
                   <input matInput type="text"
                   class="form-control"
                   name="filename"
+                  [readonly]="!isOwner"
                   formControlName="filename" placeholder="Unnamed File"/>
               </mat-form-field>
               <br/>
@@ -130,6 +132,7 @@
                   <input matInput type="text"
                   class="form-control"
                   name="filename"
+                  [readonly]="!isOwner"
                   formControlName="filename" placeholder="Unnamed File"/>
               </mat-form-field>
               <br/>

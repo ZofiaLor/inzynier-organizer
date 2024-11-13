@@ -34,7 +34,13 @@
     </mat-tab>
     <mat-tab label="Shared Files">
         @if(sharedCurrentDir) {
-            <button mat-icon-button (click)="clickUpSharedDir()" matTooltip="View Parent Folder" [matTooltipShowDelay]="1000"><mat-icon>drive_folder_upload</mat-icon></button>
+            <button mat-icon-button (click)="clickUpSharedDir()" matTooltip="View Parent Folder" [matTooltipShowDelay]="1000">
+                @if (sharedCurrentDir.id == sharedLocalBaseId) {
+                    <mat-icon>home</mat-icon>
+                } @else {
+                    <mat-icon>drive_folder_upload</mat-icon>
+                }
+            </button>
             <button mat-button class="dirName">{{sharedCurrentDir.name}}</button>
         }
         <mat-action-list>

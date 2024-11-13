@@ -285,7 +285,7 @@ export class FileViewComponent implements OnInit{
     this.dirService.createDir(this.dir!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.dir = resp.body!;
-        this.refreshDirs.emit();
+        this.router.navigate([`dir/${this.dir!.id}`]);
       },
       error: err => {
         console.log(err);
@@ -326,8 +326,8 @@ export class FileViewComponent implements OnInit{
     this.fileService.createNote(this.note!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this._file = resp.body!;
-        this.refreshDirs.emit();
         this.createMode = false;
+        this.router.navigate([`file/${this._file!.id}`]);
       },
       error: err => {
         console.log(err);
@@ -361,8 +361,8 @@ export class FileViewComponent implements OnInit{
     this.fileService.createEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this._file = resp.body!;
-        this.refreshDirs.emit();
         this.createMode = false;
+        this.router.navigate([`file/${this._file!.id}`]);
       },
       error: err => {
         console.log(err);
@@ -395,7 +395,7 @@ export class FileViewComponent implements OnInit{
       next: resp => {
         this._file = resp.body!;
         this.createMode = false;
-        this.refreshDirs.emit();
+        this.router.navigate([`file/${this._file!.id}`]);
       },
       error: err => {
         console.log(err);

@@ -12,7 +12,7 @@ import { EventFile } from '../model/event';
 import { TaskFile } from '../model/task';
 import { DirectoryService } from '../service/directory.service';
 import { Directory } from '../model/directory';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AccessFile } from '../model/access-file';
 import { AccessDir } from '../model/access-dir';
 import { AccessService } from '../service/access.service';
@@ -32,7 +32,7 @@ export class FileTreeComponent implements OnInit{
   @Output() fileCreateEmitter = new EventEmitter();
 
   constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly accessService: AccessService,
-    private readonly storageService: StorageService, private readonly router: Router) {}
+    private readonly storageService: StorageService, private readonly router: Router, private readonly route: ActivatedRoute) {}
 
   files: File[] = [];
   dirs: Directory[] = [];
@@ -47,7 +47,39 @@ export class FileTreeComponent implements OnInit{
   private readonly _destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    this.fetchBaseDirs();
+    if (this.router.url.includes('/new')) 
+      {  
+        let id = this.route.snapshot.paramMap.get('dir');
+        if (id === null) this.fetchBaseDirs();
+        else {
+          let intId = parseInt(id);
+          if (Number.isNaN(intId)) this.fetchBaseDirs();
+          else this.fetchDirById(intId);
+        }
+        
+      }
+    else if (this.router.url.includes('/file')) 
+      {  
+        let id = this.route.snapshot.paramMap.get('id');
+        if (id === null) this.fetchBaseDirs();
+        else {
+          let intId = parseInt(id);
+          if (Number.isNaN(intId)) this.fetchBaseDirs();
+          else this.fetchFileById(intId, false);
+        }
+      } 
+      else if (this.router.url.includes('/dir')) {
+        let id = this.route.snapshot.paramMap.get('id');
+        if (id === null) this.fetchBaseDirs();
+        else {
+          let intId = parseInt(id);
+          if (Number.isNaN(intId)) this.fetchBaseDirs();
+          else this.fetchDirById(intId);
+        }
+      } else {
+        this.fetchBaseDirs();
+      }
+    
     this.fetchADs();
     this.fetchAFs();
   }
@@ -78,7 +110,7 @@ export class FileTreeComponent implements OnInit{
   }
 
   clickFile(fileId: number): void {
-    this.fetchFileById(fileId);
+    this.fetchFileById(fileId, true);
   }
 
   clickEditDir(): void {
@@ -138,12 +170,19 @@ export class FileTreeComponent implements OnInit{
     });
   }
 
-  fetchFileById(id: number): void {
+  fetchFileById(id: number, navigate: boolean): void {
     this.fileService.getFileById(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        this.router.navigate([`file/${id}`]).then(() => {
-          this.itemSelectEmitter.emit();
-        });
+        if (navigate) {
+          this.router.navigate([`file/${id}`]).then(() => {
+            this.itemSelectEmitter.emit();
+          });
+        } else if (resp.body!.owner == this.storageService.getUser()!.id){
+          this.fetchDirById(resp.body!.parent);
+        } else {
+          this.fetchBaseDirs();
+        }
+        
       },
       error: err => {
         console.log(err);

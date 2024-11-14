@@ -1,7 +1,7 @@
 @if (movingElement) {
   <app-move-dir [origParentId]="parentId" [movedDirId]="movedDirId" (moveEmitter)="onFinishMoving($event)"></app-move-dir>
 } @else if (sharingElement) {
-  <app-manage-access [sharedItemId]="sharedItemId" [isSharedFile]="isSharedFile"></app-manage-access>
+  <app-manage-access [sharedItemId]="sharedItemId" [isSharedFile]="isSharedFile" (backEmitter)="sharingElement = false"></app-manage-access>
 }
 @else if (note || event || task || dir){
   <div>

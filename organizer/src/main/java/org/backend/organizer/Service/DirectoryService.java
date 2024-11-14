@@ -88,8 +88,10 @@ public class DirectoryService {
         return mapper.directoryToDirectoryDTO(repository.save(directory));
     }
 
-    public void deleteDirectory(Long id) {
-        if(!repository.existsById(id)) throw new EntityNotFoundException();
+    public void deleteDirectory(Long id, String username) {
+        User user = userRepository.findByUsername(username);
+        Directory directory = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        if (directory.getParent() == null || directory.getOwner() == user) throw new IllegalArgumentException();
         repository.deleteById(id);
     }
 

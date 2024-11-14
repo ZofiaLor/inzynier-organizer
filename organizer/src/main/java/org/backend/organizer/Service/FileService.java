@@ -69,8 +69,10 @@ public class FileService {
         return mapper.fileToFileDTO(file);
     }
 
-    public void deleteFile(Long id) {
-        if(!repository.existsById(id)) throw new EntityNotFoundException();
+    public void deleteFile(Long id, String username) {
+        User user = userRepository.findByUsername(username);
+        File file = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        if (file.getOwner() == user) throw new IllegalArgumentException();
         repository.deleteById(id);
     }
 

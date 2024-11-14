@@ -25,6 +25,10 @@ export class UserService {
     return this._http.get<HttpResponse<User | null>>(`${USER_URL}/${id}`, httpOptions);
   }
 
+  getUserByIdSafe(id: number): Observable<HttpResponse<User | null>> {
+    return this._http.get<HttpResponse<User | null>>(`${USER_URL}/safe/${id}`, httpOptions);
+  }
+
   getUserByUsername(username: string): Observable<HttpResponse<User | null>> {
     return this._http.get<HttpResponse<User | null>>(`${USER_URL}/name/${username}`, httpOptions);
   }

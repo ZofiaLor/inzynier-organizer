@@ -1,1 +1,38 @@
-<app-table-base [columns]="columns" [data]="userData" (selectEmitter)="selectUser($event)"></app-table-base>
+<button mat-flat-button color="accent" (click)="backEmitter.emit()"><mat-icon>arrow_back</mat-icon>Back</button>
+<mat-card appearance="raised">
+    <mat-card-header>
+      <mat-card-title> Users with added access</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-selection-list #userAdded>
+            @for (user of userAddedData; track user; let idx = $index) {
+                <mat-list-option checkboxPosition="before" [value]="idx">
+                    @if(isSharedFile && afs[idx].accessPrivilege == 2) {
+                        <mat-icon>edit</mat-icon>
+                    } @else if (isSharedFile && afs[idx].accessPrivilege == 1) {
+                        <mat-icon>visibility</mat-icon>
+                    } @else if(!isSharedFile && ads[idx].accessPrivilege == 2) {
+                        <mat-icon>edit</mat-icon>
+                    } @else if (!isSharedFile && ads[idx].accessPrivilege == 1) {
+                        <mat-icon>visibility</mat-icon>
+                    }
+                    &nbsp;{{user.username}}
+                </mat-list-option>
+            }
+        </mat-selection-list>
+        <button mat-flat-button color="primary" (click)="onGrantEdit()"><mat-icon>edit</mat-icon>Grant edit access to all selected</button>
+      <button mat-flat-button color="primary" (click)="onGrantView()"><mat-icon>visibility</mat-icon>Grant view only access to all selected</button>
+      <button mat-flat-button color="warn" (click)="onForbidAccess()"><mat-icon>block</mat-icon>Forbid access to all selected (and delete from list)</button>
+      </mat-card-content>
+      
+</mat-card>
+<mat-card appearance="raised">
+    <mat-card-header>
+        <mat-card-title> Browse users</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <app-table-base [columns]="columns" [data]="userBrowseData" (selectEmitter)="selectNewUser($event)"></app-table-base>
+        </mat-card-content>
+    
+</mat-card>
+

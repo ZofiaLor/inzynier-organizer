@@ -64,6 +64,14 @@ public class UserService {
         return mapper.userToUserDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
 
+    public UserDTO getUserByIdSafe(Long id) {
+        if(id == null) throw new NullPointerException();
+        User unsafe = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        User safe = new User(unsafe.getUsername(), unsafe.getName(), "");
+        safe.setId(id);
+        return mapper.userToUserDTO(safe);
+    }
+
     public UserDTO register(UserDTO newUser) {
         if (newUser.getUsername() == null | newUser.getPassword() == null) throw new NullPointerException();
         User user = mapper.userDTOToUser(newUser);

@@ -30,4 +30,12 @@ export class AccessService {
   getAFsByFileId(fileId: number): Observable<HttpResponse<AccessFile[]>> {
     return this._http.get<HttpResponse<AccessFile[]>>(`${AF_URL}/file/${fileId}`, httpOptions);
   }
+
+  modifyAD(ad: AccessDir): Observable<HttpResponse<AccessDir>> {
+    return this._http.post<HttpResponse<AccessDir>>(AD_URL, ad, httpOptions);
+  }
+
+  modifyAF(af: AccessFile): Observable<HttpResponse<AccessFile>> {
+    return this._http.post<HttpResponse<AccessFile>>(AF_URL, af, httpOptions);
+  }
 }

@@ -47,6 +47,18 @@ public class UserController {
         }
     }
 
+    @GetMapping("/safe/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<UserDTO> getUserByIdSafe(@PathVariable("id") Long id) {
+        try {
+            return new ResponseEntity<>(service.getUserByIdSafe(id), HttpStatus.OK);
+        } catch (EntityNotFoundException ex){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (NullPointerException ex){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     //TODO temporary solution for id and username disambiguation
     @GetMapping("/name/{username}")
     @PreAuthorize("hasRole('ADMIN')")

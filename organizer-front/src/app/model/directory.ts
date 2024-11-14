@@ -3,5 +3,6 @@ export interface Directory {
     name: string,
     parent: number | null,
     owner: number,
+    children: number[],
     files: number[]
 }

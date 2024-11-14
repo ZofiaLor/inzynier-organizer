@@ -36,4 +36,8 @@ export class DirectoryService {
   updateDir(dir: Directory): Observable<HttpResponse<Directory>> {
     return this._http.put<HttpResponse<Directory>>(DIR_URL, dir, httpOptions);
   }
+
+  deleteDir(id: number): Observable<HttpResponse<Directory>> {
+    return this._http.delete<HttpResponse<Directory>>(`${DIR_URL}/${id}`, httpOptions);
+  }
 }

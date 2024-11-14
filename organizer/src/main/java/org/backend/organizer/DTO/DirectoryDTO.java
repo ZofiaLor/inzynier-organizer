@@ -7,6 +7,7 @@ public class DirectoryDTO {
     private String name;
     private Long owner;
     private Long parent;
+    private List<Long> children;
     private List<Long> files;
 
     public Long getId() {
@@ -39,6 +40,14 @@ public class DirectoryDTO {
 
     public void setParent(Long parent) {
         this.parent = parent;
+    }
+
+    public List<Long> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Long> children) {
+        this.children = children;
     }
 
     public List<Long> getFiles() {

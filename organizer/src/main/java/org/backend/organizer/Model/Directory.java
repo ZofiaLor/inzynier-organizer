@@ -12,8 +12,10 @@ public class Directory {
     private String name;
     @ManyToOne
     private User owner;
-    @ManyToOne(cascade = CascadeType.DETACH)
+    @ManyToOne
     private Directory parent;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent")
+    private List<Directory> children;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parent")
     private List<File> files;
 
@@ -47,6 +49,14 @@ public class Directory {
 
     public void setParent(Directory parent) {
         this.parent = parent;
+    }
+
+    public List<Directory> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Directory> children) {
+        this.children = children;
     }
 
     public List<File> getFiles() {

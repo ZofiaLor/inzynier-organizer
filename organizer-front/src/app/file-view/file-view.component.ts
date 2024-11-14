@@ -176,7 +176,7 @@ export class FileViewComponent implements OnInit{
     this.task = undefined;
     switch(this._typeToCreate) {
       case 0:
-        this.dir = {id: 0, name: "Unnamed Directory", owner: 0, parent: this.currentDir!, files: []};
+        this.dir = {id: 0, name: "Unnamed Directory", owner: 0, parent: this.currentDir!, children: [], files: []};
         break;
       case 1:
         this.event = {id: 0, name: "Unnamed Event", textContent: "", eventDates: [], creationDate: "", owner: 0, parent: this.currentDir!};
@@ -195,21 +195,31 @@ export class FileViewComponent implements OnInit{
 
   deleteFile(): void {
     if (this.dir) {
-      console.log("TBA");
-      return;
-    }
-    this.fileService.deleteFile(this._file!.id).pipe(takeUntil(this._destroy$)).subscribe({
+      this.dirService.deleteDir(this.dir.id).pipe(takeUntil(this._destroy$)).subscribe({
+        next: resp => {
+          this.dir = undefined;
+          this.router.navigate(['']);
+        },
+        error: err => {
+          console.log(err);
+        }
+      })
+    } else {
+      this.fileService.deleteFile(this._file!.id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this._file = undefined;
         this.event = undefined;
         this.note = undefined;
         this.task = undefined;
-        this.refreshDirs.emit();
+        this.router.navigate(['']);
+        // this.refreshDirs.emit();
       },
       error: err => {
         console.log(err);
       }
-    })
+    });
+    }
+    
   }
 
   saveItem(): void {

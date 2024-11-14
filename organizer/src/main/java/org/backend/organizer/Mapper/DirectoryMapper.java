@@ -24,6 +24,7 @@ public abstract class DirectoryMapper {
 
     @Mapping(source = "parent", target = "parent", qualifiedByName = "getLongParent")
     @Mapping(source = "owner", target = "owner", qualifiedByName = "getLongOwner")
+    @Mapping(source = "children", target = "children", qualifiedByName = "getListOfLongChildren")
     @Mapping(source = "files", target = "files", qualifiedByName = "getListOfLongFiles")
     public abstract DirectoryDTO directoryToDirectoryDTO(Directory directory);
 
@@ -39,6 +40,16 @@ public abstract class DirectoryMapper {
         return owner.getId();
     }
 
+    @Named("getListOfLongChildren")
+    List<Long> getListOfLongChildren(List<Directory> children) {
+        if (children == null) return null;
+        var result = new ArrayList<Long>();
+        for (var child : children) {
+            result.add(child.getId());
+        }
+        return result;
+    }
+
     @Named("getListOfLongFiles")
     List<Long> getListOfLongFiles(List<File> files) {
         if (files == null) return null;
@@ -51,6 +62,7 @@ public abstract class DirectoryMapper {
 
     @Mapping(source = "parent", target = "parent", qualifiedByName = "getParent")
     @Mapping(source = "owner", target = "owner", qualifiedByName = "getOwner")
+    @Mapping(source = "children", target = "children", qualifiedByName = "getListOfChildren")
     @Mapping(source = "files", target = "files", qualifiedByName = "getListOfFiles")
     public abstract Directory directoryDTOToDirectory(DirectoryDTO directoryDTO);
 
@@ -66,6 +78,16 @@ public abstract class DirectoryMapper {
         return userRepository.getReferenceById(owner);
     }
 
+    @Named("getListOfChildren")
+    List<Directory> getListOfChildren(List<Long> children) {
+        if (children == null) return null;
+        var result = new ArrayList<Directory>();
+        for (var child : children) {
+            result.add(directoryRepository.getReferenceById(child));
+        }
+        return result;
+    }
+
     @Named("getListOfFiles")
     List<File> getListOfFiles(List<Long> files) {
         if (files == null) return null;
@@ -79,6 +101,7 @@ public abstract class DirectoryMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "parent", target = "parent", qualifiedByName = "getParent")
     @Mapping(target = "owner", ignore = true)
+    @Mapping(source = "children", target = "children", qualifiedByName = "getListOfChildren")
     @Mapping(source = "files", target = "files", qualifiedByName = "getListOfFiles")
     public abstract void updateDirectoryFromDirectoryDTO(DirectoryDTO directoryDTO, @MappingTarget Directory directory);
 }

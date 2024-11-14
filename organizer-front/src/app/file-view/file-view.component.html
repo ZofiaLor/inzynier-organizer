@@ -38,15 +38,18 @@
       >
         <mat-icon>groups</mat-icon>Share
       </button>
-      <mat-expansion-panel hideToggle>
-        <mat-expansion-panel-header>
-          <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete</mat-panel-title>
-        </mat-expansion-panel-header>
-        Are you sure? This action cannot be undone.
-        <button mat-raised-button color="warn" (click)="deleteFile()" aria-label="Delete File">
-            <mat-icon>check</mat-icon> CONFIRM
-        </button>
-      </mat-expansion-panel>
+      @if (!dir || dir.parent) {
+        <mat-expansion-panel hideToggle>
+          <mat-expansion-panel-header>
+            <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete</mat-panel-title>
+          </mat-expansion-panel-header>
+          Are you sure? This action cannot be undone.
+          <button mat-raised-button color="warn" (click)="deleteFile()" aria-label="Delete File">
+              <mat-icon>check</mat-icon> CONFIRM
+          </button>
+        </mat-expansion-panel>
+      }
+      
     }
   </div>
   @if(note) {
@@ -57,7 +60,7 @@
             <input matInput type="text"
             class="form-control"
             name="filename"
-            [readonly]="!isOwner"
+            [readonly]="!isOwner && !createMode"
             formControlName="filename" placeholder="Unnamed File"/>
         </mat-form-field>
         <br/>
@@ -83,7 +86,7 @@
                   <input matInput type="text"
                   class="form-control"
                   name="filename"
-                  [readonly]="!isOwner"
+                  [readonly]="!isOwner && !createMode"
                   formControlName="filename" placeholder="Unnamed File"/>
               </mat-form-field>
               <br/>
@@ -132,7 +135,7 @@
                   <input matInput type="text"
                   class="form-control"
                   name="filename"
-                  [readonly]="!isOwner"
+                  [readonly]="!isOwner && !createMode"
                   formControlName="filename" placeholder="Unnamed File"/>
               </mat-form-field>
               <br/>

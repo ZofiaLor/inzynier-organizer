@@ -47,41 +47,20 @@ export class FileTreeComponent implements OnInit{
   private readonly _destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    if (this.router.url.includes('/new')) 
-      {  
-        let id = this.route.snapshot.paramMap.get('dir');
-        if (id === null) this.fetchBaseDirs();
-        else {
-          let intId = parseInt(id);
-          if (Number.isNaN(intId)) this.fetchBaseDirs();
-          else this.fetchDirById(intId);
-        }
-        
-      }
-    else if (this.router.url.includes('/file')) 
-      {  
-        let id = this.route.snapshot.paramMap.get('id');
-        if (id === null) this.fetchBaseDirs();
-        else {
-          let intId = parseInt(id);
-          if (Number.isNaN(intId)) this.fetchBaseDirs();
-          else this.fetchFileById(intId, false);
-        }
-      } 
-      else if (this.router.url.includes('/dir')) {
-        let id = this.route.snapshot.paramMap.get('id');
-        if (id === null) this.fetchBaseDirs();
-        else {
-          let intId = parseInt(id);
-          if (Number.isNaN(intId)) this.fetchBaseDirs();
-          else this.fetchDirById(intId);
-        }
-      } else {
-        this.fetchBaseDirs();
-      }
-    
-    this.fetchADs();
-    this.fetchAFs();
+    this.currentDir = this.storageService.getCurrentDir();
+    this.sharedLocalBaseId = this.storageService.getLocalBase();
+    this.sharedCurrentDir = this.storageService.getCurrentShared();
+    if (this.currentDir) {
+      this.fetchDirById(this.currentDir.id);
+    } else {
+      this.fetchBaseDirs();
+    }
+    if (this.sharedCurrentDir) {
+      this.fetchSharedDirById(this.sharedCurrentDir.id);
+    } else {
+      this.fetchADs();
+      this.fetchAFs();
+    }
   }
 
   isEvent(file: any): file is EventFile {
@@ -97,7 +76,10 @@ export class FileTreeComponent implements OnInit{
   }
 
   clickSharedDir(dirId: number): void {
-    if (this.sharedLocalBaseId === undefined) this.sharedLocalBaseId = dirId;
+    if (this.sharedLocalBaseId === undefined) {
+      this.sharedLocalBaseId = dirId;
+      this.storageService.saveLocalBase(dirId);
+    } 
     this.fetchSharedDirById(dirId);
   }
 
@@ -110,7 +92,7 @@ export class FileTreeComponent implements OnInit{
   }
 
   clickFile(fileId: number): void {
-    this.fetchFileById(fileId, true);
+    this.fetchFileById(fileId);
   }
 
   clickEditDir(): void {
@@ -131,6 +113,7 @@ export class FileTreeComponent implements OnInit{
     this.dirService.getCurrentUsersBaseDir().pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.currentDir = resp.body!;
+        this.storageService.saveCurrentDir(this.currentDir);
         this.dirSelectEmitter.emit(this.currentDir!.id);
         this.hasParent = false;
         this.fetchFilesInDir();
@@ -146,6 +129,7 @@ export class FileTreeComponent implements OnInit{
     this.dirService.getDirById(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.currentDir = resp.body!;
+        this.storageService.saveCurrentDir(this.currentDir);
         this.dirSelectEmitter.emit(this.currentDir!.id);
         this.hasParent = this.currentDir!.parent !== null;
         this.fetchFilesInDir();
@@ -161,6 +145,7 @@ export class FileTreeComponent implements OnInit{
     this.dirService.getDirById(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.sharedCurrentDir = resp.body!;
+        this.storageService.saveSharedDir(this.sharedCurrentDir);
         this.fetchSharedSubdirsInDir();
         this.fetchSharedFilesInDir();
       },
@@ -170,18 +155,12 @@ export class FileTreeComponent implements OnInit{
     });
   }
 
-  fetchFileById(id: number, navigate: boolean): void {
+  fetchFileById(id: number): void {
     this.fileService.getFileById(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        if (navigate) {
-          this.router.navigate([`file/${id}`]).then(() => {
-            this.itemSelectEmitter.emit();
-          });
-        } else if (resp.body!.owner == this.storageService.getUser()!.id){
-          this.fetchDirById(resp.body!.parent);
-        } else {
-          this.fetchBaseDirs();
-        }
+        this.router.navigate([`file/${id}`]).then(() => {
+          this.itemSelectEmitter.emit();
+        });
         
       },
       error: err => {
@@ -195,6 +174,7 @@ export class FileTreeComponent implements OnInit{
       this.dirService.getDirById(this.currentDir!.parent!).pipe(takeUntil(this._destroy$)).subscribe({
         next: resp => {
           this.currentDir = resp.body!;
+          this.storageService.saveCurrentDir(this.currentDir);
           this.dirSelectEmitter.emit(this.currentDir!.id);
           this.hasParent = this.currentDir!.parent !== null;
           this.fetchFilesInDir();
@@ -211,12 +191,15 @@ export class FileTreeComponent implements OnInit{
     if (this.sharedCurrentDir!.id == this.sharedLocalBaseId) {
       this.sharedCurrentDir = undefined;
       this.sharedLocalBaseId = undefined;
+      this.storageService.saveSharedDir(undefined);
+      this.storageService.saveLocalBase(undefined);
       this.fetchADs();
       this.fetchAFs();
     } else {
       this.dirService.getDirById(this.sharedCurrentDir!.parent!).pipe(takeUntil(this._destroy$)).subscribe({
         next: resp => {
           this.sharedCurrentDir = resp.body!;
+          this.storageService.saveSharedDir(this.sharedCurrentDir);
           this.fetchSharedFilesInDir();
           this.fetchSharedSubdirsInDir();
         },

@@ -1,4 +1,4 @@
-<mat-tab-group>
+<mat-tab-group [selectedIndex]="currentTab" (selectedIndexChange)="onTabChange($event)">
     <mat-tab label="My Files">
         @if(currentDir) {
             <button mat-icon-button (click)="clickUpDir()" [disabled]="!hasParent" matTooltip="View Parent Folder" [matTooltipShowDelay]="1000"><mat-icon>drive_folder_upload</mat-icon></button>

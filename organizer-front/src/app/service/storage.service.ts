@@ -4,6 +4,7 @@ import { Directory } from '../model/directory';
 
 const USER_KEY = 'auth-user';
 const DIR_KEYS = ['my-curr, local-base, shared-curr']
+const TAB__KEY = 'last-tab';
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage
 // https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage
 
@@ -69,6 +70,20 @@ export class StorageService {
       return JSON.parse(currentShared);
     }
     return undefined;
+  }
+
+  public saveTab(tab: number): void {
+    window.sessionStorage.removeItem(TAB__KEY);
+    window.sessionStorage.setItem(TAB__KEY, JSON.stringify(tab));
+  }
+
+  public getTab(): number {
+    const tab = window.sessionStorage.getItem(TAB__KEY);
+    if (tab) {
+      return JSON.parse(tab);
+    }
+    window.sessionStorage.setItem(TAB__KEY, JSON.stringify(1));
+    return 1;
   }
 
   public isLoggedIn(): boolean {

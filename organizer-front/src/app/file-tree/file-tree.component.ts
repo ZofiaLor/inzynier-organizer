@@ -42,6 +42,7 @@ export class FileTreeComponent implements OnInit{
   sharedFiles: File[] = [];
   sharedLocalBaseId?: number;
   sharedCurrentDir?: Directory;
+  currentTab: number = 1;
   currentDir?: Directory;
   hasParent: boolean = false;
   private readonly _destroy$ = new Subject<void>();
@@ -50,6 +51,7 @@ export class FileTreeComponent implements OnInit{
     this.currentDir = this.storageService.getCurrentDir();
     this.sharedLocalBaseId = this.storageService.getLocalBase();
     this.sharedCurrentDir = this.storageService.getCurrentShared();
+    this.currentTab = this.storageService.getTab();
     if (this.currentDir) {
       this.fetchDirById(this.currentDir.id);
     } else {
@@ -61,6 +63,11 @@ export class FileTreeComponent implements OnInit{
       this.fetchADs();
       this.fetchAFs();
     }
+  }
+
+  onTabChange(tab: number) {
+    this.currentTab = tab;
+    this.storageService.saveTab(tab);
   }
 
   isEvent(file: any): file is EventFile {

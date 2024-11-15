@@ -53,6 +53,18 @@ public class DirectoryController {
         }
     }
 
+    @GetMapping("/check/{id}")
+    public ResponseEntity<Boolean> checkDirectoryEditAccess(HttpServletRequest request, @PathVariable(name = "id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
+        try {
+            return new ResponseEntity<>(service.checkDirectoryEditAccess(id, username), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/subdirs/{id}")
     public ResponseEntity<List<DirectoryDTO>> getDirectoryByParentID(HttpServletRequest request, @PathVariable(name = "id") Long id) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));

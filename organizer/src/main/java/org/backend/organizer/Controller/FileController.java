@@ -67,6 +67,18 @@ public class FileController {
         }
     }
 
+    @GetMapping("/check/{id}")
+    public ResponseEntity<Boolean> checkFileEditAccess(HttpServletRequest request, @PathVariable(name = "id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
+        try {
+            return new ResponseEntity<>(fileService.checkFileEditAccess(id, username), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/event")
     public ResponseEntity<EventDTO> createEvent(HttpServletRequest request, @RequestBody EventDTO event) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));

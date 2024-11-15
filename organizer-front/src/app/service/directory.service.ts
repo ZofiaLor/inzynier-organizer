@@ -29,6 +29,10 @@ export class DirectoryService {
     return this._http.get<HttpResponse<Directory>>(`${DIR_URL}/${id}`, httpOptions);
   }
 
+  canEditDir(id: number): Observable<HttpResponse<boolean>> {
+    return this._http.get<HttpResponse<boolean>>(`${DIR_URL}/check/${id}`, httpOptions);
+  }
+
   createDir(dir: Directory): Observable<HttpResponse<Directory>> {
     return this._http.post<HttpResponse<Directory>>(DIR_URL, dir, httpOptions);
   }

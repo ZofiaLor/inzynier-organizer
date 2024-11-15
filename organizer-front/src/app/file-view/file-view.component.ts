@@ -20,6 +20,7 @@ import { DirectoryService } from '../service/directory.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../service/storage.service';
 import { Directory } from '../model/directory';
+import { AccessService } from '../service/access.service';
 
 @Component({
   selector: 'app-file-view',
@@ -32,27 +33,7 @@ import { Directory } from '../model/directory';
 export class FileViewComponent implements OnInit{
 
   private _file?: File;
-  // @Input() set file(value: File | undefined) {
-  //   this._file = value;
-  //   if (value !== undefined){
-  //     this.inferFileType();
-  //     this.onChange();
-  //   }
-  // }
-  // get file(): File | undefined {
-  //   return this._file;
-  // }
   private _typeToCreate?: number;
-  // @Input() set typeToCreate(value: number | undefined){
-  //   this._typeToCreate = value;
-  //   if (value !== undefined){
-  //     this.setUpNewFile();
-  //     this.onChange();
-  //   }
-  // }
-  // get typeToCreate(): number | undefined {
-  //   return this._typeToCreate;
-  // }
   @Input() currentDir?: number;
   @Output() refreshDirs = new EventEmitter();
   event?: EventFile;
@@ -65,6 +46,7 @@ export class FileViewComponent implements OnInit{
   sharedItemId?: number;
   isSharedFile = false;
   isOwner = false;
+  canEdit = false;
   parentId?: number;
   movedDirId?: number;
   private readonly _destroy$ = new Subject<void>();
@@ -95,7 +77,7 @@ export class FileViewComponent implements OnInit{
 
   //https://stackoverflow.com/questions/45997369/how-to-get-param-from-url-in-angular-4
   constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly storageService: StorageService, 
-    private readonly fb: FormBuilder, private route: ActivatedRoute, private readonly router: Router) {}
+    private readonly fb: FormBuilder, private route: ActivatedRoute, private readonly router: Router, private readonly accessService: AccessService) {}
   ngOnInit(): void {
     if (this.router.url.includes('/new')) 
       {  
@@ -461,6 +443,16 @@ export class FileViewComponent implements OnInit{
       next: resp => {
         this._file = resp.body!;
         this.isOwner = this._file!.owner == this.storageService.getUser()!.id;
+        if (!this.isOwner) {
+          this.fileService.canEditFile(id).pipe(takeUntil(this._destroy$)).subscribe({
+            next: resp => {
+              this.canEdit = resp.body!;
+            },
+            error: err => {
+              console.log(err);
+            }
+          });
+        }
         this.dir = undefined;
         this.inferFileType();
         this.onChange();
@@ -476,6 +468,16 @@ export class FileViewComponent implements OnInit{
       next: resp => {
         this.dir = resp.body!;
         this.isOwner = this.dir!.owner == this.storageService.getUser()!.id;
+        if (!this.isOwner) {
+          this.dirService.canEditDir(id).pipe(takeUntil(this._destroy$)).subscribe({
+            next: resp => {
+              this.canEdit = resp.body!;
+            },
+            error: err => {
+              console.log(err);
+            }
+          });
+        }
         this._file = undefined;
         this.onChange();
       },

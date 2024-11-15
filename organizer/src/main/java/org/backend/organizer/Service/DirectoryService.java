@@ -69,6 +69,17 @@ public class DirectoryService {
         return mapper.directoryToDirectoryDTO(dir);
     }
 
+    public boolean checkDirectoryEditAccess(Long id, String username) {
+        if (id == null) throw new NullPointerException();
+        Directory dir = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        try {
+            checkAccess(1, id, dir.getOwner(), username);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
     public DirectoryDTO createDirectory(DirectoryDTO newDirectory, String username, boolean isNewUser) {
         if (!isNewUser && newDirectory.getParent() == null) throw new NullPointerException();
         Directory directory = mapper.directoryDTOToDirectory(newDirectory);

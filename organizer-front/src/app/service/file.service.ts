@@ -32,6 +32,10 @@ export class FileService {
     return this._http.get<HttpResponse<File>>(`${FILE_URL}/${id}`, httpOptions);
   }
 
+  canEditFile(id: number): Observable<HttpResponse<boolean>> {
+    return this._http.get<HttpResponse<boolean>>(`${FILE_URL}/check/${id}`, httpOptions);
+  }
+
   createEvent(event: EventFile): Observable<HttpResponse<EventFile>> {
     return this._http.post<HttpResponse<EventFile>>(FILE_URL + '/event', event, httpOptions);
   }

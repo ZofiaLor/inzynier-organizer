@@ -38,4 +38,12 @@ export class AccessService {
   modifyAF(af: AccessFile): Observable<HttpResponse<AccessFile>> {
     return this._http.post<HttpResponse<AccessFile>>(AF_URL, af, httpOptions);
   }
+
+  deleteAD(userId: number, dirId: number): Observable<HttpResponse<null>> {
+    return this._http.delete<HttpResponse<null>>(`${AD_URL}/${userId}/${dirId}`, httpOptions);
+  }
+
+  deleteAF(userId: number, fileId: number): Observable<HttpResponse<null>> {
+    return this._http.delete<HttpResponse<null>>(`${AF_URL}/${userId}/${fileId}`, httpOptions);
+  }
 }

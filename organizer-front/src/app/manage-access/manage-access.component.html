@@ -20,8 +20,8 @@
                 </mat-list-option>
             }
         </mat-selection-list>
-        <button mat-flat-button color="primary" (click)="onGrantEdit()"><mat-icon>edit</mat-icon>Grant edit access to all selected</button>
-      <button mat-flat-button color="primary" (click)="onGrantView()"><mat-icon>visibility</mat-icon>Grant view only access to all selected</button>
+        <button mat-flat-button color="primary" (click)="onGrantAccess(2)"><mat-icon>edit</mat-icon>Grant edit access to all selected</button>
+      <button mat-flat-button color="primary" (click)="onGrantAccess(1)"><mat-icon>visibility</mat-icon>Grant view only access to all selected</button>
       <button mat-flat-button color="warn" (click)="onForbidAccess()"><mat-icon>block</mat-icon>Forbid access to all selected (and delete from list)</button>
       </mat-card-content>
       
@@ -31,6 +31,17 @@
         <mat-card-title> Browse users</mat-card-title>
         </mat-card-header>
         <mat-card-content>
+            @if (user) {
+                Selected user: {{user.username}}
+                @if (user.name) {
+                    ({{user.name}})
+                }
+                <button mat-flat-button color="primary" (click)="onGrantAccessNew(2)"><mat-icon>edit</mat-icon>Grant edit access</button>
+                <button mat-flat-button color="primary" (click)="onGrantAccessNew(1)"><mat-icon>visibility</mat-icon>Grant view only access</button>
+            } @else {
+                Select a user to add them to the access list
+            }
+            <br/><br/>
             <app-table-base [columns]="columns" [data]="userBrowseData" (selectEmitter)="selectNewUser($event)"></app-table-base>
         </mat-card-content>
     

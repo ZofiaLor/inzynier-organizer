@@ -11,6 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { User } from '../model/user';
 import { AccessFile } from '../model/access-file';
 import { AccessDir } from '../model/access-dir';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-manage-access',
@@ -32,7 +33,7 @@ export class ManageAccessComponent implements OnChanges, OnInit{
   ads: AccessDir[] = [];
   columns: string[] = ["id", "username", "name"];
 
-  constructor (private readonly userService: UserService, private readonly storageService: StorageService, private readonly accessService: AccessService) {}
+  constructor (private readonly userService: UserService, private readonly storageService: StorageService, private readonly accessService: AccessService, private snackBar: MatSnackBar) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (this.sharedItemId) {
       if (this.isSharedFile) {
@@ -54,52 +55,60 @@ export class ManageAccessComponent implements OnChanges, OnInit{
     });
   }
 
-  onGrantEdit() {
+  onGrantAccess(access: number) {
     console.log(this.userAddedList.selectedOptions);
     if (this.isSharedFile) {
       for (var selected of this.userAddedList.selectedOptions.selected) {
-        let af: AccessFile = {id: {userId: this.userAddedData[parseInt(selected.value)].id, fileId: this.sharedItemId!}, accessPrivilege: 2};
+        let af: AccessFile = {id: {userId: this.userAddedData[parseInt(selected.value)].id, fileId: this.sharedItemId!}, accessPrivilege: access};
         this.modifyAF(af);
-        this.afs[parseInt(selected.value)].accessPrivilege = 2;
+        this.afs[parseInt(selected.value)].accessPrivilege = access;
       }
     } else {
       for (var selected of this.userAddedList.selectedOptions.selected) {
-        let ad: AccessDir = {id: {userId: this.userAddedData[parseInt(selected.value)].id, directoryId: this.sharedItemId!}, accessPrivilege: 2};
+        let ad: AccessDir = {id: {userId: this.userAddedData[parseInt(selected.value)].id, directoryId: this.sharedItemId!}, accessPrivilege: access};
         this.modifyAD(ad);
-        this.ads[parseInt(selected.value)].accessPrivilege = 2;
+        this.ads[parseInt(selected.value)].accessPrivilege = access;
       }
     }
   }
 
-  onGrantView() {
-    console.log(this.userAddedList.selectedOptions.selected[0].value);
+  onGrantAccessNew(access: number) {
+    if (this.user === undefined) return;
     if (this.isSharedFile) {
-      for (var selected of this.userAddedList.selectedOptions.selected) {
-        let af: AccessFile = {id: {userId: this.userAddedData[parseInt(selected.value)].id, fileId: this.sharedItemId!}, accessPrivilege: 1};
-        this.modifyAF(af);
-        this.afs[parseInt(selected.value)].accessPrivilege = 1;
-      }
+      let af: AccessFile = {id: {userId: this.user.id, fileId: this.sharedItemId!}, accessPrivilege: access};
+      this.modifyAF(af);
+      this.afs.push(af);
     } else {
-      for (var selected of this.userAddedList.selectedOptions.selected) {
-        let ad: AccessDir = {id: {userId: this.userAddedData[parseInt(selected.value)].id, directoryId: this.sharedItemId!}, accessPrivilege: 1};
-        this.modifyAD(ad);
-        this.ads[parseInt(selected.value)].accessPrivilege = 1;
-      }
+      let ad: AccessDir = {id: {userId: this.user.id, directoryId: this.sharedItemId!}, accessPrivilege: access};
+      this.modifyAD(ad);
+      this.ads.push(ad);
     }
+    this.userAddedData.push(this.user);
+    this.user = undefined;
   }
 
   onForbidAccess() {
-    console.log(this.userAddedList.selectedOptions.selected[0].value);
+    if (this.isSharedFile) {
+      for (var selected of this.userAddedList.selectedOptions.selected) {
+        this.deleteAF(this.userAddedData[parseInt(selected.value)].id, this.sharedItemId!);
+      }
+      this.fetchAFs();
+    } else {
+      for (var selected of this.userAddedList.selectedOptions.selected) {
+        this.deleteAD(this.userAddedData[parseInt(selected.value)].id, this.sharedItemId!);
+      }
+      this.fetchADs();
+    }
   }
 
   selectNewUser(id: number): void {
+    if (id != this.storageService.getUser()!.id){
+      this.fetchUserById(id);
+    } else {
+      this.snackBar.open("You already have the access :)", undefined, {duration: 3000});
+    }
     
   }
-
-  selectAddedUser(id: number): void {
-    
-  }
-
   fetchAFs(): void {
     this.accessService.getAFsByFileId(this.sharedItemId!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
@@ -153,6 +162,17 @@ export class ManageAccessComponent implements OnChanges, OnInit{
     }
   }
 
+  fetchUserById(id: number): void {
+    this.userService.getUserByIdSafe(id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.user = resp.body!;
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
   modifyAF(af: AccessFile): void {
     this.accessService.modifyAF(af).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
@@ -166,6 +186,28 @@ export class ManageAccessComponent implements OnChanges, OnInit{
 
   modifyAD(ad: AccessDir): void {
     this.accessService.modifyAD(ad).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        console.log(resp.body!);
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
+  deleteAF(userId: number, fileId: number) {
+    this.accessService.deleteAF(userId, fileId).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        console.log(resp.body!);
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
+  deleteAD(userId: number, dirId: number) {
+    this.accessService.deleteAD(userId, dirId).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         console.log(resp.body!);
       },

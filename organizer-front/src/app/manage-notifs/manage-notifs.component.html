@@ -1,0 +1,34 @@
+<form [formGroup]="customDateForm">
+    <mat-form-field appearance="outline" class="longDate">
+        <mat-label>Full date</mat-label>
+        <input matInput type="datetime-local"
+        name="customDate"
+        formControlName="customDate"/>
+    </mat-form-field>
+  </form>
+  
+<form [formGroup]="unitsForm">
+    <mat-form-field appearance="outline">
+        <input matInput type="number" value="5"
+        name="timeDifference" formControlName="timeDifference">
+      </mat-form-field>
+      <br/>
+    <mat-form-field appearance="outline">
+      <mat-label>Units</mat-label>
+      <mat-select matNativeControl formControlName="unitSelect" name="unitSelect">
+        @for (unit of units; track unit) {
+          <mat-option [value]="unit">{{unit}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <br/>
+    <div>
+      <mat-radio-group formControlName="fromNow">
+        <mat-radio-button value=false>before</mat-radio-button>
+        <mat-radio-button value=true>from now</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    {{unitsForm.controls.timeDifference.value}}
+    {{unitsForm.controls.unitSelect.value}}
+    {{unitsForm.controls.fromNow.value}}
+</form>

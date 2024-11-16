@@ -73,8 +73,17 @@ public class NotificationService {
         return mapper.notificationToNotificationDTO(repository.save(notification));
     }
 
-    public void sendNotifications() {
+    public void sendAllNotifications() {
         for (var notif : repository.getAllBySentAndSendTimeSettingAfter(false, LocalDateTime.now())) {
+            notif.setSent(true);
+            repository.save(notif);
+        }
+    }
+
+    public void sendUsersNotifications(String username) {
+        if (!userRepository.existsByUsername(username)) throw new EntityNotFoundException();
+        User user = userRepository.findByUsername(username);
+        for (var notif : repository.getAllByUserAndSentAndSendTimeSettingAfter(user,false, LocalDateTime.now())) {
             notif.setSent(true);
             repository.save(notif);
         }

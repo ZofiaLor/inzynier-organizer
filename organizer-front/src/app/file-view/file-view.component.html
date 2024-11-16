@@ -2,6 +2,8 @@
   <app-move-dir [origParentId]="parentId" [movedDirId]="movedDirId" (moveEmitter)="onFinishMoving($event)"></app-move-dir>
 } @else if (sharingElement) {
   <app-manage-access [sharedItemId]="sharedItemId" [isSharedFile]="isSharedFile" (backEmitter)="sharingElement = false"></app-manage-access>
+} @else if (managingNotifs) {
+  <app-manage-notifs></app-manage-notifs>
 }
 @else if (note || event || task || dir){
   <div class="editInfo">
@@ -46,6 +48,14 @@
         mat-raised-button
         color="primary"
         class="btn btn-primary btn-block"
+        (click)="manageNotifs()"
+      >
+        <mat-icon>notifications</mat-icon>Manage notifications
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        class="btn btn-primary btn-block"
         (click)="shareItem()"
       >
         <mat-icon>groups</mat-icon>Share
@@ -74,6 +84,10 @@
             name="filename"
             [readonly]="!isOwner && !createMode"
             formControlName="filename" placeholder="Unnamed File"/>
+            <mat-error>
+              @if (!noteForm.controls.filename.valid) { @if
+              (noteForm.controls.filename.hasError('required')) { The name cannot be empty! } }
+            </mat-error>
         </mat-form-field>
         <br/>
         <div class="created">Created on {{note.creationDate | date: 'medium'}}</div>
@@ -101,6 +115,10 @@
                   name="filename"
                   [readonly]="!isOwner && !createMode"
                   formControlName="filename" placeholder="Unnamed File"/>
+                  <mat-error>
+                    @if (!eventForm.controls.filename.valid) { @if
+                    (eventForm.controls.filename.hasError('required')) { The name cannot be empty! } }
+                  </mat-error>
               </mat-form-field>
               <br/>
               <div class="created">Created on {{event.creationDate | date: 'medium'}}</div>
@@ -154,6 +172,10 @@
                   name="filename"
                   [readonly]="!isOwner && !createMode"
                   formControlName="filename" placeholder="Unnamed File"/>
+                  <mat-error>
+                    @if (!taskForm.controls.filename.valid) { @if
+                    (taskForm.controls.filename.hasError('required')) { The name cannot be empty! } }
+                  </mat-error>
               </mat-form-field>
               <br/>
               <div class="created">Created on {{task.creationDate | date: 'medium'}}</div>
@@ -190,6 +212,10 @@
           class="form-control"
           name="dirname"
           formControlName="dirname" placeholder="Unnamed Directory"/>
+          <mat-error>
+            @if (!dirForm.controls.dirname.valid) { @if
+            (dirForm.controls.dirname.hasError('required')) { The name cannot be empty! } }
+          </mat-error>
       </mat-form-field>
   </form>
   }

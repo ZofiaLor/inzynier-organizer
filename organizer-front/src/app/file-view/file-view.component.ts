@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { MoveDirComponent } from '../move-dir/move-dir.component';
 import { ManageAccessComponent } from '../manage-access/manage-access.component';
+import { ManageNotifsComponent } from '../manage-notifs/manage-notifs.component';
 import { DirectoryService } from '../service/directory.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../service/storage.service';
@@ -26,7 +27,7 @@ import { AccessService } from '../service/access.service';
   selector: 'app-file-view',
   standalone: true,
   imports: [MatFormFieldModule, CommonModule, FormsModule, ReactiveFormsModule, MatInputModule, MatIconModule, MatCheckboxModule, MatButtonModule, 
-    MatExpansionModule, MoveDirComponent, ManageAccessComponent],
+    MatExpansionModule, MoveDirComponent, ManageAccessComponent, ManageNotifsComponent],
   templateUrl: './file-view.component.html',
   styleUrl: './file-view.component.scss'
 })
@@ -43,6 +44,7 @@ export class FileViewComponent implements OnInit{
   createMode = false;
   movingElement = false;
   sharingElement = false;
+  managingNotifs = false;
   sharedItemId?: number;
   isSharedFile = false;
   isOwner = false;
@@ -52,16 +54,16 @@ export class FileViewComponent implements OnInit{
   private readonly _destroy$ = new Subject<void>();
 
   dirForm = this.fb.group({
-    dirname: new FormControl('')
+    dirname: new FormControl('', Validators.required)
   });
 
   noteForm = this.fb.group({
-    filename: new FormControl(''),
+    filename: new FormControl('', Validators.required),
     content: new FormControl('')
   });
 
   eventForm = this.fb.group({
-    filename: new FormControl(''),
+    filename: new FormControl('', Validators.required),
     content: new FormControl(''),
     startDate: new FormControl(''),
     endDate: new FormControl(''),
@@ -69,14 +71,14 @@ export class FileViewComponent implements OnInit{
   });
 
   taskForm = this.fb.group({
-    filename: new FormControl(''),
+    filename: new FormControl('', Validators.required),
     content: new FormControl(''),
     deadline: new FormControl(''),
     isFinished: new FormControl(false),
   });
 
   //https://stackoverflow.com/questions/45997369/how-to-get-param-from-url-in-angular-4
-  constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly storageService: StorageService, 
+  constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly storageService: StorageService,
     private readonly fb: FormBuilder, private route: ActivatedRoute, private readonly router: Router, private readonly accessService: AccessService) {}
   ngOnInit(): void {
     if (this.router.url.includes('/new')) 
@@ -270,6 +272,10 @@ export class FileViewComponent implements OnInit{
       this.sharedItemId = this._file?.id;
     }
     this.sharingElement = true;
+  }
+
+  manageNotifs(): void {
+    this.managingNotifs = true;
   }
 
   createDir(): void {

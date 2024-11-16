@@ -42,7 +42,7 @@ export class FileTreeComponent implements OnInit{
   sharedFiles: File[] = [];
   sharedLocalBaseId?: number;
   sharedCurrentDir?: Directory;
-  currentTab: number = 1;
+  currentTab: number = 0;
   currentDir?: Directory;
   hasParent: boolean = false;
   private readonly _destroy$ = new Subject<void>();

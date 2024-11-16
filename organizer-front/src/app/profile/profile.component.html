@@ -1,9 +1,18 @@
 @if (user) {
-    <mat-card>
+  <div class="layoutBox-v" fxLayout="column" fxLayoutGap="50px">
+    <div
+      class="layoutBox-h"
+      fxLayout="row"
+      fxLayout.xs="column"
+      fxLayoutGap="10px"
+      fxLayoutAlign="space-evenly stretch"
+    >
+    <mat-card fxFlex="30" fxFlexOrder="1" fxFlexOrder.xs="2">
         <mat-card-header>
             <h2>Profile</h2>
         </mat-card-header>
         <mat-card-content>
+          <br/>
             <form [formGroup]="form">
                 <mat-form-field appearance="outline">
                   <mat-label><b>Username</b></mat-label>
@@ -80,6 +89,18 @@
               </form>
         </mat-card-content>
     </mat-card>
+    <mat-card fxFlex="70" fxFlexOrder="2" fxFlexOrder.xs="1">
+      <mat-card-header>
+        <h2>Notifications</h2>
+      </mat-card-header>
+        <mat-card-content>
+          <app-notifs-view></app-notifs-view>
+        </mat-card-content>
+    </mat-card>
+
+    </div>
+</div>
+    
 } @else {
     Please log in
 }

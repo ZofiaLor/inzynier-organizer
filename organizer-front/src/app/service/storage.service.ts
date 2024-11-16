@@ -82,8 +82,8 @@ export class StorageService {
     if (tab) {
       return JSON.parse(tab);
     }
-    window.sessionStorage.setItem(TAB__KEY, JSON.stringify(1));
-    return 1;
+    window.sessionStorage.setItem(TAB__KEY, JSON.stringify(0));
+    return 0;
   }
 
   public isLoggedIn(): boolean {

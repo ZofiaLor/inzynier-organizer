@@ -66,10 +66,22 @@ public class NotificationController {
         }
     }
 
-    @PutMapping("/send")
-    public ResponseEntity<HttpStatus> sendNotifications() {
-        service.sendNotifications();
+    @PutMapping("/sendall")
+    public ResponseEntity<HttpStatus> sendAllNotifications() {
+        service.sendAllNotifications();
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/send")
+    public ResponseEntity<HttpStatus> sendUsersNotifications(HttpServletRequest request) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
+        try {
+            service.sendUsersNotifications(username);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
     @PutMapping("")

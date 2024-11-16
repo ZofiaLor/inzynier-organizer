@@ -3,6 +3,7 @@ import { User } from '../model/user';
 import { StorageService } from '../service/storage.service';
 import { UserService } from '../service/user.service';
 import { MatCardModule } from '@angular/material/card';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, FormBuilder,
   FormControl,Validators, ReactiveFormsModule } from '@angular/forms';
   import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,6 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { Subject, takeUntil } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotifsViewComponent } from '../notifs-view/notifs-view.component';
 
 @Component({
   selector: 'app-profile',
@@ -22,7 +24,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
-    MatButtonModule,],
+    MatButtonModule,
+    FlexLayoutModule,
+    NotifsViewComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })

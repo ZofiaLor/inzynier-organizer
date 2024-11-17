@@ -1,4 +1,6 @@
-<form [formGroup]="customDateForm">
+<button mat-flat-button color="accent" (click)="backEmitter.emit()"><mat-icon>arrow_back</mat-icon>Back</button>
+@if (file) {
+  <form [formGroup]="customDateForm">
     <mat-form-field appearance="outline" class="longDate">
         <mat-label>Full date</mat-label>
         <input matInput type="datetime-local"
@@ -6,29 +8,45 @@
         formControlName="customDate"/>
     </mat-form-field>
   </form>
-  
-<form [formGroup]="unitsForm">
-    <mat-form-field appearance="outline">
-        <input matInput type="number" value="5"
-        name="timeDifference" formControlName="timeDifference">
+  <button mat-flat-button color="primary" (click)="addCustomDate()"><mat-icon>notification_add</mat-icon>Add</button>
+
+  @if (isEvent(file) || isTask(file)) {
+    <form [formGroup]="unitsForm">
+      <mat-form-field appearance="outline">
+          <input matInput type="number" value="0" min="0" step="1"
+          name="timeDifference" formControlName="timeDifference">
+        </mat-form-field>
+        <br/>
+      <mat-form-field appearance="outline">
+        <mat-label>Units</mat-label>
+        <mat-select matNativeControl formControlName="unitSelect" name="unitSelect">
+          @for (unit of units; track unit) {
+            <mat-option [value]="unit">{{unit}}</mat-option>
+          }
+        </mat-select>
       </mat-form-field>
-      <br/>
-    <mat-form-field appearance="outline">
-      <mat-label>Units</mat-label>
-      <mat-select matNativeControl formControlName="unitSelect" name="unitSelect">
-        @for (unit of units; track unit) {
-          <mat-option [value]="unit">{{unit}}</mat-option>
-        }
-      </mat-select>
+      {{unitsForm.controls.timeDifference.value}}
+      {{unitsForm.controls.unitSelect.value}}
+    </form>
+    <button mat-flat-button color="primary" (click)="addUnitDate()"><mat-icon>notification_add</mat-icon>Add</button>
+  }
+  <form [formGroup]="messageForm">
+    <mat-form-field appearance="outline" class="longDate">
+        <mat-label>Message</mat-label>
+        <textarea matInput placeholder="Leave empty for auto message" name="messageText"
+        formControlName="messageText"></textarea>
     </mat-form-field>
-    <br/>
-    <div>
-      <mat-radio-group formControlName="fromNow">
-        <mat-radio-button value=false>before</mat-radio-button>
-        <mat-radio-button value=true>from now</mat-radio-button>
-      </mat-radio-group>
-    </div>
-    {{unitsForm.controls.timeDifference.value}}
-    {{unitsForm.controls.unitSelect.value}}
-    {{unitsForm.controls.fromNow.value}}
-</form>
+  </form>
+  <h2>Future notifications</h2>
+  @for(notif of notifs; track notif) {
+    <mat-card appearance="raised">
+      <mat-card-content>
+        {{notif.sendTimeSetting | date: 'medium'}}
+        <br/>
+        <button mat-button>Cancel</button>
+      </mat-card-content>
+  </mat-card>
+}
+  
+  
+}

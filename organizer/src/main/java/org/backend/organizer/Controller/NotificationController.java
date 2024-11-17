@@ -44,6 +44,18 @@ public class NotificationController {
         }
     }
 
+    @GetMapping("/file/{id}")
+    public ResponseEntity<List<NotificationDTO>> getNotificationByUserAndFileID(HttpServletRequest request, @PathVariable(name = "id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
+        try {
+            return new ResponseEntity<>(service.getAllUnsentByUserAndFile(username, id), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<NotificationDTO> getNotificationByID(@PathVariable(name = "id") Long id) {
         try {

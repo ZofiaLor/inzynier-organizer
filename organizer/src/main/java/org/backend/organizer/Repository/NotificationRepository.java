@@ -1,5 +1,6 @@
 package org.backend.organizer.Repository;
 
+import org.backend.organizer.Model.File;
 import org.backend.organizer.Model.Notification;
 import org.backend.organizer.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> getAllSentByUser(User user);
     @Query("SELECT n FROM Notification n WHERE n.isRead = :isRead AND n.user = :user AND n.isSent = TRUE")
     List<Notification> getAllSentByReadAndUser(boolean isRead, User user);
+
+    @Query("SELECT n FROM Notification n WHERE n.file = :file AND n.user = :user AND n.isSent = FALSE")
+    List<Notification> getAllUnsentByUserAndFile(User user, File file);
 }

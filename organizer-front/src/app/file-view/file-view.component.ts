@@ -33,8 +33,8 @@ import { AccessService } from '../service/access.service';
 })
 export class FileViewComponent implements OnInit{
 
-  private _file?: File;
-  private _typeToCreate?: number;
+  _file?: File;
+  _typeToCreate?: number;
   @Input() currentDir?: number;
   @Output() refreshDirs = new EventEmitter();
   event?: EventFile;

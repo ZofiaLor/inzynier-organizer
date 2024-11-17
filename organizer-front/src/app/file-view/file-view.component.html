@@ -2,8 +2,8 @@
   <app-move-dir [origParentId]="parentId" [movedDirId]="movedDirId" (moveEmitter)="onFinishMoving($event)"></app-move-dir>
 } @else if (sharingElement) {
   <app-manage-access [sharedItemId]="sharedItemId" [isSharedFile]="isSharedFile" (backEmitter)="sharingElement = false"></app-manage-access>
-} @else if (managingNotifs) {
-  <app-manage-notifs></app-manage-notifs>
+} @else if (managingNotifs && _file) {
+  <app-manage-notifs [file]="_file" (backEmitter)="managingNotifs = false"></app-manage-notifs>
 }
 @else if (note || event || task || dir){
   <div class="editInfo">

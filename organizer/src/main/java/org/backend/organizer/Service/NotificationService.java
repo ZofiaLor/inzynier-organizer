@@ -3,8 +3,10 @@ package org.backend.organizer.Service;
 import jakarta.persistence.EntityNotFoundException;
 import org.backend.organizer.DTO.NotificationDTO;
 import org.backend.organizer.Mapper.NotificationMapper;
+import org.backend.organizer.Model.File;
 import org.backend.organizer.Model.Notification;
 import org.backend.organizer.Model.User;
+import org.backend.organizer.Repository.FileRepository;
 import org.backend.organizer.Repository.NotificationRepository;
 import org.backend.organizer.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ public class NotificationService {
     NotificationMapper mapper;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    FileRepository fileRepository;
 
     public List<NotificationDTO> getAllNotifications() {
         var result = new ArrayList<NotificationDTO>();
@@ -54,6 +58,18 @@ public class NotificationService {
         User user = userRepository.findByUsername(username);
         var result = new ArrayList<NotificationDTO>();
         for (var notif : repository.getAllSentByReadAndUser(isRead, user)) {
+            result.add(mapper.notificationToNotificationDTO(notif));
+        }
+        return result;
+    }
+
+    public List<NotificationDTO> getAllUnsentByUserAndFile(String username, Long fileId) {
+        if (fileId == null) throw new NullPointerException();
+        if (!userRepository.existsByUsername(username)) throw new EntityNotFoundException();
+        User user = userRepository.findByUsername(username);
+        File file = fileRepository.findById(fileId).orElseThrow(EntityNotFoundException::new);
+        var result = new ArrayList<NotificationDTO>();
+        for (var notif : repository.getAllUnsentByUserAndFile(user, file)) {
             result.add(mapper.notificationToNotificationDTO(notif));
         }
         return result;

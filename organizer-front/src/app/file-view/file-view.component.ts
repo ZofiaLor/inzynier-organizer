@@ -17,6 +17,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { MoveDirComponent } from '../move-dir/move-dir.component';
 import { ManageAccessComponent } from '../manage-access/manage-access.component';
 import { ManageNotifsComponent } from '../manage-notifs/manage-notifs.component';
+import { VotingPanelComponent } from '../voting-panel/voting-panel.component';
 import { DirectoryService } from '../service/directory.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../service/storage.service';
@@ -27,7 +28,7 @@ import { AccessService } from '../service/access.service';
   selector: 'app-file-view',
   standalone: true,
   imports: [MatFormFieldModule, CommonModule, FormsModule, ReactiveFormsModule, MatInputModule, MatIconModule, MatCheckboxModule, MatButtonModule, 
-    MatExpansionModule, MoveDirComponent, ManageAccessComponent, ManageNotifsComponent],
+    MatExpansionModule, MoveDirComponent, ManageAccessComponent, ManageNotifsComponent, VotingPanelComponent],
   templateUrl: './file-view.component.html',
   styleUrl: './file-view.component.scss'
 })
@@ -45,6 +46,7 @@ export class FileViewComponent implements OnInit{
   movingElement = false;
   sharingElement = false;
   managingNotifs = false;
+  inVotingPanel = false;
   sharedItemId?: number;
   isSharedFile = false;
   isOwner = false;
@@ -276,6 +278,10 @@ export class FileViewComponent implements OnInit{
 
   manageNotifs(): void {
     this.managingNotifs = true;
+  }
+
+  goToVotingPanel(): void {
+    this.inVotingPanel = true;
   }
 
   createDir(): void {

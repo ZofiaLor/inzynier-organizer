@@ -49,6 +49,18 @@ public class VoteController {
         }
     }
 
+    @GetMapping("myvote/{id}")
+    public ResponseEntity<VoteDTO> getCurrentUsersVoteByEventDateId(HttpServletRequest request, @PathVariable("id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
+        try {
+            return new ResponseEntity<>(service.getVoteByUserAndEventDate(username, id), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<VoteDTO> getVoteId(@PathVariable("id") Long id) {
         try {

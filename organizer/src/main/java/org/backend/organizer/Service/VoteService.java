@@ -54,6 +54,14 @@ public class VoteService {
         return result;
     }
 
+    public VoteDTO getVoteByUserAndEventDate(String username, Long edId) {
+        if (username == null || edId == null) throw new NullPointerException();
+        User user = userRepository.findByUsername(username);
+        EventDate eventDate = eventDateRepository.findById(edId).orElseThrow(EntityNotFoundException::new);
+        Vote vote = repository.findByUserAndEventDate(user, eventDate).orElseThrow(EntityNotFoundException::new);
+        return mapper.voteToVoteDTO(vote);
+    }
+
     public VoteDTO getVoteById(Long id) {
         if (id == null) throw new NullPointerException();
         return mapper.voteToVoteDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
@@ -71,7 +79,7 @@ public class VoteService {
         } else {
             vote = repository.findByUserAndEventDate(user, eventDate).get();
             eventDate.setTotalScore(eventDate.getTotalScore() - vote.getScore() + voteDTO.getScore()); // total - old + new
-            mapper.updateVoteFromVoteDTO(voteDTO, vote);
+            vote.setScore(voteDTO.getScore());
         }
 
         eventDateRepository.save(eventDate);

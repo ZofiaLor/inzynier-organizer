@@ -43,7 +43,7 @@
       <mat-card-content>
         {{notif.sendTimeSetting | date: 'medium'}}
         <br/>
-        <button mat-button>Cancel</button>
+        <button mat-button (click)="deleteNotif(notif.id)">Cancel</button>
       </mat-card-content>
   </mat-card>
 }

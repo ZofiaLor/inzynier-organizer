@@ -40,12 +40,34 @@ export class NotifsViewComponent implements OnInit{
     })
   }
 
+  fetchReadUnreadNotifs(read: boolean) {
+    this.notifService.getCurrentUsersNotifsByRead(read).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.notifs = resp.body!;
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
   setNotifAsReadUnread(notif: Notification, read: boolean) {
     notif.read = read;
     this.notifService.updateNotif(notif).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         console.log(resp);
         notif = resp.body!;
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
+  deleteNotif(id: number): void {
+    this.notifService.deleteNotif(id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.fetchAllNotifs();
       },
       error: err => {
         console.log(err);

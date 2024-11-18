@@ -67,8 +67,7 @@ export class ManageNotifsComponent implements OnInit{
     }
     var notif: Notification = {id: 0, user: this.storageService.getUser()!.id, file: this.file!.id, 
       sendTimeSetting: date!, message: message!, read: false};
-    console.log(notif);
-    //this.createNotif(notif);
+    this.createNotif(notif);
   }
 
   addUnitDate(): void {
@@ -95,15 +94,15 @@ export class ManageNotifsComponent implements OnInit{
     }
     var notif: Notification = {id: 0, user: this.storageService.getUser()!.id, file: this.file!.id, 
       sendTimeSetting: date!, message: message!, read: false};
-    console.log(notif);
+    this.createNotif(notif);
   }
 
   isEvent(file: any): file is EventFile {
-    return (file as EventFile).startDate !== undefined && (file as EventFile).startDate != '';
+    return (file as EventFile).startDate !== undefined && (file as EventFile).startDate != '' && (file as EventFile).startDate != null;
   }
 
   isTask(file: any): file is TaskFile {
-    return (file as TaskFile).deadline !== undefined && (file as TaskFile).deadline != '';
+    return (file as TaskFile).deadline !== undefined && (file as TaskFile).deadline != '' && (file as TaskFile).deadline != null;
   }
 
   createNotif(notif: Notification): void {
@@ -121,6 +120,17 @@ export class ManageNotifsComponent implements OnInit{
     this.notifService.getCurrentUsersNotifsByFile(this.file!.id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.notifs = resp.body!;
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
+  deleteNotif(id: number): void {
+    this.notifService.deleteNotif(id).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.fetchFutureNotifs();
       },
       error: err => {
         console.log(err);

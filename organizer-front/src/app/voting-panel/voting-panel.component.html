@@ -1,0 +1,44 @@
+<button mat-flat-button color="accent" (click)="backEmitter.emit()"><mat-icon>arrow_back</mat-icon>Back</button>
+<h2>Add new date proposal</h2>
+<form [formGroup]="form">
+    <mat-form-field appearance="outline" class="longDate">
+        <mat-label>Start Date</mat-label>
+        <input matInput type="datetime-local"
+        class="form-control"
+        name="start"
+        formControlName="start"/>
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="longDate">
+        <mat-label>End Date</mat-label>
+        <input matInput type="datetime-local"
+        class="form-control"
+        name="end"
+        formControlName="end"/>
+    </mat-form-field>
+</form>
+<button mat-raised-button color="primary" (click)="onAddEventDate()">Add</button>
+<h2>Proposals</h2>
+@for (ed of eds; track ed) {
+    <mat-card class="edCard">
+        <mat-card-content>
+            {{ed.start | date: 'medium'}}
+            @if (ed.end) {
+                - {{ed.end | date: 'medium'}}
+            }
+            <h3>Total score: {{ed.totalScore}}</h3>
+            <h4>Votes:</h4>
+            <mat-chip-set aria-label="Votes">
+                @for (vote of votes.get(ed.id); track vote) {
+                    <mat-chip>{{vote.score}}</mat-chip>
+                }
+            </mat-chip-set>
+            
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-flat-button color="primary" (click)="onCastVote(ed.id, -1)">-1</button>
+            <button mat-flat-button color="primary" (click)="onCastVote(ed.id, 0)">0</button>
+            <button mat-flat-button color="primary" (click)="onCastVote(ed.id, 1)">1</button>
+            <button mat-flat-button color="warn" (click)="onDelete(ed.id)"><mat-icon>delete</mat-icon>Delete</button>
+        </mat-card-actions>
+    </mat-card>
+}

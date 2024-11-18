@@ -1,3 +1,6 @@
+<button mat-raised-button color="primary" (click)="fetchAllNotifs()"><mat-icon>mail</mat-icon>All Notifications</button>
+<button mat-raised-button color="primary" (click)="fetchReadUnreadNotifs(true)"><mat-icon>mark_email_read</mat-icon>Read Notifications</button>
+<button mat-raised-button color="primary" (click)="fetchReadUnreadNotifs(false)"><mat-icon>mark_email_unread</mat-icon>Unread Notifications</button>
 @for(notif of notifs; track notif) {
     @if (notif.read) {
         <mat-card appearance="raised" class="read">
@@ -10,7 +13,7 @@
             <mat-card-actions align="end">
                 <button mat-button (click)="goToFile(notif.file)"><mat-icon>file_open</mat-icon>Go to file</button>
                 <button mat-button (click)="setNotifAsReadUnread(notif, false)"><mat-icon>mark_email_unread</mat-icon>Mark as unread</button>
-                <button mat-button><mat-icon>delete</mat-icon>Delete</button>
+                <button mat-button (click)="deleteNotif(notif.id)"><mat-icon>delete</mat-icon>Delete</button>
               </mat-card-actions>
         </mat-card>
     } @else {
@@ -24,7 +27,7 @@
             <mat-card-actions align="end">
                 <button mat-button (click)="goToFile(notif.file)"><mat-icon>file_open</mat-icon>Go to file</button>
                 <button mat-button (click)="setNotifAsReadUnread(notif, true)"><mat-icon>mark_email_read</mat-icon>Mark as read</button>
-                <button mat-button><mat-icon>delete</mat-icon>Delete</button>
+                <button mat-button (click)="deleteNotif(notif.id)"><mat-icon>delete</mat-icon>Delete</button>
               </mat-card-actions>
         </mat-card>
     }

@@ -4,6 +4,8 @@
   <app-manage-access [sharedItemId]="sharedItemId" [isSharedFile]="isSharedFile" (backEmitter)="sharingElement = false"></app-manage-access>
 } @else if (managingNotifs && _file) {
   <app-manage-notifs [file]="_file" (backEmitter)="managingNotifs = false"></app-manage-notifs>
+} @else if (inVotingPanel && event) {
+  <app-voting-panel [event]="event" (backEmitter)="inVotingPanel = false"></app-voting-panel>
 }
 @else if (note || event || task || dir){
   <div class="editInfo">
@@ -139,6 +141,8 @@
                   [readonly] = "!isOwner && !createMode && !canEdit"
                   formControlName="endDate"/>
               </mat-form-field>
+              <button mat-raised-button
+              color="accent" (click)="goToVotingPanel()"><mat-icon>how_to_vote</mat-icon>Date voting panel</button>
               <br/><br/>
               <mat-form-field appearance="outline">
                   <mat-label>Location</mat-label>

@@ -265,6 +265,21 @@ export class FileViewComponent implements OnInit{
     }
   }
 
+  onChangeEventDate() {
+    console.log(this.event);
+    this.inVotingPanel = false;
+    this.fileService.updateEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.event = resp.body!;
+        this.setUpEventForm();
+        this.refreshDirs.emit();
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
+
   shareItem(): void {
     if (this.dir) {
       this.isSharedFile = false;

@@ -30,10 +30,12 @@ export class VotingPanelComponent implements OnInit {
   private readonly _destroy$ = new Subject<void>();
   @Input() event?: EventFile;
   @Output() backEmitter = new EventEmitter();
+  @Output() changeDateEmitter = new EventEmitter();
 
   eds: EventDate[] = [];
   votes = new Map<number, Vote[]>; // number - EventDate ID
   user?: User;
+  isOwner = false;
 
   form = this.fb.group({
     start: new FormControl('', Validators.required),
@@ -47,6 +49,7 @@ export class VotingPanelComponent implements OnInit {
   ngOnInit(): void {
     this.fetchEventDates();
     this.user = this.storageService.getUser();
+    this.isOwner = this.user!.id == this.event!.owner;
   }
 
   onAddEventDate(): void {
@@ -66,6 +69,30 @@ export class VotingPanelComponent implements OnInit {
     this.voteService.getCurrentUserVoteByEventDateId(edId).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.deleteVote(resp.body!.id);
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
+  confirmEventDate(edId: number) {
+    this.edService.getEventDateById(edId).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.event!.startDate = resp.body!.start;
+        this.event!.endDate = resp.body!.end;
+        this.changeDateEmitter.emit();
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
+
+  onDeleteEventDate(edId: number) {
+    this.edService.deleteEventDate(edId).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.fetchEventDates();
       },
       error: err => {
         console.log(err);

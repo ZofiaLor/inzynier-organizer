@@ -5,7 +5,7 @@
 } @else if (managingNotifs && _file) {
   <app-manage-notifs [file]="_file" (backEmitter)="managingNotifs = false"></app-manage-notifs>
 } @else if (inVotingPanel && event) {
-  <app-voting-panel [event]="event" (backEmitter)="inVotingPanel = false"></app-voting-panel>
+  <app-voting-panel [event]="event" (changeDateEmitter)="onChangeEventDate()" (backEmitter)="inVotingPanel = false"></app-voting-panel>
 }
 @else if (note || event || task || dir){
   <div class="editInfo">

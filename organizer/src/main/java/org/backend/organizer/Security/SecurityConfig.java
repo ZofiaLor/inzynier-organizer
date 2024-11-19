@@ -36,8 +36,6 @@ public class SecurityConfig {
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/api/", "/api/auth/*").permitAll()
                 .anyRequest().permitAll()) // blocks guests from accessing any page
-            .formLogin(Customizer.withDefaults()) // shows login form in browser
-            .httpBasic(Customizer.withDefaults()) // enables login from e.g. Postman
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -6,18 +6,28 @@
             <mat-label>Start Date</mat-label>
             <input matInput type="datetime-local"
             class="form-control"
-            name="start"
+            name="start" required
             formControlName="start"/>
+            <mat-error>
+                @if(form.controls.start.value == '') {
+                  Enter the date fully for it to be saved
+                }
+              </mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline" class="longDate">
             <mat-label>End Date</mat-label>
             <input matInput type="datetime-local"
             class="form-control"
-            name="end"
+            name="end" required
             formControlName="end"/>
+            <mat-error>
+                @if(form.controls.end.value == '') {
+                  Enter the date fully for it to be saved
+                }
+              </mat-error>
         </mat-form-field>
     </form>
-    <button mat-raised-button color="primary" (click)="onAddEventDate()">Add</button>
+    <button mat-raised-button color="primary" [disabled]="!form.controls.start.valid" (click)="onAddEventDate()">Add</button>
 }
 
 <h2>Proposals</h2>

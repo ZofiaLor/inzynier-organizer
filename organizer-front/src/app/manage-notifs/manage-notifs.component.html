@@ -1,14 +1,19 @@
 <button mat-flat-button color="accent" (click)="backEmitter.emit()"><mat-icon>arrow_back</mat-icon>Back</button>
 @if (file) {
   <form [formGroup]="customDateForm">
-    <mat-form-field appearance="outline" class="longDate">
+    <mat-form-field appearance="outline" class="longDate" [hideRequiredMarker]="true">
         <mat-label>Full date</mat-label>
         <input matInput type="datetime-local"
-        name="customDate"
+        name="customDate" required
         formControlName="customDate"/>
+        <mat-error>
+          @if(customDateForm.controls.customDate.value == '') {
+            Enter the date fully
+          }
+        </mat-error>
     </mat-form-field>
   </form>
-  <button mat-flat-button color="primary" (click)="addCustomDate()"><mat-icon>notification_add</mat-icon>Add</button>
+  <button mat-flat-button color="primary" [disabled]="!customDateForm.valid" (click)="addCustomDate()"><mat-icon>notification_add</mat-icon>Add</button>
 
   @if (isEvent(file) || isTask(file)) {
     <form [formGroup]="unitsForm">
@@ -25,10 +30,8 @@
           }
         </mat-select>
       </mat-form-field>
-      {{unitsForm.controls.timeDifference.value}}
-      {{unitsForm.controls.unitSelect.value}}
     </form>
-    <button mat-flat-button color="primary" (click)="addUnitDate()"><mat-icon>notification_add</mat-icon>Add</button>
+    <button mat-flat-button color="primary" [disabled]="!unitsForm.valid" (click)="addUnitDate()"><mat-icon>notification_add</mat-icon>Add</button>
   }
   <form [formGroup]="messageForm">
     <mat-form-field appearance="outline" class="longDate">

@@ -8,6 +8,7 @@ import org.backend.organizer.Service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class NotificationController {
         return new ResponseEntity<>(service.getAllNotifications(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/mynotifs")
     public ResponseEntity<List<NotificationDTO>> getCurrentUsersNotifications(HttpServletRequest request, @RequestParam(required = false) Boolean read) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
@@ -84,6 +86,7 @@ public class NotificationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping("/send")
     public ResponseEntity<HttpStatus> sendUsersNotifications(HttpServletRequest request) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));

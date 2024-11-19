@@ -16,6 +16,7 @@ import { Vote } from '../model/vote';
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { User } from '../model/user';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-voting-panel',
@@ -43,7 +44,7 @@ export class VotingPanelComponent implements OnInit {
   })
 
   constructor (private readonly storageService: StorageService, private readonly edService: EventDateService, private readonly voteService: VoteService,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder, private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -53,8 +54,15 @@ export class VotingPanelComponent implements OnInit {
   }
 
   onAddEventDate(): void {
-    console.log(this.form.controls.start.value);
     if (!this.form.controls.start.value || this.form.controls.start.value == '' || this.form.controls.start.value == null) return;
+    if (this.form.controls.end.value != null && this.form.controls.end.value != '') {
+      var start = new Date(this.form.controls.start.value!);
+      var end = new Date(this.form.controls.end.value!);
+      if (start > end) {
+        this.snackBar.open("The start of the event cannot be after the end!", "OK", {duration: 10000});
+        return;
+      }
+    }
     let ed: EventDate = {id: 0, event: this.event!.id, votes: [], totalScore: 0, start: this.form.controls.start.value, end: this.form.controls.end.value!};
     this.createEventDate(ed);
   }

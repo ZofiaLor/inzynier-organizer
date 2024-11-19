@@ -23,6 +23,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { StorageService } from '../service/storage.service';
 import { Directory } from '../model/directory';
 import { AccessService } from '../service/access.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-file-view',
@@ -81,7 +82,7 @@ export class FileViewComponent implements OnInit{
 
   //https://stackoverflow.com/questions/45997369/how-to-get-param-from-url-in-angular-4
   constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly storageService: StorageService,
-    private readonly fb: FormBuilder, private route: ActivatedRoute, private readonly router: Router, private readonly accessService: AccessService) {}
+    private readonly fb: FormBuilder, private route: ActivatedRoute, private readonly router: Router, private readonly accessService: AccessService, private snackBar: MatSnackBar) {}
   ngOnInit(): void {
     if (this.router.url.includes('/new')) 
       {  
@@ -357,9 +358,17 @@ export class FileViewComponent implements OnInit{
   updateEvent(): void {
     this.event!.name = this.eventForm.controls.filename.value!;
     this.event!.textContent = this.eventForm.controls.content.value!;
-    this.event!.startDate = this.eventForm.controls.startDate.value!
-    this.event!.endDate = this.eventForm.controls.endDate.value!
+    this.event!.startDate = this.eventForm.controls.startDate.value!;
+    this.event!.endDate = this.eventForm.controls.endDate.value!;
     this.event!.location = this.eventForm.controls.location.value!;
+    if (this.event!.startDate != null && this.event!.endDate != null) {
+      var start = new Date(this.event!.startDate!);
+      var end = new Date(this.event!.endDate!);
+      if (start > end) {
+        this.snackBar.open("The start of the event cannot be after the end!", "OK", {duration: 10000});
+        return;
+      }
+    }
     this.fileService.updateEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.event = resp.body!;
@@ -377,6 +386,14 @@ export class FileViewComponent implements OnInit{
     this.event!.startDate = this.eventForm.controls.startDate.value!
     this.event!.endDate = this.eventForm.controls.endDate.value!
     this.event!.location = this.eventForm.controls.location.value!;
+    if (this.event!.startDate != null && this.event!.endDate != null) {
+      var start = new Date(this.event!.startDate!);
+      var end = new Date(this.event!.endDate!);
+      if (start > end) {
+        this.snackBar.open("The start of the event cannot be after the end!", "OK", {duration: 10000});
+        return;
+      }
+    }
     this.fileService.createEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this._file = resp.body!;

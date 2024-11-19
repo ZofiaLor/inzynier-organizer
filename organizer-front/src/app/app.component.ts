@@ -84,6 +84,9 @@ export class AppComponent implements OnInit, OnDestroy{
             console.log(err);
           }
         })
+      },
+      error: err => {
+        this.onLogout();
       }
     })
     

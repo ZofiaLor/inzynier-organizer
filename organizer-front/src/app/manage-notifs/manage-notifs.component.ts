@@ -35,7 +35,7 @@ export class ManageNotifsComponent implements OnInit{
   private readonly _destroy$ = new Subject<void>();
 
   customDateForm = this.fb.group({
-    customDate: new FormControl('2024-01-01T00:00')
+    customDate: new FormControl('')
   })
 
   unitsForm = this.fb.group({

@@ -585,82 +585,99 @@ jak i pojedyncze symbole $x$ i $y$  składa się w trybie matematycznym.
 
 \subsection{Użytkownicy}
 \ksremark{słowo zagajenia – jakieś zdanie wprowadzenia zanim pojawi się spis użytkowników}
-\begin{itemize}
-	\item U.1. Użytkownik zwykły: edytuje profil, tworzy, przegląda, modyfikuje, usuwa, udostępnia elementy.
-	\item U.2. Administrator: posiada dostęp do wszystkich funkcjonalności użytkownika zwykłego, zarządza użytkownikami - \pauza\ nadaje i odbiera uprawnienia administratorskie, usuwa użytkowników.
-	\item U.3. Użytkownik niezalogowany: loguje lub rejestruje się.
-\end{itemize}	
-\ksremark{Może byłoby lepiej tak jak niżej?}
+Znaczna większość funkcjonalności aplikacji wymaga, aby znany był aktualnie zalogowany użytkownik -- od edycji profilu po przeglądanie plików. Ponadto istnieć powinien użytkownik specjalny (administrator), który zarządzać może pozostałymi użytkownikami. Wyróżnić można więc 3 rodzaje użytkowników:
 \begin{description}
 	\item [U.1] Użytkownik zwykły: edytuje profil, tworzy, przegląda, modyfikuje, usuwa, udostępnia elementy.
-	\item [U.2] Administrator: posiada dostęp do wszystkich funkcjonalności użytkownika zwykłego, zarządza użytkownikami - \pauza\ nadaje i odbiera uprawnienia administratorskie, usuwa użytkowników.
+	\item [U.2] Administrator: posiada dostęp do wszystkich funkcjonalności użytkownika zwykłego, zarządza użytkownikami -- nadaje i odbiera uprawnienia administratorskie, usuwa użytkowników.
 	\item [U.3] Użytkownik niezalogowany: loguje lub rejestruje się.
 \end{description}	
+
+Zależności między użytkownikami przedstawiono na rys. \ref{fig:uml-users}.
+
+\begin{figure}
+\centering
+\includegraphics[height=\textheight]{./UML-Users.png}
+\caption{Użytkownicy aplikacji.}
+\label{fig:uml-users}
+\end{figure}
 
 
 \subsection{Funkcjonalności}
 \ksremark{słowo zagajenia}
+Dostępne użytkownikowi funkcje aplikacji można ogólnie podzielić na operacje związane z kontem -- autoryzacją i edycją -- oraz związane z plikami -- przeglądanie, edycja, tworzenie nowych plików.
 \begin{itemize}
-	\item F.1. Autentykacja użytkowników
+	\item [F.1.] Autentykacja użytkowników
 	\begin{itemize}
-		\item F.1.1. Logowanie użytkownika U.3. na istniejące konto przy pomocy nazwy użytkownika oraz hasła.
-		\item F.1.2. Wylogowanie zalogowanego użytkownika (U.1., U.2.).
-		\item F.1.3. Rejestracja nowego użytkownika w systemie, umożliwiająca następnie zalogowanie (por. F.1.1.).
+		\item [F.1.1.] Logowanie użytkownika U.3. na istniejące konto przy pomocy nazwy użytkownika oraz hasła.
+		\item [F.1.2.] Wylogowanie zalogowanego użytkownika (U.1., U.2.).
+		\item [F.1.3.] Rejestracja nowego użytkownika w systemie, umożliwiająca następnie zalogowanie (por. F.1.1.).
 	\end{itemize}
-	\item F.2. Zarządzanie elementami.
+	\item [F.2.] Zarządzanie elementami.
 	\begin{itemize}
-		\item F.2.1. Tworzenie nowego elementu.
-		\item F.2.2. Wyświetlenie elementu. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5.).
-		\item F.2.3. Edycja elementu.
+		\item [F.2.1.] Tworzenie nowego elementu.
+		\item [F.2.2.] Wyświetlenie elementu. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5.).
+		\item [F.2.3.] Edycja elementu.
 		\begin{itemize}
-			\item F.2.3.1. Przeniesienie do innego katalogu.
-			\item F.2.3.2. Zmiana nazwy.
-			\item F.2.3.3. Mofyfikacja zawartości. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5.).
-			\item F.2.3.4. Modyfikacja opcji powiadomień.
-			\item F.2.3.5. Oddawanie głosu na termin wydarzenia.
+			\item [F.2.3.1.] Przeniesienie do innego katalogu.
+			\item [F.2.3.2.] Zmiana nazwy.
+			\item [F.2.3.3.] Mofyfikacja zawartości. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5.).
+			\item [F.2.3.4.] Modyfikacja opcji powiadomień.
+			\item [F.2.3.5.] Oddawanie głosu na termin wydarzenia.
 		\end{itemize}
-		\item F.2.4. Usunięcie elementu.
-		\item F.2.5. Przydział dostępu innym użytkownikom do elementów.
+		\item [F.2.4.] Usunięcie elementu.
+		\item [F.2.5.] Przydział dostępu innym użytkownikom do elementów.
 	\end{itemize}
-	\item F.3. Zarządzanie kontem użytkownika.
+	\item [F.3.] Zarządzanie kontem użytkownika.
 	\begin{itemize}
-		\item F.3.1. Edycja danych.
-		\item F.3.2. Usunięcie konta.
+		\item [F.3.1.] Edycja danych.
+		\item [F.3.2.] Usunięcie konta.
 	\end{itemize}
-	\item F.4. Zarządzanie użytkownikami przez administratora (U.2.).
+	\item [F.4.] Zarządzanie użytkownikami przez administratora (U.2.).
 	\begin{itemize}
-		\item F.4.1. Wyświetlenie wszystkich użytkowników systemu.
-		\item F.4.2. Wyświetlenie jednego użytkownika.
-		\item F.4.3. Nadanie bądź odebranie użytkownikowi uprawnień administratora.
-		\item F.4.4. Usunięcie użytkownika.
+		\item [F.4.1.] Wyświetlenie wszystkich użytkowników systemu.
+		\item [F.4.2.] Wyświetlenie jednego użytkownika.
+		\item [F.4.3.] Nadanie bądź odebranie użytkownikowi uprawnień administratora.
+		\item [F.4.4.] Usunięcie użytkownika.
 	\end{itemize}
+	\item [F.5.] Odporność na nieprawidłowe dane wejściowe.
 \end{itemize}
 
-Wymagania funkcjonalne przedstawiono na Rys. \ksremark{rys.} \ref{fig:uml-ucd}.
+Wymagania funkcjonalne dla poszczególnych użytkowników przedstawiono na rys. \ref{fig:uml-admin,fig:uml-logged,fig:uml-anon}.
 
 \begin{figure}
 \centering
-\includegraphics[height=\textheight]{./UML-UCD.png}
-\caption{Diagram przypadków użycia aplikacji.}
-\label{fig:uml-ucd}
+\includegraphics[height=\textheight]{./UML-Admin.png}
+\caption{Diagram przypadków użycia aplikacji dla administratora.}
+\label{fig:uml-admin}
 \end{figure}
-\ksremark{Rys. \ref{fig:uml-ucd}: Rysunek podzieliłbym na trzy osobne dla każdego aktora plus rysunek z relacjami pomiędzy aktorami.}
+
+\begin{figure}
+\centering
+\includegraphics[height=\textheight]{./UML-Logged.png}
+\caption{Diagram przypadków użycia aplikacji dla zwykłego, zalogowanego użytkownika.}
+\label{fig:uml-logged}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[height=\textheight]{./UML-Anonymous.png}
+\caption{Diagram przypadków użycia aplikacji dla użytkownika niezalogowanego.}
+\label{fig:uml-anon}
+\end{figure}
 
 \section{Wymagania niefunkcjonalne}
 
-Dla aplikacji wymagającej zalogowania przez użytkownika, służącej do przechowywania prywatnych informacji niezbędne jest zapewnienie bezpieczeństwa danych przed potencjalnym przechwyceniem. \ksremark{W jaki sposób zweryfikujemy, czy to wymaganie zostało spełnione?}
+Dla aplikacji wymagającej zalogowania przez użytkownika, służącej do przechowywania prywatnych informacji niezbędne jest zapewnienie bezpieczeństwa danych przed potencjalnym przechwyceniem. Hasła użytkowników muszą być przechowywane w formie zakodowanej, do minimum należy też ograniczyć przesyłanie ich do front-endu -- potrzebne są tylko do logowania, rejestracji oraz zmiany hasła. \ksremark{W jaki sposób zweryfikujemy, czy to wymaganie zostało spełnione?}
 
-Ze względu na dużą ilość danych wprowadzanych przez użytkownika, powinna zostać zapewniona odporność na nieprawidłowe dane wejściowe. \ksremark{To jest wymaganie funkcjonalne.}
-
-Istotna również jest intuicyjność interfejsu użytkownika. \ksremark{W jaki sposób zweryfikujemy, czy to wymaganie zostało spełnione?}
+Istotna również jest intuicyjność interfejsu użytkownika. Elementy interfejsu i ich zachowania powinny być podobne do takich, jakie można znaleźć w innych podobnych aplikacjach. Ponadto przyciski i formularze powinny zawierać informację, czego dotyczą, jakie operacje wykonują. Pomocne może być też zastosowanie ikon wraz z opisem tekstowym. \ksremark{W jaki sposób zweryfikujemy, czy to wymaganie zostało spełnione?}
 
 \section{Narzędzia}
 
-Do implementacji back-endu wybrano framework Spring \ksremark{cytowanie dokumentacji, strony, …}, pozwalający m.in. na pisanie aplikacji z wykorzystaniem Java Persistence API (Spring Data JPA) oraz proste zaimplementowanie autentykacji i autoryzacji użytkowników (Spring Security). Za wybraniem tego frameworku zamiast np. Entity Framework \ksremark{cytowanie dokumentacji} przemawiała również posiadana już wiedza o REST API oraz chęć pogłębienia znajomości samego Springa.
-Wspieraną przez Spring bazę danych MySQL \ksremark{cytowanie dokumentacji} oraz sam back-end postanowiono uruchomić w kontenerze Dockera \ksremark{cytowanie dokumentacji}.
+Do implementacji back-endu wybrano framework Spring \cite{bib:spring}, pozwalający m.in. na pisanie aplikacji z wykorzystaniem Java Persistence API (Spring Data JPA) oraz proste zaimplementowanie autentykacji i autoryzacji użytkowników (Spring Security). Za wybraniem tego frameworku zamiast np. Entity Framework \cite{bib:entityframework} przemawiała również posiadana już wiedza o REST API oraz chęć pogłębienia znajomości samego Springa.
+Wspieraną przez Spring bazę danych MySQL \ksremark{cytowanie dokumentacji} oraz sam back-end postanowiono uruchomić w kontenerze Dockera \cite{bib:mysql}.
 
-Do wykonania front-endu posłużył framework Angular \ksremark{cytowanie dokumentacji}. Podobnie jak w przypadku Springa, za tym wyborem przemawiało pragnienie pogłębienia wstępnej wiedzy o frameworku. Subiektywną zaletą jest też, w przeciwieństwie do popularniejszego \footnote{\url{https://trends.stackoverflow.co/?tags=reactjs,vue.js,angular,svelte,angularjs,vuejs3}, dostęp 08.11.2024} Reacta \ksremark{cytowanie dokumentacji}, wyraźny rozdział na pliki HTML, CSS (SCSS) oraz TypeScript w ramach danego komponentu. 
-Wykorzystano również komponenty Angular Material, dzięki którym w prosty sposób uzyskać można estetycznie wyglądający interfejs graficzny, pozwalając na skupienie się na samej logice programu. Angular Material zawiera większość potrzebnych w projekcie komponentów, jednak brakuje w nim komponentu do wizualizacji wydarzeń w kalendarzu. W tym celu wykorzystano otwartoźródłowy (Apache License 2.0) pakiet DayPilot \ksremark{cytowanie dokumentacji}.
+Do wykonania front-endu posłużył framework Angular \cite{bib:angularnew,bib:angularold}. Podobnie jak w przypadku Springa, za tym wyborem przemawiało pragnienie pogłębienia wstępnej wiedzy o frameworku. Subiektywną zaletą jest też, w przeciwieństwie do popularniejszego \footnote{\url{https://trends.stackoverflow.co/?tags=reactjs,vue.js,angular,svelte,angularjs,vuejs3}, dostęp 08.11.2024} Reacta \cite{bib:react}, wyraźny rozdział na pliki HTML, CSS (SCSS) oraz TypeScript w ramach danego komponentu. 
+Wykorzystano również komponenty Angular Material \cite{bib:angularmaterial}, dzięki którym w prosty sposób uzyskać można estetycznie wyglądający interfejs graficzny, zgodny z wytycznymi Material Design firmy Google \cite{material}. Wykorzystanie gotowych komponentów pozwala na skupienie się na samej logice programu.
 
 
 % TODO

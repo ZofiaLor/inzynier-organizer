@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Subject, takeUntil } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotifsViewComponent } from '../notifs-view/notifs-view.component';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -37,10 +38,15 @@ export class ProfileComponent implements OnInit {
     name: new FormControl(''),
     email: new FormControl('', Validators.email),
   });
+
+  passwordForm = this.fb.group({
+    oldPassword: new FormControl('', Validators.required),
+    newPassword: new FormControl('', Validators.required)
+  })
   user?: User;
   private readonly _destroy$ = new Subject<void>();
 
-  constructor (private storageService: StorageService, private userService: UserService, private readonly fb: FormBuilder, private snackBar: MatSnackBar,) {}
+  constructor (private storageService: StorageService, private userService: UserService, private readonly fb: FormBuilder, private snackBar: MatSnackBar, private readonly authService: AuthService) {}
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
@@ -78,6 +84,24 @@ export class ProfileComponent implements OnInit {
     this.form.controls.username.setValue(this.user?.username!);
     this.form.controls.name.setValue(this.user?.name ?? null);
     this.form.controls.email.setValue(this.user?.email ?? null);
+  }
+
+  onChangePassword() {
+    this.authService.changePassword(this.passwordForm.controls.oldPassword.value!, this.passwordForm.controls.newPassword.value!).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.snackBar.open("You've successfully changed your password", undefined, {duration: 3000});
+      },
+      error: err => {
+        console.log(err);
+        if (err.status == 403) {
+          this.snackBar.open("Your password was incorrect", undefined, {duration: 3000});
+        } else if (err.status == 200) {
+          this.snackBar.open("You've successfully changed your password", undefined, {duration: 3000});
+        } else {
+          this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+        }
+      }
+    })
   }
 
 }

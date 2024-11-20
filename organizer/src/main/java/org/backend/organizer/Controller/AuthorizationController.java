@@ -6,6 +6,7 @@ import org.backend.organizer.DTO.UserDTO;
 import org.backend.organizer.Mapper.UserMapper;
 import org.backend.organizer.Model.User;
 import org.backend.organizer.Model.UserPrincipal;
+import org.backend.organizer.Request.PasswordReset;
 import org.backend.organizer.Service.JWTService;
 import org.backend.organizer.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,20 @@ public class AuthorizationController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, service.logout()).body("Success");
+    }
+
+    @PutMapping("/password")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<?> resetPassword(HttpServletRequest request, @RequestBody PasswordReset passwords) {
+        try {
+            return new ResponseEntity<>(service.resetPassword(request, passwords), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("/grant")

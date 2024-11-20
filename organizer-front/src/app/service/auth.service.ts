@@ -37,6 +37,10 @@ export class AuthService {
     return this.http.post(AUTH_URL + 'logout', { }, httpOptions);
   }
 
+  changePassword(oldPwd: string, newPwd: string): Observable<any> {
+    return this.http.put(AUTH_URL + 'password', {oldPassword: oldPwd, newPassword: newPwd}, httpOptions);
+  }
+
   grantAdmin(user: User): Observable<HttpResponse<User>> {
     return this.http.put<HttpResponse<User>>(AUTH_URL + 'grant', user, httpOptions);
   }

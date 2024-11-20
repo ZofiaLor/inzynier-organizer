@@ -87,6 +87,59 @@
                   </button>
                 </div>
               </form>
+              <br/>
+              <h3>Change Password</h3>
+              <form [formGroup]="passwordForm">
+                <mat-form-field appearance="outline">
+                  <mat-label><b>Old Password</b></mat-label>
+                  <input
+                    matInput
+                    type="password"
+                    class="form-control"
+                    formControlName="oldPassword"
+                    required
+                    minlength="6"
+                    [ngClass]="{
+                      'is-invalid': passwordForm.controls.oldPassword.hasError('required')
+                    }"
+                  />
+                  <mat-error>
+                    @if (!passwordForm.controls.oldPassword.valid) { @if
+                    (passwordForm.controls.oldPassword.hasError('required')) { The password is required! }
+                    @else { The password is too short! } }
+                  </mat-error>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label><b>New Password</b></mat-label>
+                  <input
+                    matInput
+                    type="password"
+                    class="form-control"
+                    formControlName="newPassword"
+                    required
+                    minlength="6"
+                    [ngClass]="{
+                      'is-invalid': passwordForm.controls.newPassword.hasError('required')
+                    }"
+                  />
+                  <mat-error>
+                    @if (!passwordForm.controls.newPassword.valid) { @if
+                    (passwordForm.controls.newPassword.hasError('required')) { The password is required! }
+                    @else { The password is too short! } }
+                  </mat-error>
+                </mat-form-field>
+                <div>
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    class="btn btn-primary btn-block"
+                    [disabled]="!passwordForm.valid"
+                    (click)="onChangePassword()"
+                  >
+                    Change password
+                  </button>
+                </div>
+              </form>
         </mat-card-content>
     </mat-card>
     <mat-card fxFlex="70" fxFlexOrder="2" fxFlexOrder.xs="1">

@@ -8,6 +8,7 @@ import org.backend.organizer.Mapper.UserMapper;
 import org.backend.organizer.Model.User;
 import org.backend.organizer.Model.UserPrincipal;
 import org.backend.organizer.Repository.UserRepository;
+import org.backend.organizer.Request.PasswordReset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -101,6 +102,19 @@ public class UserService {
 
     public String logout() {
         return jwtService.getCleanJwtCookie().toString();
+    }
+
+    public String resetPassword(HttpServletRequest request, PasswordReset passwords) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
+        if (username == null | passwords.getNewPassword() == null || passwords.getOldPassword() == null) throw new NullPointerException();
+        if (!repository.existsByUsername(username)) throw new EntityNotFoundException();
+        User user = repository.findByUsername(username);
+        if (encoder.matches(passwords.getOldPassword(), user.getPassword())) {
+            user.setPassword(encoder.encode(passwords.getNewPassword()));
+            repository.save(user);
+            return "Success";
+        }
+        throw new IllegalArgumentException();
     }
 
     public UserDTO changePrivilege(String newRole, String username, HttpServletRequest request) {

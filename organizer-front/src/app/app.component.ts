@@ -26,7 +26,7 @@ export class AppComponent implements OnInit, OnDestroy{
   currentUser?: User;
   unreadNotifs = 0;
   // https://developer.mozilla.org/en-US/docs/Web/API/Window/setInterval
-  readonly intervalID = setInterval(() => this.getUnreadNotifs(), 60000);
+  readonly intervalID = setInterval(() => this.getUnreadNotifs(), 2000);
   private readonly _destroy$ = new Subject<void>();
 
   constructor (private readonly storageService: StorageService, private readonly authService: AuthService, private readonly notifService: NotificationService, 

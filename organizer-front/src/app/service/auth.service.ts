@@ -37,6 +37,10 @@ export class AuthService {
     return this.http.post(AUTH_URL + 'logout', { }, httpOptions);
   }
 
+  refreshToken(): Observable<any> {
+    return this.http.post(AUTH_URL + 'refreshtoken', { }, httpOptions);
+  }
+
   changePassword(oldPwd: string, newPwd: string): Observable<any> {
     return this.http.put(AUTH_URL + 'password', {oldPassword: oldPwd, newPassword: newPwd}, httpOptions);
   }

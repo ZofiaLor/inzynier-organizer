@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.backend.organizer.Model.User;
 import org.backend.organizer.Model.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,8 @@ public class JWTService {
 
     @Value("${organizer.app.jwtCookieName}")
     private String jwtCookie;
+    @Value("${organizer.app.jwtRefreshCookieName}")
+    private String jwtRefreshCookie;
 
     public JWTService() {
         try {
@@ -46,7 +49,15 @@ public class JWTService {
     }
 
     public String getJwtFromCookies(HttpServletRequest request) {
-        Cookie cookie = WebUtils.getCookie(request, jwtCookie);
+        return getCookieValueByName(request, jwtCookie);
+    }
+
+    public String getJwtRefreshFromCookies(HttpServletRequest request) {
+        return getCookieValueByName(request, jwtRefreshCookie);
+    }
+
+    private String getCookieValueByName(HttpServletRequest request, String name) {
+        Cookie cookie = WebUtils.getCookie(request, name);
         if (cookie != null) {
             return cookie.getValue();
         } else {
@@ -60,8 +71,23 @@ public class JWTService {
         return cookie;
     }
 
+    public ResponseCookie generateJwtCookie(User user) {
+        String jwt = generateToken(user.getUsername());
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(24 * 60 * 60).httpOnly(true).build();
+        return cookie;
+    }
+
+    public ResponseCookie generateRefreshJwtCookie(String refreshToken) {
+        return generateCookie(jwtRefreshCookie, refreshToken, "/api/auth/refreshtoken");
+    }
+
     public ResponseCookie getCleanJwtCookie() {
         ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/").build();
+        return cookie;
+    }
+
+    public ResponseCookie getCleanJwtRefreshCookie() {
+        ResponseCookie cookie = ResponseCookie.from(jwtRefreshCookie, null).path("/api/auth/refreshtoken").build();
         return cookie;
     }
 
@@ -94,6 +120,11 @@ public class JWTService {
                 .and()
                 .signWith(getKey())
                 .compact();
+    }
+
+    private ResponseCookie generateCookie(String name, String value, String path) {
+        ResponseCookie cookie = ResponseCookie.from(name, value).path(path).maxAge(24 * 60 * 60).httpOnly(true).build();
+        return cookie;
     }
 
     private SecretKey getKey() {

@@ -4,10 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.backend.organizer.DTO.UserDTO;
 import org.backend.organizer.Mapper.UserMapper;
+import org.backend.organizer.Model.RefreshToken;
 import org.backend.organizer.Model.User;
 import org.backend.organizer.Model.UserPrincipal;
 import org.backend.organizer.Request.PasswordReset;
 import org.backend.organizer.Service.JWTService;
+import org.backend.organizer.Service.RefreshTokenService;
 import org.backend.organizer.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,7 +33,8 @@ public class AuthorizationController {
 
     @Autowired
     JWTService jwtService;
-    //TODO log out currently logged user, maybe log in the new one
+    @Autowired
+    RefreshTokenService refreshTokenService;
     @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO user) {
         try {
@@ -47,7 +50,11 @@ public class AuthorizationController {
         try {
             UserPrincipal userPrincipal = service.login(user);
             ResponseCookie jwtCookie = jwtService.generateJwtCookie(userPrincipal);
-            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(mapper.userToUserDTO(userPrincipal.getUser()));
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrincipal.getUser().getId());
+
+            ResponseCookie jwtRefreshCookie = jwtService.generateRefreshJwtCookie(refreshToken.getToken());
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
+                    .body(mapper.userToUserDTO(userPrincipal.getUser()));
         } catch (NullPointerException ex) {
             return ResponseEntity.badRequest().body("Empty username or password");
         } catch (AuthenticationException ex) {
@@ -58,7 +65,8 @@ public class AuthorizationController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout() {
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, service.logout()).body("Success");
+        var cookies = service.logout();
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookies.get(0)).header(HttpHeaders.SET_COOKIE, cookies.get(1)).body("Success");
     }
 
     @PutMapping("/password")
@@ -96,5 +104,29 @@ public class AuthorizationController {
         } catch (IllegalArgumentException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/refreshtoken")
+    public ResponseEntity<?> refreshToken(HttpServletRequest request) {
+        String refreshToken = jwtService.getJwtRefreshFromCookies(request);
+
+        if ((refreshToken != null) && (!refreshToken.isEmpty())) {
+            try {
+                RefreshToken token = refreshTokenService.findByToken(refreshToken).orElseThrow(EntityNotFoundException::new);
+                refreshTokenService.verifyExpiration(token);
+                User user = token.getUser();
+                ResponseCookie jwtCookie = jwtService.generateJwtCookie(user);
+                return ResponseEntity.ok()
+                        .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                        .body("Success");
+            } catch (IllegalArgumentException ex) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            } catch (EntityNotFoundException ex) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

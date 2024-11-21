@@ -86,10 +86,27 @@ export class AppComponent implements OnInit, OnDestroy{
         })
       },
       error: err => {
-        this.onLogout();
+        console.log("could not get notifs")
+        this.handleExpiredToken();
       }
     })
     
+  }
+
+  handleExpiredToken(): void {
+    this.authService.refreshToken().pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        console.log("refreshed");
+      },
+      error: err => {
+        if (err.status == 200) {
+          console.log("refresh from err");
+        } else {
+          console.log(err);
+          this.onLogout();
+        }
+      }
+    })
   }
   
 }

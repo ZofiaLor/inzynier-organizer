@@ -29,6 +29,8 @@ public class UserService {
 
     @Autowired
     JWTService jwtService;
+    @Autowired
+    RefreshTokenService refreshTokenService;
 
     @Autowired
     DirectoryService directoryService;
@@ -100,8 +102,18 @@ public class UserService {
         }
     }
 
-    public String logout() {
-        return jwtService.getCleanJwtCookie().toString();
+    public List<String> logout() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!Objects.equals(principal.toString(), "anonymousUser")) {
+            Long userId = ((UserPrincipal) principal).getUser().getId();
+            refreshTokenService.deleteByUserId(userId);
+        }
+
+        var result = new ArrayList<String>();
+        result.add(jwtService.getCleanJwtCookie().toString());
+        result.add(jwtService.getCleanJwtRefreshCookie().toString());
+
+        return result;
     }
 
     public String resetPassword(HttpServletRequest request, PasswordReset passwords) {

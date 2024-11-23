@@ -25,10 +25,6 @@ export class NotificationService {
     return this._http.get<HttpResponse<Notification[]>>(`${NOTIF_URL}/file/${fileId}`, httpOptions);
   }
 
-  getNotifById(id: number): Observable<HttpResponse<Notification>> {
-    return this._http.get<HttpResponse<Notification>>(`${NOTIF_URL}/${id}`, httpOptions);
-  }
-
   createNotif(notif: Notification): Observable<HttpResponse<Notification>> {
     return this._http.post<HttpResponse<Notification>>(NOTIF_URL, notif, httpOptions);
   }

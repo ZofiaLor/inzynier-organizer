@@ -20,10 +20,6 @@ public class AccessDirectoryService {
     @Autowired
     DirectoryRepository directoryRepository;
 
-    public List<AccessDirectory> getAllAccessDirectories() {
-        return repository.findAll();
-    }
-
     public List<AccessDirectory> getAccessDirectoryByUser(Long userId) {
         if (userId == null) throw new NullPointerException();
         return repository.findAccessDirectoryByUser(userId);

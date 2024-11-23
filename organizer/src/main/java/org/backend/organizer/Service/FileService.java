@@ -35,23 +35,6 @@ public class FileService {
     @Autowired
     DirectoryService directoryService;
 
-    public List<FileDTO> getAllFiles() {
-        var result = new ArrayList<FileDTO>();
-        for (var file : repository.findAll()) {
-            result.add(mapper.fileToFileDTO(file));
-        }
-        return result;
-    }
-
-    public List<FileDTO> getAllFilesByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        var result = new ArrayList<FileDTO>();
-        for (var file : repository.getAllByOwner(user)) {
-            result.add(mapper.fileToFileDTO(file));
-        }
-        return result;
-    }
-
     public List<FileDTO> getAllFilesByDirectory(Long parentID, String username) {
         Directory directory = directoryRepository.findById(parentID).orElseThrow(EntityNotFoundException::new);
         directoryService.checkAccess(1, parentID, directory.getOwner(), username);

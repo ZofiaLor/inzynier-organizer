@@ -10,7 +10,4 @@ import java.util.List;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    List<Task> getAllByDeadlineBefore(LocalDateTime deadline);
-    List<Task> getAllByDeadlineAfter(LocalDateTime deadline);
-    List<Task> getAllByOwner(User owner);
 }

@@ -34,7 +34,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String jwt = service.getJwtFromCookies(request);
 
 
-        if (jwt != null && service.validateToken(jwt)) {
+        if (jwt != null && !jwt.isEmpty() && service.validateToken(jwt)) {
             String username = service.extractUsername(jwt);
             UserDetails userDetails = context.getBean(UserDetailsServiceImpl.class).loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authToken =

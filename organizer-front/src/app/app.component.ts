@@ -49,7 +49,7 @@ export class AppComponent implements OnInit, OnDestroy{
     this.authService.logout().subscribe({
       next: () => {
         this.storageService.clean();
-        this.router.navigate(['auth/login']).then(() => {
+        this.router.navigate(['/']).then(() => {
           window.location.reload();
         });
         // https://stackoverflow.com/questions/53569884/angular-router-navigate-then-reload

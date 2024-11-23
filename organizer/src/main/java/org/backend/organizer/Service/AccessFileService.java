@@ -20,9 +20,6 @@ public class AccessFileService {
     @Autowired
     FileRepository fileRepository;
 
-    public List<AccessFile> getAllAccessFiles() {
-        return repository.findAll();
-    }
     public List<AccessFile> getAccessFileByUser(Long userId) {
         if (userId == null) throw new NullPointerException();
         return repository.findAccessFileByUser(userId);

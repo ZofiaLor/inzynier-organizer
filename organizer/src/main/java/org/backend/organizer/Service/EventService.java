@@ -29,20 +29,6 @@ public class EventService {
     @Autowired
     AccessFileService afService;
 
-    public List<EventDTO> getAllEventsByUser(String username) {
-        User user = userRepository.findByUsername(username);
-        var result = new ArrayList<EventDTO>();
-        for (var file : repository.getAllByOwner(user)) {
-            result.add(mapper.eventToEventDTO(file));
-        }
-        return result;
-    }
-
-    public EventDTO getEventByID(Long id) {
-        if (id == null) throw new NullPointerException();
-        return mapper.eventToEventDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
-    }
-
     public EventDTO createEvent(EventDTO newEvent, String username) {
         if (newEvent.getParent() == null) throw new NullPointerException();
         Event Event = mapper.eventDTOToEvent(newEvent);

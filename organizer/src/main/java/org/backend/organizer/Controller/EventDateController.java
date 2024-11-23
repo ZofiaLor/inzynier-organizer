@@ -6,6 +6,7 @@ import org.backend.organizer.Service.EventDateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
 @Controller
 @RequestMapping("/api/ed")
+@PreAuthorize("isAuthenticated()")
 public class EventDateController {
     @Autowired
     EventDateService service;
@@ -49,17 +51,6 @@ public class EventDateController {
             return new ResponseEntity<>(service.createEventDate(eventDateDTO), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PutMapping("")
-    public ResponseEntity<EventDateDTO> updateEventDate(@RequestBody EventDateDTO eventDateDTO) {
-        try {
-            return new ResponseEntity<>(service.updateEventDate(eventDateDTO), HttpStatus.OK);
-        } catch (NullPointerException ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (EntityNotFoundException ex) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

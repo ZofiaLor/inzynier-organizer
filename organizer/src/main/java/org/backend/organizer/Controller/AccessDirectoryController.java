@@ -7,6 +7,7 @@ import org.backend.organizer.Service.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,16 +17,12 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
 @Controller
 @RequestMapping("/api/ad")
+@PreAuthorize("isAuthenticated()")
 public class AccessDirectoryController {
     @Autowired
     AccessDirectoryService service;
     @Autowired
     JWTService jwtService;
-
-    @GetMapping("")
-    public ResponseEntity<List<AccessDirectory>> getAllAccessDirectories() {
-        return new ResponseEntity<>(service.getAllAccessDirectories(), HttpStatus.OK);
-    }
 
     @GetMapping("user/{user}")
     public ResponseEntity<List<AccessDirectory>> getAccessDirectoryByUser(@PathVariable(name = "user") Long user) {
@@ -40,17 +37,6 @@ public class AccessDirectoryController {
     public ResponseEntity<List<AccessDirectory>> getAccessDirectoryByDirectory(@PathVariable(name = "dir") Long dir) {
         try {
             return new ResponseEntity<>(service.getAccessDirectoryByDirectory(dir), HttpStatus.OK);
-        } catch (NullPointerException ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping("{user}/{dir}")
-    public ResponseEntity<AccessDirectory> getAccessDirectory(@PathVariable(name = "user") Long user, @PathVariable(name = "dir") Long dir) {
-        try {
-            Optional<AccessDirectory> ad = service.getAccessDirectory(user, dir);
-            return ad.map(accessDirectory -> new ResponseEntity<>(accessDirectory, HttpStatus.OK))
-                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

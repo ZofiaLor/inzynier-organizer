@@ -29,23 +29,6 @@ public class DirectoryService {
     @Autowired
     AccessDirectoryService adService;
 
-    public List<DirectoryDTO> getAllDirectories() {
-        var result = new ArrayList<DirectoryDTO>();
-        for (var dir : repository.findAll()) {
-            result.add(mapper.directoryToDirectoryDTO(dir));
-        }
-        return result;
-    }
-
-    public List<DirectoryDTO> getAllDirectoriesByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        var result = new ArrayList<DirectoryDTO>();
-        for (var dir : repository.getAllByOwner(user)) {
-            result.add(mapper.directoryToDirectoryDTO(dir));
-        }
-        return result;
-    }
-
     public List<DirectoryDTO> getAllDirectoriesByParentID(Long parentID, String username) {
         if (parentID == null) throw new NullPointerException();
         Directory parent = repository.findById(parentID).orElseThrow(EntityNotFoundException::new);

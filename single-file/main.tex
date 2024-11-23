@@ -545,6 +545,14 @@ escapeinside={@*}{*@},%
 \item  studia literaturowe \cite{bib:artykul,bib:ksiazka,bib:konferencja,bib:internet} -  opis znanych rozwiązań (także opisanych naukowo, jeżeli problem jest poruszany w publikacjach naukowych), algorytmów, 
 \end{itemize}
 
+\section{Opis problemu}
+
+\section{Istniejące rozwiązania}
+\subsection{Google Calendar}
+Popularną aplikacją służącą do zarządzania wydarzeniami i zadaniami jest Google Calendar. Zadania można dodać do kalendarza, ustawić ich termin oraz opis. Wydarzenia pozwalają ponadto między innymi na dodanie osób uczestniczących, miejsca wydarzenia i powiadomień.
+\subsection{Google Docs, Google Drive}
+Aplikacja Google Docs pozwala na tworzenie różnych rodzajów plików -- dokumentów tekstowych, prezentacji multimedialnych, arkuszy kalkulacyjnych -- i zapisywanie ich na dysku Google Drive. Pliki i foldery na dysku można udostępniać innym użytkownikom, dodając ich pojedynczo bądź grupowo, jak i udostępniając link. Udostępnienie ma trzy możliwe poziomy dostępu: tylko przeglądanie, komentowanie oraz edytowanie. Udostępnienie folderu przyznaje dostęp do wszystkich plików i podfolderów w nim się znajdujących.
+
 
 Wzory  
 \begin{align}
@@ -677,7 +685,7 @@ Do implementacji back-endu wybrano framework Spring \cite{bib:spring}, pozwalaj�
 Wspieraną przez Spring bazę danych MySQL \ksremark{cytowanie dokumentacji} oraz sam back-end postanowiono uruchomić w kontenerze Dockera \cite{bib:mysql}.
 
 Do wykonania front-endu posłużył framework Angular \cite{bib:angularnew,bib:angularold}. Podobnie jak w przypadku Springa, za tym wyborem przemawiało pragnienie pogłębienia wstępnej wiedzy o frameworku. Subiektywną zaletą jest też, w przeciwieństwie do popularniejszego \footnote{\url{https://trends.stackoverflow.co/?tags=reactjs,vue.js,angular,svelte,angularjs,vuejs3}, dostęp 08.11.2024} Reacta \cite{bib:react}, wyraźny rozdział na pliki HTML, CSS (SCSS) oraz TypeScript w ramach danego komponentu. 
-Wykorzystano również komponenty Angular Material \cite{bib:angularmaterial}, dzięki którym w prosty sposób uzyskać można estetycznie wyglądający interfejs graficzny, zgodny z wytycznymi Material Design firmy Google \cite{material}. Wykorzystanie gotowych komponentów pozwala na skupienie się na samej logice programu.
+Wykorzystano również komponenty Angular Material \cite{bib:angularmaterial}, dzięki którym w prosty sposób uzyskać można estetycznie i spójnie wyglądający interfejs graficzny, zgodny z wytycznymi Material Design firmy Google \cite{material}. Wykorzystanie gotowych komponentów pozwala na skupienie się na samej logice programu. Do operacji matematycznych na datach użyto biblioteki Luxon \cite{bib:luxon}.
 
 
 % TODO

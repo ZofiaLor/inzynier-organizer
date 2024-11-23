@@ -30,20 +30,6 @@ public class TaskService {
     @Autowired
     AccessFileService afService;
 
-    public List<TaskDTO> getAllTasksByUser(String username) {
-        User user = userRepository.findByUsername(username);
-        var result = new ArrayList<TaskDTO>();
-        for (var file : repository.getAllByOwner(user)) {
-            result.add(mapper.taskToTaskDTO(file));
-        }
-        return result;
-    }
-
-    public TaskDTO getTaskByID(Long id) {
-        if (id == null) throw new NullPointerException();
-        return mapper.taskToTaskDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
-    }
-
     public TaskDTO createTask(TaskDTO newTask, String username) {
         if (newTask.getParent() == null) throw new NullPointerException();
         Task Task = mapper.taskDTOToTask(newTask);

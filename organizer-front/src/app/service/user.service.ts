@@ -29,23 +29,15 @@ export class UserService {
     return this._http.get<HttpResponse<User | null>>(`${USER_URL}/safe/${id}`, httpOptions);
   }
 
-  getUserByUsername(username: string): Observable<HttpResponse<User | null>> {
-    return this._http.get<HttpResponse<User | null>>(`${USER_URL}/name/${username}`, httpOptions);
-  }
-
-  getMyUser(): Observable<HttpResponse<User | null>> {
-    return this._http.get<HttpResponse<User | null>>(USER_URL + '/myuser', httpOptions);
-  }
-
-  createUser(user: User): Observable<HttpResponse<User | null>> {
-    return this._http.post<HttpResponse<User | null>>(USER_URL, user, httpOptions);
-  }
-
   updateUser(user: User): Observable<HttpResponse<User | null>> {
     return this._http.put<HttpResponse<User | null>>(USER_URL, user, httpOptions);
   }
   
   deleteUser(id: number): Observable<HttpResponse<null>> {
     return this._http.delete<HttpResponse<null>>(`${USER_URL}/${id}`, httpOptions);
+  }
+
+  deleteMyUser(): Observable<HttpResponse<null>> {
+    return this._http.delete<HttpResponse<null>>(`${USER_URL}/delete`, httpOptions);
   }
 }

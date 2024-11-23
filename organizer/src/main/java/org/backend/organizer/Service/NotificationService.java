@@ -27,22 +27,6 @@ public class NotificationService {
     @Autowired
     FileRepository fileRepository;
 
-    public List<NotificationDTO> getAllNotifications() {
-        var result = new ArrayList<NotificationDTO>();
-        for (var notif : repository.findAll()) {
-            result.add(mapper.notificationToNotificationDTO(notif));
-        }
-        return result;
-    }
-
-    public List<NotificationDTO> getAllNotificationsBySent(boolean isSent) {
-        var result = new ArrayList<NotificationDTO>();
-        for (var notif : repository.getAllBySent(isSent)) {
-            result.add(mapper.notificationToNotificationDTO(notif));
-        }
-        return result;
-    }
-
     public List<NotificationDTO> getAllSentNotificationsByUser(String username) {
         if (!userRepository.existsByUsername(username)) throw new EntityNotFoundException();
         User user = userRepository.findByUsername(username);
@@ -75,11 +59,6 @@ public class NotificationService {
         return result;
     }
 
-    public NotificationDTO getById(Long id) {
-        if (id == null) throw new NullPointerException();
-        return mapper.notificationToNotificationDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
-    }
-
     public NotificationDTO createNotification(NotificationDTO notificationDTO) {
         if (notificationDTO.getUser() == null || notificationDTO.getFile() == null) throw new NullPointerException();
         Notification notification = mapper.notificationDTOToNotification(notificationDTO);
@@ -89,13 +68,6 @@ public class NotificationService {
         return mapper.notificationToNotificationDTO(repository.save(notification));
     }
 
-    public void sendAllNotifications() {
-        for (var notif : repository.getAllBySentAndSendTimeSettingAfter(false, LocalDateTime.now())) {
-            notif.setSent(true);
-            repository.save(notif);
-        }
-    }
-
     public void sendUsersNotifications(String username) {
         if (!userRepository.existsByUsername(username)) throw new EntityNotFoundException();
         User user = userRepository.findByUsername(username);
@@ -103,14 +75,6 @@ public class NotificationService {
             notif.setSent(true);
             repository.save(notif);
         }
-    }
-
-    public NotificationDTO updateNotification(NotificationDTO notificationUpdates) {
-        if (notificationUpdates == null) throw new NullPointerException();
-        Notification notification = repository.findById(notificationUpdates.getId()).orElseThrow(EntityNotFoundException::new);
-        mapper.updateNotificationFromNotificationDTO(notificationUpdates, notification);
-        notification.setSent(LocalDateTime.now().isAfter(notification.getSendTimeSetting()));
-        return mapper.notificationToNotificationDTO(repository.save(notification));
     }
 
     public void deleteNotification(Long id) {

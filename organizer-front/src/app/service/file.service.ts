@@ -16,14 +16,6 @@ export class FileService {
 
   constructor(private readonly _http: HttpClient) { }
 
-  getAllFiles(): Observable<HttpResponse<File[]>> {
-    return this._http.get<HttpResponse<File[]>>(FILE_URL, httpOptions);
-  }
-
-  getCurrentUsersFiles(): Observable<HttpResponse<File[]>> {
-    return this._http.get<HttpResponse<File[]>>(FILE_URL + '/myfiles', httpOptions);
-  }
-
   getFilesInDirectory(id: number): Observable<HttpResponse<File[]>> {
     return this._http.get<HttpResponse<File[]>>(`${FILE_URL}/dir/${id}`, httpOptions);
   }

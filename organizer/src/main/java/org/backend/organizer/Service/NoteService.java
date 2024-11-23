@@ -29,20 +29,6 @@ public class NoteService {
     @Autowired
     AccessFileService afService;
 
-    public List<NoteDTO> getAllNotesByUser(String username) {
-        User user = userRepository.findByUsername(username);
-        var result = new ArrayList<NoteDTO>();
-        for (var file : repository.getAllByOwner(user)) {
-            result.add(mapper.noteToNoteDTO(file));
-        }
-        return result;
-    }
-
-    public NoteDTO getNoteByID(Long id) {
-        if (id == null) throw new NullPointerException();
-        return mapper.noteToNoteDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
-    }
-
     public NoteDTO createNote(NoteDTO newNote, String username) {
         if (newNote.getParent() == null) throw new NullPointerException();
         Note note = mapper.noteDTOtoNote(newNote);

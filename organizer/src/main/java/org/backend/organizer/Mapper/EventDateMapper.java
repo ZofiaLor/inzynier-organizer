@@ -57,10 +57,4 @@ public abstract class EventDateMapper {
         }
         return result;
     }
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "event", ignore = true)
-    @Mapping(target = "totalScore", ignore = true)
-    @Mapping(source = "votes", target = "votes", qualifiedByName = "getListOfVotes")
-    public abstract void updateEventDateFromEventDateDTO(EventDateDTO eventDateDTO, @MappingTarget EventDate eventDate);
 }

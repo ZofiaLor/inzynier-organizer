@@ -21,16 +21,8 @@ export class VoteService {
     return this._http.get<HttpResponse<Vote>>(`${VOTE_URL}/myvote/${id}`, httpOptions);
   }
 
-  getVoteById(id: number): Observable<HttpResponse<Vote>> {
-    return this._http.get<HttpResponse<Vote>>(`${VOTE_URL}/${id}`, httpOptions);
-  }
-
   createVote(vote: Vote): Observable<HttpResponse<Vote>> {
     return this._http.post<HttpResponse<Vote>>(VOTE_URL, vote, httpOptions);
-  }
-
-  updateVote(vote: Vote): Observable<HttpResponse<Vote>> {
-    return this._http.put<HttpResponse<Vote>>(VOTE_URL, vote, httpOptions);
   }
 
   deleteVote(id: number): Observable<HttpResponse<null>> {

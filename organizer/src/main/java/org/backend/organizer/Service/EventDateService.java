@@ -52,13 +52,6 @@ public class EventDateService {
         return mapper.eventDateToEventDateDTO(repository.save(eventDate));
     }
 
-    public EventDateDTO updateEventDate(EventDateDTO eventDateUpdates) {
-        if (eventDateUpdates == null) throw new NullPointerException();
-        EventDate eventDate = repository.findById(eventDateUpdates.getId()).orElseThrow(EntityNotFoundException::new);
-        mapper.updateEventDateFromEventDateDTO(eventDateUpdates, eventDate);
-        return mapper.eventDateToEventDateDTO(repository.save(eventDate));
-    }
-
     public void deleteEventDate(Long id) {
         if(!repository.existsById(id)) throw new EntityNotFoundException();
         repository.deleteById(id);

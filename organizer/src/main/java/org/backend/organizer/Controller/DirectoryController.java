@@ -8,6 +8,7 @@ import org.backend.organizer.Service.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,23 +17,12 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
 @Controller
 @RequestMapping("/api/directories")
+@PreAuthorize("isAuthenticated()")
 public class DirectoryController {
     @Autowired
     DirectoryService service;
     @Autowired
     JWTService jwtService;
-
-    @GetMapping("")
-    public ResponseEntity<List<DirectoryDTO>> getAllDirectories() {
-        return new ResponseEntity<>(service.getAllDirectories(), HttpStatus.OK);
-    }
-
-    @GetMapping("/mydirs")
-    public ResponseEntity<List<DirectoryDTO>> getCurrentUsersDirectories(HttpServletRequest request) {
-        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
-        return new ResponseEntity<>(service.getAllDirectoriesByUsername(username), HttpStatus.OK);
-    }
-
     @GetMapping("/basedirs")
     public ResponseEntity<DirectoryDTO> getCurrentUsersBaseDirectory(HttpServletRequest request) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));

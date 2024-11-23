@@ -7,9 +7,11 @@ import org.backend.organizer.Model.User;
 import org.backend.organizer.Service.JWTService;
 import org.backend.organizer.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
 @RestController
 @RequestMapping("/api/users")
+@PreAuthorize("isAuthenticated()")
 public class UserController {
     @Autowired
     UserService service;
@@ -30,7 +33,6 @@ public class UserController {
     }
 
     @GetMapping("/safe")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<List<UserDTO>> getAllUsersSafe() {
         return new ResponseEntity<>(service.getAllUsersSafe(), HttpStatus.OK);
     }
@@ -48,7 +50,6 @@ public class UserController {
     }
 
     @GetMapping("/safe/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<UserDTO> getUserByIdSafe(@PathVariable("id") Long id) {
         try {
             return new ResponseEntity<>(service.getUserByIdSafe(id), HttpStatus.OK);
@@ -56,29 +57,6 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } catch (NullPointerException ex){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    //TODO temporary solution for id and username disambiguation
-    @GetMapping("/name/{username}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable("username") String username) {
-        try {
-            UserDTO user = service.getUserByUsername(username);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (EntityNotFoundException ex){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @GetMapping("/myuser")
-    public ResponseEntity<UserDTO> getMyUser(HttpServletRequest request) {
-        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
-        try {
-            UserDTO user = service.getUserByUsername(username);
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } catch (EntityNotFoundException ex){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -97,12 +75,31 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") Long id) {
+    public ResponseEntity<HttpStatus> deleteUser(HttpServletRequest request, @PathVariable("id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            service.deleteUser(id);
+            service.deleteUser(id, username);
             return new ResponseEntity<>(HttpStatus.OK);
         }
         catch (EntityNotFoundException ex) { return new ResponseEntity<>(HttpStatus.NOT_FOUND); }
+        catch (IllegalArgumentException ex){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @DeleteMapping("/delete")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<?> deleteMyUser(HttpServletRequest request) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
+        try {
+            var cookies = service.deleteMyUser(username);
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookies.get(0)).header(HttpHeaders.SET_COOKIE, cookies.get(1)).body("");
+        }
+        catch (EntityNotFoundException ex) { return new ResponseEntity<>(HttpStatus.NOT_FOUND); }
+        catch (UsernameNotFoundException ex) {
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtService.getCleanJwtCookie().toString())
+                    .header(HttpHeaders.SET_COOKIE, jwtService.getCleanJwtRefreshCookie().toString()).body("");
+        }
     }
 
 

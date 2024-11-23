@@ -11,10 +11,13 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
+import {MatExpansionModule} from '@angular/material/expansion';
 import { Subject, takeUntil } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotifsViewComponent } from '../notifs-view/notifs-view.component';
 import { AuthService } from '../service/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -27,7 +30,9 @@ import { AuthService } from '../service/auth.service';
     ReactiveFormsModule,
     MatButtonModule,
     FlexLayoutModule,
-    NotifsViewComponent],
+    NotifsViewComponent,
+    MatExpansionModule,
+    MatIconModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
@@ -46,7 +51,8 @@ export class ProfileComponent implements OnInit {
   user?: User;
   private readonly _destroy$ = new Subject<void>();
 
-  constructor (private storageService: StorageService, private userService: UserService, private readonly fb: FormBuilder, private snackBar: MatSnackBar, private readonly authService: AuthService) {}
+  constructor (private storageService: StorageService, private userService: UserService, private readonly fb: FormBuilder, private snackBar: MatSnackBar, 
+    private readonly authService: AuthService, private readonly router: Router) {}
 
   ngOnInit(): void {
     this.user = this.storageService.getUser();
@@ -100,6 +106,24 @@ export class ProfileComponent implements OnInit {
         } else {
           this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
         }
+      }
+    })
+  }
+
+  deleteAccount() {
+    this.userService.deleteMyUser().pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.storageService.clean();
+        this.router.navigate(['/']).then(() => {
+          window.location.reload();
+        });
+      },
+      error: err => {
+        console.log(err);
+        this.storageService.clean();
+        this.router.navigate(['/']).then(() => {
+          window.location.reload();
+        });
       }
     })
   }

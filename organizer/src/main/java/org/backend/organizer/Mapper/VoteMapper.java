@@ -47,9 +47,4 @@ public abstract class VoteMapper {
         if (id == null) return null;
         return userRepository.getReferenceById(id);
     }
-
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "eventDate", ignore = true)
-    @Mapping(target = "user", ignore = true)
-    public abstract void updateVoteFromVoteDTO(VoteDTO voteDTO, @MappingTarget Vote vote);
 }

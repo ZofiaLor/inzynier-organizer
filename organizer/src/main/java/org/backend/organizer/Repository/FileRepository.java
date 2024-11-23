@@ -10,6 +10,5 @@ import java.util.List;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, Long> {
-    List<File> getAllByOwner(User owner);
     List<File> getAllByParent(Directory parent);
 }

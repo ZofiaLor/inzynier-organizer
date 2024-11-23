@@ -10,6 +10,7 @@ import org.backend.organizer.Service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
 @Controller
 @RequestMapping("/api/files")
+@PreAuthorize("isAuthenticated()")
 public class FileController {
     @Autowired
     FileService fileService;
@@ -29,17 +31,6 @@ public class FileController {
     TaskService taskService;
     @Autowired
     JWTService jwtService;
-
-    @GetMapping("")
-    public ResponseEntity<List<FileDTO>> getAllFiles() {
-        return new ResponseEntity<>(fileService.getAllFiles(), HttpStatus.OK);
-    }
-
-    @GetMapping("/myfiles")
-    public ResponseEntity<List<FileDTO>> getCurrentUsersFiles(HttpServletRequest request) {
-        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
-        return new ResponseEntity<>(fileService.getAllFilesByUsername(username), HttpStatus.OK);
-    }
 
     @GetMapping("/dir/{id}")
     public ResponseEntity<List<FileDTO>> getFilesInDirectory(HttpServletRequest request, @PathVariable(name = "id") Long id) {

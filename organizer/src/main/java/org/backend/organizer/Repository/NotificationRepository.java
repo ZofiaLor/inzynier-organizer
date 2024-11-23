@@ -12,17 +12,13 @@ import java.util.List;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-    @Query("SELECT n FROM Notification n WHERE n.isSent = :isSent")
-    List<Notification> getAllBySent(boolean isSent);
-    @Query("SELECT n FROM Notification n WHERE n.isSent = :isSent AND n.sendTimeSetting <= :sendTimeSetting")
-    List<Notification> getAllBySentAndSendTimeSettingAfter(boolean isSent, LocalDateTime sendTimeSetting);
     @Query("SELECT n FROM Notification n WHERE n.user = :user AND n.isSent = :isSent AND n.sendTimeSetting <= :sendTimeSetting")
     List<Notification> getAllByUserAndSentAndSendTimeSettingAfter(User user, boolean isSent, LocalDateTime sendTimeSetting);
-    @Query("SELECT n FROM Notification n WHERE n.user = :user AND n.isSent = TRUE")
+    @Query("SELECT n FROM Notification n WHERE n.user = :user AND n.isSent = TRUE ORDER BY n.sendTimeSetting DESC")
     List<Notification> getAllSentByUser(User user);
-    @Query("SELECT n FROM Notification n WHERE n.isRead = :isRead AND n.user = :user AND n.isSent = TRUE")
+    @Query("SELECT n FROM Notification n WHERE n.isRead = :isRead AND n.user = :user AND n.isSent = TRUE ORDER BY n.sendTimeSetting DESC")
     List<Notification> getAllSentByReadAndUser(boolean isRead, User user);
 
-    @Query("SELECT n FROM Notification n WHERE n.file = :file AND n.user = :user AND n.isSent = FALSE")
+    @Query("SELECT n FROM Notification n WHERE n.file = :file AND n.user = :user AND n.isSent = FALSE ORDER BY n.sendTimeSetting DESC")
     List<Notification> getAllUnsentByUserAndFile(User user, File file);
 }

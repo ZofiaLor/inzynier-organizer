@@ -34,16 +34,6 @@ public class VoteService {
         return result;
     }
 
-    public List<VoteDTO> getVotesByUserId(Long id) {
-        if (id == null) throw new NullPointerException();
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        var result = new ArrayList<VoteDTO>();
-        for (var vote : repository.getAllByUser(user)) {
-            result.add(mapper.voteToVoteDTO(vote));
-        }
-        return result;
-    }
-
     public List<VoteDTO> getVotesByEventDateId(Long id) {
         if (id == null) throw new NullPointerException();
         EventDate eventDate = eventDateRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -62,11 +52,6 @@ public class VoteService {
         return mapper.voteToVoteDTO(vote);
     }
 
-    public VoteDTO getVoteById(Long id) {
-        if (id == null) throw new NullPointerException();
-        return mapper.voteToVoteDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
-    }
-
     public VoteDTO createVote(VoteDTO voteDTO, String username) {
         if (voteDTO.getEventDate() == null) throw new NullPointerException();
         EventDate eventDate = eventDateRepository.findById(voteDTO.getEventDate()).orElseThrow(EntityNotFoundException::new);
@@ -83,16 +68,6 @@ public class VoteService {
         }
 
         eventDateRepository.save(eventDate);
-        return mapper.voteToVoteDTO(repository.save(vote));
-    }
-
-    public VoteDTO updateVote(VoteDTO voteUpdates) {
-        if (voteUpdates == null) throw new NullPointerException();
-        Vote vote = repository.findById(voteUpdates.getId()).orElseThrow(EntityNotFoundException::new);
-        EventDate eventDate = eventDateRepository.findById(vote.getEventDate().getId()).orElseThrow(EntityNotFoundException::new);
-        eventDate.setTotalScore(eventDate.getTotalScore() - vote.getScore() + voteUpdates.getScore()); // total - old + new
-        eventDateRepository.save(eventDate);
-        mapper.updateVoteFromVoteDTO(voteUpdates, vote);
         return mapper.voteToVoteDTO(repository.save(vote));
     }
 

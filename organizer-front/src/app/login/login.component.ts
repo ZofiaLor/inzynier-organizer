@@ -46,6 +46,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
+    console.log(this.form.controls.username.value!);
 
     this.authService.login(this.form.controls.username.value!, this.form.controls.password.value!).subscribe({
       next: resp => {

@@ -8,6 +8,7 @@ import org.backend.organizer.Service.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
 @Controller
 @RequestMapping("/api/votes")
+@PreAuthorize("isAuthenticated()")
 public class VoteController {
     @Autowired
     VoteService service;
@@ -25,17 +27,6 @@ public class VoteController {
     @GetMapping("")
     public ResponseEntity<List<VoteDTO>> getAllVotes() {
         return new ResponseEntity<>(service.getAllVotes(), HttpStatus.OK);
-    }
-
-    @GetMapping("/user/{id}")
-    public ResponseEntity<List<VoteDTO>> getVotesByUserId(@PathVariable("id") Long id) {
-        try {
-            return new ResponseEntity<>(service.getVotesByUserId(id), HttpStatus.OK);
-        } catch (NullPointerException ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (EntityNotFoundException ex) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
     }
 
     @GetMapping("/ed/{id}")
@@ -61,33 +52,11 @@ public class VoteController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<VoteDTO> getVoteId(@PathVariable("id") Long id) {
-        try {
-            return new ResponseEntity<>(service.getVoteById(id), HttpStatus.OK);
-        } catch (NullPointerException ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (EntityNotFoundException ex) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     @PostMapping("")
     public ResponseEntity<VoteDTO> createVote(HttpServletRequest request, @RequestBody VoteDTO voteDTO) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
             return new ResponseEntity<>(service.createVote(voteDTO, username), HttpStatus.OK);
-        } catch (NullPointerException ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (EntityNotFoundException ex) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @PutMapping("")
-    public ResponseEntity<VoteDTO> updateVote(@RequestBody VoteDTO voteDTO) {
-        try {
-            return new ResponseEntity<>(service.updateVote(voteDTO), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {

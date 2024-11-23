@@ -1,6 +1,6 @@
 package org.backend.organizer.Request;
 
-public class PasswordReset {
+public class Passwords {
     private String oldPassword;
     private String newPassword;
 

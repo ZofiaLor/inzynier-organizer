@@ -14,7 +14,7 @@
                 }
               </mat-error>
         </mat-form-field>
-        <mat-form-field appearance="outline" class="longDate">
+        <mat-form-field appearance="outline" class="longDate" [hideRequiredMarker]="true">
             <mat-label>End Date</mat-label>
             <input matInput type="datetime-local"
             class="form-control"
@@ -22,7 +22,7 @@
             formControlName="end"/>
             <mat-error>
                 @if(form.controls.end.value == '') {
-                  Enter the date fully for it to be saved
+                  This date is not required. If you wish to set it, the date and time have to be entered fully.
                 }
               </mat-error>
         </mat-form-field>

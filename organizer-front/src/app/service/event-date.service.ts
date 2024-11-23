@@ -25,10 +25,6 @@ export class EventDateService {
     return this._http.post<HttpResponse<EventDate>>(EVDATE_URL, ed, httpOptions);
   }
 
-  updateEventDate(ed: EventDate): Observable<HttpResponse<EventDate>> {
-    return this._http.put<HttpResponse<EventDate>>(EVDATE_URL, ed, httpOptions);
-  }
-
   deleteEventDate(id: number): Observable<HttpResponse<null>> {
     return this._http.delete<HttpResponse<null>>(`${EVDATE_URL}/${id}`, httpOptions);
   }

@@ -13,10 +13,6 @@ export class DirectoryService {
 
   constructor(private readonly _http: HttpClient) { }
 
-  getCurrentUsersDirs(): Observable<HttpResponse<Directory[]>> {
-    return this._http.get<HttpResponse<Directory[]>>(DIR_URL + '/mydirs', httpOptions);
-  }
-
   getCurrentUsersBaseDir(): Observable<HttpResponse<Directory>> {
     return this._http.get<HttpResponse<Directory>>(DIR_URL + '/basedirs', httpOptions);
   }

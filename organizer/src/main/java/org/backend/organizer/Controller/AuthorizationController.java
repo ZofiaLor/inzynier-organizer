@@ -7,7 +7,7 @@ import org.backend.organizer.Mapper.UserMapper;
 import org.backend.organizer.Model.RefreshToken;
 import org.backend.organizer.Model.User;
 import org.backend.organizer.Model.UserPrincipal;
-import org.backend.organizer.Request.PasswordReset;
+import org.backend.organizer.Request.Passwords;
 import org.backend.organizer.Service.JWTService;
 import org.backend.organizer.Service.RefreshTokenService;
 import org.backend.organizer.Service.UserService;
@@ -18,7 +18,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -71,7 +70,7 @@ public class AuthorizationController {
 
     @PutMapping("/password")
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
-    public ResponseEntity<?> resetPassword(HttpServletRequest request, @RequestBody PasswordReset passwords) {
+    public ResponseEntity<?> resetPassword(HttpServletRequest request, @RequestBody Passwords passwords) {
         try {
             return new ResponseEntity<>(service.resetPassword(request, passwords), HttpStatus.OK);
         } catch (NullPointerException ex) {

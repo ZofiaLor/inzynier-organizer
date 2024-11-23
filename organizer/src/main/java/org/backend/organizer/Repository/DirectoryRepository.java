@@ -9,7 +9,6 @@ import java.util.List;
 
 @Repository
 public interface DirectoryRepository extends JpaRepository<Directory, Long> {
-    List<Directory> getAllByOwner(User owner);
     List<Directory> getAllByParent(Directory parent);
     Directory getByOwnerAndParentIsNull(User owner);
 }

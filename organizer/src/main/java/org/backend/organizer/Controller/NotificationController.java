@@ -17,18 +17,13 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials = "true")
 @Controller
 @RequestMapping("/api/notifs")
+@PreAuthorize("isAuthenticated()")
 public class NotificationController {
     @Autowired
     NotificationService service;
     @Autowired
     JWTService jwtService;
 
-    @GetMapping("")
-    public ResponseEntity<List<NotificationDTO>> getAllNotifications() {
-        return new ResponseEntity<>(service.getAllNotifications(), HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping("/mynotifs")
     public ResponseEntity<List<NotificationDTO>> getCurrentUsersNotifications(HttpServletRequest request, @RequestParam(required = false) Boolean read) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
@@ -58,17 +53,6 @@ public class NotificationController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<NotificationDTO> getNotificationByID(@PathVariable(name = "id") Long id) {
-        try {
-            return new ResponseEntity<>(service.getById(id), HttpStatus.OK);
-        } catch (NullPointerException ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (EntityNotFoundException ex) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     @PostMapping("")
     public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
         try {
@@ -80,13 +64,6 @@ public class NotificationController {
         }
     }
 
-    @PutMapping("/sendall")
-    public ResponseEntity<HttpStatus> sendAllNotifications() {
-        service.sendAllNotifications();
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping("/send")
     public ResponseEntity<HttpStatus> sendUsersNotifications(HttpServletRequest request) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
@@ -97,17 +74,6 @@ public class NotificationController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-    }
-
-    @PutMapping("")
-    public ResponseEntity<NotificationDTO> updateNotification(@RequestBody NotificationDTO notificationDTO) {
-        try {
-            return new ResponseEntity<>(service.updateNotification(notificationDTO), HttpStatus.OK);
-        } catch (NullPointerException ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (EntityNotFoundException ex) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
     }
 
     @DeleteMapping("/{id}")

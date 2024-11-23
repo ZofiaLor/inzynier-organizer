@@ -8,9 +8,8 @@ import org.backend.organizer.Mapper.UserMapper;
 import org.backend.organizer.Model.User;
 import org.backend.organizer.Model.UserPrincipal;
 import org.backend.organizer.Repository.UserRepository;
-import org.backend.organizer.Request.PasswordReset;
+import org.backend.organizer.Request.Passwords;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,7 +41,6 @@ public class UserService {
     UserMapper mapper;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
-    //TODO Error proofing
 
     public List<UserDTO> getAllUsers() {
         var result = new ArrayList<UserDTO>();
@@ -116,7 +114,7 @@ public class UserService {
         return result;
     }
 
-    public String resetPassword(HttpServletRequest request, PasswordReset passwords) {
+    public String resetPassword(HttpServletRequest request, Passwords passwords) {
         String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         if (username == null | passwords.getNewPassword() == null || passwords.getOldPassword() == null) throw new NullPointerException();
         if (!repository.existsByUsername(username)) throw new EntityNotFoundException();
@@ -141,24 +139,26 @@ public class UserService {
         return mapper.userToUserDTO(repository.save(user));
     }
 
-    public UserDTO getUserByUsername(String username) {
-        User user = repository.findByUsername(username);
-        if (user == null) throw new EntityNotFoundException();
-        return mapper.userToUserDTO(user);
-    }
-
     public UserDTO updateUser(UserDTO userUpdates) {
         if (userUpdates == null | userUpdates.getId() == null) throw new NullPointerException();
         User user = repository.findById(userUpdates.getId()).orElseThrow(EntityNotFoundException::new);
         if (!Objects.equals(user.getUsername(), userUpdates.getUsername()) && repository.existsByUsername(userUpdates.getUsername())) throw new IllegalArgumentException();
-        //TODO use mapper to ignore nulls
         mapper.updateUserFromUserDTO(userUpdates, user);
         return mapper.userToUserDTO(repository.save(user));
     }
 
-    //TODO don't delete your own user
-    public void deleteUser(Long id) {
-        if(!repository.existsById(id)) throw new EntityNotFoundException();
+    public void deleteUser(Long id, String username) {
+        User user = repository.findByUsername(username);
+        if(!repository.existsById(id) || user == null) throw new EntityNotFoundException();
+        if (id.equals(user.getId())) throw new IllegalArgumentException();
         repository.deleteById(id);
+    }
+
+    public List<String> deleteMyUser(String username) {
+        User user = repository.findByUsername(username);
+        if (user == null) throw new EntityNotFoundException();
+        var result = this.logout();
+        repository.deleteById(user.getId());
+        return result;
     }
 }

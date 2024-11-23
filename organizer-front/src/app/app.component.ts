@@ -46,6 +46,7 @@ export class AppComponent implements OnInit, OnDestroy{
   }
 
   onLogout(): void {
+    this.isLoggedIn = false;
     this.authService.logout().subscribe({
       next: () => {
         this.storageService.clean();
@@ -59,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy{
         console.log(err);
         if(err?.error?.text === 'Success'){
           this.storageService.clean();
-          this.router.navigate(['auth/login']).then(() => {
+          this.router.navigate(['/']).then(() => {
             window.location.reload();
           });
           

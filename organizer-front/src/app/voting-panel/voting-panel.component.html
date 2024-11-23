@@ -22,7 +22,7 @@
             formControlName="end"/>
             <mat-error>
                 @if(form.controls.end.value == '') {
-                  This date is not required. If you wish to set it, the date and time have to be entered fully.
+                  This date is not required. If you wish to set it, the date and time have to be entered fully and be valid.
                 }
               </mat-error>
         </mat-form-field>
@@ -47,15 +47,20 @@
             <h6>Votes:</h6>
             <mat-chip-set aria-label="Votes">
                 @for (vote of votes.get(ed.id); track vote) {
-                    <mat-chip>{{vote.score}}</mat-chip>
+                    @if (vote.user == user!.id) {
+                        <mat-chip matTooltip="My Vote"><b>{{vote.score}}</b></mat-chip>
+                    } @else {
+                        <mat-chip>{{vote.score}}</mat-chip>
+                    }
+                    
                 }
             </mat-chip-set>
             
         </mat-card-content>
         <mat-card-actions>
-            <button mat-flat-button color="primary" (click)="onCastVote(ed.id, -1)">-1</button>
-            <button mat-flat-button color="primary" (click)="onCastVote(ed.id, 0)">0</button>
-            <button mat-flat-button color="primary" (click)="onCastVote(ed.id, 1)">1</button>
+            <button mat-mini-fab matTooltip="-1" color="primary" (click)="onCastVote(ed.id, -1)"><mat-icon>sentiment_very_dissatisfied</mat-icon></button>
+            <button mat-mini-fab matTooltip="0" color="primary" (click)="onCastVote(ed.id, 0)"><mat-icon>sentiment_neutral</mat-icon></button>
+            <button mat-mini-fab matTooltip="1" color="primary" (click)="onCastVote(ed.id, 1)"><mat-icon>sentiment_very_satisfied</mat-icon></button>
             <button mat-flat-button color="warn" (click)="onDelete(ed.id)"><mat-icon>delete</mat-icon>Delete vote</button>
         </mat-card-actions>
     </mat-card>

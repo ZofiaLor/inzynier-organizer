@@ -4,13 +4,14 @@ import { User } from '../model/user';
 import { File } from '../model/file';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
+import {MatIconModule} from '@angular/material/icon';
 import { FileTreeComponent } from '../file-tree/file-tree.component';
 import { FileViewComponent } from '../file-view/file-view.component';
 
 @Component({
   selector: 'app-browser',
   standalone: true,
-  imports: [FlexLayoutModule, MatCardModule, FileTreeComponent, FileViewComponent],
+  imports: [FlexLayoutModule, MatCardModule, FileTreeComponent, FileViewComponent, MatIconModule],
   templateUrl: './browser.component.html',
   styleUrl: './browser.component.scss'
 })

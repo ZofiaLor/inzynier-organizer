@@ -4,6 +4,9 @@
     </mat-card-header>
   
     <mat-card-content>
+      @if (afterRegister) {
+        Thank you for registering! Click the button to the top right or <a href="/auth/login">this link</a> to log in!
+      }
         <form [formGroup]="form">
             <mat-form-field appearance="outline">
               <mat-label><b>Username</b></mat-label>

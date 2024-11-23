@@ -5,6 +5,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import { FormsModule, FormBuilder,
   FormControl,Validators, ReactiveFormsModule } from '@angular/forms';
 import { EventFile } from '../model/event';
@@ -22,7 +23,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   selector: 'app-voting-panel',
   standalone: true,
   imports: [MatCardModule, CommonModule, MatButtonModule, MatIconModule, MatChipsModule,
-    MatFormFieldModule, FormsModule, ReactiveFormsModule, MatInputModule
+    MatFormFieldModule, FormsModule, ReactiveFormsModule, MatInputModule, MatTooltipModule
   ],
   templateUrl: './voting-panel.component.html',
   styleUrl: './voting-panel.component.scss'

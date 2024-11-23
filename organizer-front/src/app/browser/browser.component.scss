@@ -11,4 +11,9 @@
 
 .loggedOut {
   text-align: center;
+  font-size: 1.5em;
+  .mat-icon {
+    transform: scale(1.5);
+    margin: 10px;
+  }
 }

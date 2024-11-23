@@ -33,6 +33,8 @@ export class RegisterComponent {
     email: new FormControl(''),
   });
 
+  afterRegister = false;
+
   constructor (private authService: AuthService, private readonly fb: FormBuilder, private snackBar: MatSnackBar) {}
 
   onSubmit(): void {
@@ -47,6 +49,7 @@ export class RegisterComponent {
     this.authService.register(user, this.form.controls.password.value!).subscribe({
       next: resp => {
         this.snackBar.open("You have successfully registered!", undefined, {duration: 3000});
+        this.afterRegister = true;
       },
       error: err => {
         if (err.status == 403) {

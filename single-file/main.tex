@@ -604,7 +604,7 @@ Zależności między użytkownikami przedstawiono na rys. \ref{fig:uml-users}.
 
 \begin{figure}
 \centering
-\includegraphics[height=\textheight]{./UML-Users.png}
+\includegraphics{./UML-Users.png}
 \caption{Użytkownicy aplikacji.}
 \label{fig:uml-users}
 \end{figure}
@@ -654,7 +654,7 @@ Wymagania funkcjonalne dla poszczególnych użytkowników przedstawiono na rys. 
 
 \begin{figure}
 \centering
-\includegraphics[height=\textheight]{./UML-Admin.png}
+\includegraphics{./UML-Admin.png}
 \caption{Diagram przypadków użycia aplikacji dla administratora.}
 \label{fig:uml-admin}
 \end{figure}
@@ -668,7 +668,7 @@ Wymagania funkcjonalne dla poszczególnych użytkowników przedstawiono na rys. 
 
 \begin{figure}
 \centering
-\includegraphics[height=\textheight]{./UML-Anonymous.png}
+\includegraphics{./UML-Anonymous.png}
 \caption{Diagram przypadków użycia aplikacji dla użytkownika niezalogowanego.}
 \label{fig:uml-anon}
 \end{figure}
@@ -828,6 +828,888 @@ class test : public basic
 \caption{Pseudokod w \texttt{listings}.}
 \label{fig:pseudokod:listings}
 \end{figure}
+
+\subsection{Lista endpointów}
+
+W tym podrozdziale przedstawiono listę wszystkich endpointów wystawianych przez backend. Dla każdego opisano URL, ogólną zasadę działania, dane wejściowe oraz możliwe odpowiedzi.
+
+\subsubsection{Authorization}\label{authorization}
+
+\subsubsubsection{Log In}\label{log-in}
+
+\texttt{POST\ /api/auth/login}
+
+Logowanie użytkownika.
+
+Wymagane w ciele zapytania: nazwa użytkownika (username), hasło
+(password)
+
+\begin{verbatim}
+{
+    "username": "newUser",
+    "password": "password"
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Poprawne zalogowanie: obiekt użytkownika z pustym hasłem, kod 200 (OK) 
+	\item Niepoprawne hasło/login: ,,Incorrect credentials'', kod 403 (Forbidden) 
+	\item Brak hasła/loginu: ,,Empty username or password'', kod 400 (Bad Request) 
+\end{itemize}
+
+\subsubsubsection{Log Out} 
+
+\texttt{POST\ /api/auth/logout}
+
+Wylogowanie użytkownika.
+
+Brak wymaganego ciała zapytania.
+
+\begin{verbatim}
+{}
+\end{verbatim}
+
+Odpowiedź: ,,Success'', puste ciasteczka w nagłówku, kod 200 (OK)
+
+\subsubsubsection{Register}\label{register}
+
+\texttt{POST\ /api/auth/register}
+
+Rejestracja nowego użytkownika i założenie jego katalogu bazowego Base Directory.
+
+Wymagana nazwa użytkownika i hasło, opcjonalny adres email oraz imię (name). Pozostałe parametry są ignorowane.
+
+\begin{verbatim}
+{
+    "username": "someUser",
+    "password": "password",
+    "email": "some@email.com",
+    "name": "Some User"
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Poprawne zarejestrowanie: obiekt utworzonego użytkownika z pustym hasłem i rolą ROLE\_USER, kod 200 (OK) 
+	\item Próba zarejestrowania użytkownika o istniejącej już nazwie: kod 403 (Forbidden) 
+	\item Brak nazwy użytkownika lub hasła: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Change Password}\label{change-password}
+
+\texttt{PUT\ /api/password}
+
+Pozwala na zmianę hasła użytkownika.
+
+Wymaga podania starego hasła, służącego do zatwierdzenia zmiany, oraz nowego hasła.
+
+\begin{verbatim}
+{
+  "oldPassword": "pwdOld",
+  "newPassword": "pwdNew"
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Poprawna zmiana hasła: ,,Success'', kod 200 (OK)
+	\item Brak podanego starego lub nowego hasła: kod 400 (Bad Request) 
+	\item Użytkownik nie istnieje: kod 404 (Not Found) 
+	\item Stare hasło jest niepoprawne: kod 403 (Forbidden)
+\end{itemize}
+
+
+\subsubsubsection{Grant/Revoke Admin Privilege}\label{grantrevoke-admin-privilege}
+
+\texttt{PUT\ /api/auth/grant} \texttt{PUT\ /api/auth/revoke}
+
+Nadanie/odebranie roli Administratora użytkownikowi.
+
+Wymagana nazwa użytkownika. Endpoint dostępny jest tylko administratorowi.
+
+\begin{verbatim}
+{
+    "username": "newUser"
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Poprawne nadanie/odebranie roli: obiekt użytkownika, kod 200 (OK) 
+	\item Nieistniejąca nazwa użytkownika: kod 404 (Not Found) 
+	\item Próba nadania/odebrania sobie roli: kod 400 (Bad Request) 
+	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
+\end{itemize}
+
+
+\subsubsubsection{Refresh Token}\label{refresh-token}
+
+\texttt{POST\ /api/refreshtoken}
+
+Odświeża JWT odpowiadający za autoryzację użytkownika, jeżeli refreshToken zapisany w ciasteczkach nie stracił ważności.
+
+Ciało zapytania jest ignorowane.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Poprawne odświeżenie JWT: nowe ciasteczko JWT w nagłówku, kod 200 (OK) 
+	\item refreshToken stracił ważność: kod 403 (Forbidden) 
+	\item Nie znaleziono refreshToken w bazie danych: kod 404 (Not Found)
+	\item refreshToken w ciasteczku jest pusty lub null: kod 400 (Bad Request)
+\end{itemize}
+
+
+\subsubsection{Users}\label{users}
+
+\subsubsubsection{Get All Users}\label{get-all-users}
+
+\texttt{GET\ /api/users}
+
+Zwraca wszystkich użytkowników z pustymi hasłami. Endpoint dostępny tylko administratorowi.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Użytkownik jest administratorem: lista obiektów użytkowników, kod 200 (OK) 
+	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Get All Users Safe}\label{get-all-users-safe}
+
+\texttt{GET\ /api/users/safe}
+
+Zwraca ID, nazwy użytkownika i nazwy wszystkich użytkowników.
+
+Odpowiedź: lista obiektów użytkowników, kod 200 (OK)
+
+\subsubsubsection{Get User By ID}\label{get-user-by-id}
+
+\texttt{GET\ /api/users/\{id\}}
+
+Zwraca użytkownika o podanym ID z pustym hasłem. Endpoint dostępny tylko administratorowi.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Użytkownik istnieje: obiekt użytkownika, kod 200 (OK)
+	\item Użytkownik nie istnieje: kod 404 (Not Found) 
+	\item Brak ID: kod 400 (Bad Request) 
+	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Update User}\label{update-user}
+
+\texttt{PUT\ /api/users}
+
+Aktualizuje użytkownika.
+
+Wymagane podanie ID użytkownika w ciele zapytania.
+
+\begin{verbatim}
+{
+    "id": 5,
+    "name": "New User 2"
+}
+\end{verbatim}
+
+Parametry brane pod uwagę: 
+\begin{itemize}
+	\item  username \item  name \item  email
+\end{itemize}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślna aktualizacja: obiekt użytkownika z pustym hasłem, kod 200 (OK) 
+	\item Nie znaleziono ID: kod 404 (Not Found) 
+	\item  Próba zmiany nazwy użytkownika na już istniejącą/nie podano ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Delete User}\label{delete-user}
+
+\texttt{DELETE\ /api/users/\{id\}}
+
+Usuwa użytkownika o podanym ID, wraz z jego katalogami, głosami i powiadomieniami. Endpoint dostępny tylko administratorowi.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found) 
+	\item Próba usunięcia własnego użytkownika/użytkownik nie jest administratorem: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Delete My User}\label{delete-my-user}
+
+\texttt{DELETE\ /api/users/delete}
+
+Wylogowuje i usuwa aktualnie zalogowanego użytkownika, wraz z jego katalogami, głosami i powiadomieniami.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item  Poprawne usunięcie: puste ciasteczka w nagłówku, kod 200 (OK) 
+	\item  Nie znaleziono użytkownika: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsection{Directories}\label{directories}
+
+\subsubsubsection{Get My Base Directory}\label{get-my-base-directory}
+
+\texttt{GET\ /api/directories/basedirs}
+
+Zwraca katalog bazowy aktualnie zalogowanego użytkownika.
+
+Odpowiedź: obiekt katalogu bazowego, kod 200 (OK)
+
+\subsubsubsection{Get Directories By Parent ID}\label{get-directories-by-parent-id}
+
+\texttt{GET\ /api/directories/subdirs/\{id\}}
+
+Zwraca katalogi podrzędne katalogu o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: lista obiektów katalogów, kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found) 
+	\item Nie podano ID: kod 400 (Bad Request)
+	\item Brak dostępu: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Get Directory By ID}\label{get-directory-by-id}
+
+\texttt{GET\ /api/directories/\{id\}}
+
+Zwraca katalog o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: obiekt katalogu, kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found) 
+	\item Nie podano ID: kod 400 (Bad Request)
+	\item Brak dostępu: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Check Directory Edit Access}\label{check-directory-edit-access}
+
+\texttt{GET\ /api/directories/check/\{id\}}
+
+Sprawdza, czy aktualnie zalogowany użytkownik posiada prawa do edycji katalogu o danym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: true jeżeli użytkownik może edytować katalog, false jeżeli nie, kod 200 (OK) 
+	\item Nie podano ID: kod 400 (Bad Request) 
+	\item ID nie istnieje: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsubsection{Create Directory}\label{create-directory}
+
+\texttt{POST\ /api/directories}
+
+Tworzy nowy katalog.
+
+Wymagane ID rodzica, można podać nazwę. W przypadku niepodania nazwy, domyślnie ustawiana jest ona na ,,Unnamed Directory''.
+
+\begin{verbatim}
+{
+    "name": "Test Directory",
+    "parent": 3
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Poprawne utworzenie katalogu: obiekt nowego katalogu, kod 200 (OK) 
+	\item Brak ID rodzica: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Update Directory}\label{update-directory}
+
+\texttt{PUT\ /api/directories}
+
+Aktualizuje katalog.
+
+Wymagane podanie ID katalogu w ciele zapytania.
+
+\begin{verbatim}
+{
+    "id": 2,
+    "name": "Some Directory"
+}
+\end{verbatim}
+
+Parametry brane pod uwagę: 
+\begin{itemize}
+	\item  name
+\end{itemize}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślna aktualizacja: obiekt katalogu, kod 200 (OK)
+	\item Brak obiektu: kod 400 (Bad Request) 
+	\item Nie znaleziono ID: kod 404 (Not Found) 
+	\item Brak dostępu do edycji: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Delete Directory}\label{delete-directory}
+
+\texttt{DELETE\ /api/directories/\{id\}}
+
+Usuwa katalog o podanym ID, wraz z jego plikami.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsection{Files}\label{files}
+
+\subsubsubsection{Get Files In Directory}\label{get-files-in-directory}
+
+\texttt{GET\ /api/files/dir/\{id\}}
+
+Zwraca wszystkie pliki w katalogu o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: lista obiektów katalogów, kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found) 
+	\item Brak dostępu: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Get File By ID}\label{get-file-by-id}
+
+\texttt{GET\ /api/files/\{id\}}
+
+Zwraca katalog o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: obiekt katalogu, kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found) 
+	\item Nie podano ID: kod 400 (Bad Request) 
+	\item Brak dostępu: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Check File Edit Access}\label{check-file-edit-access}
+
+\texttt{GET\ /api/files/check/\{id\}}
+
+Sprawdza, czy aktualnie zalogowany użytkownik posiada prawa do edycji pliku o danym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: true jeżeli użytkownik może edytować plik, false jeżeli nie, kod 200 (OK) 
+	\item  Nie podano ID: kod 400 (Bad Request) 
+	\item ID nie istnieje: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsubsection{Create Event}\label{create-event}
+
+\texttt{POST\ /api/files/event}
+
+Tworzy nowe wydarzenie.
+
+Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Event''.
+
+\begin{verbatim}
+{
+    "name": "My First Event",
+    "parent": 3,
+    "textContent": "Hello World! This is my first event",
+    "location": "Katowice"
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślne utworzenie: obiekt nowego wydarzenia, kod 200 (OK) 
+	\item Nie podano ID rodzica: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Update Event}\label{update-event}
+
+\texttt{PUT\ /api/files/event}
+
+Aktualizuje wydarzenie.
+
+Wymagane podanie ID wydarzenia w ciele zapytania.
+
+\begin{verbatim}
+{
+    "id": 2,
+    "location": "Gliwice"
+}
+\end{verbatim}
+
+Parametry brane pod uwagę: 
+\begin{itemize}
+	\item  name \item  textContent \item  startDate \item  endDate \item location
+\end{itemize}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślna aktualizacja: obiekt wydarzenia, kod 200 (OK) 
+	\item Brak obiektu: kod 400 (Bad Request) 
+	\item Nie znaleziono ID: kod 404 (Not Found) 
+	\item Brak dostępu do edycji: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Create Note}\label{create-note}
+
+\texttt{POST\ /api/files/note}
+
+Tworzy nową notatkę.
+
+Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Note''.
+
+\begin{verbatim}
+{
+  "name": "My First Note",
+  "parent": 3,
+  "textContent": "Hello World! This is my first note"
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślne utworzenie: obiekt nowej notatki, kod 200 (OK) 
+	\item Nie podano ID rodzica: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Update Note}\label{update-note}
+
+\texttt{PUT\ /api/files/note}
+
+Aktualizuje notatkę.
+
+Wymagane podanie ID notatki w ciele zapytania.
+
+\begin{verbatim}
+{
+  "id": 1,
+  "name": "My Note"
+}
+\end{verbatim}
+
+Parametry brane pod uwagę: 
+\begin{itemize}
+	\item  name \item  textContent
+\end{itemize}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślna aktualizacja: obiekt notatki, kod 200 (OK) 
+	\item Brak obiektu: kod 400 (Bad Request) 
+	\item Nie znaleziono ID: kod 404 (Not Found)
+	\item Brak dostępu do edycji: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Create Task}\label{create-task}
+
+\texttt{POST\ /api/files/task}
+
+Tworzy nowe zadanie.
+
+Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Task''.
+
+\begin{verbatim}
+{
+  "name": "My First Task",
+  "parent": 2,
+  "textContent": "Hello World! This is my first task",
+  "isFinished": false
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślne utworzenie: obiekt nowego zadania, kod 200 (OK) 
+	\item Nie podano ID rodzica: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Update Task}\label{update-task}
+
+\texttt{PUT\ /api/files/task}
+
+Aktualizuje zadanie.
+
+Wymagane podanie ID zadania w ciele zapytania.
+
+\begin{verbatim}
+{
+  "id": 3,
+  "isFinished": true
+}
+\end{verbatim}
+
+Parametry brane pod uwagę: 
+\begin{itemize}
+	\item  name \item  textContent \item  isFinished \item  deadline
+\end{itemize}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślna aktualizacja: obiekt zadania, kod 200 (OK) 
+	\item Brak obiektu: kod 400 (Bad Request) 
+	\item Nie znaleziono ID: kod 404 (Not Found)
+	\item Brak dostępu do edycji: kod 403 (Forbidden)
+\end{itemize}
+
+\subsubsubsection{Delete File}\label{delete-file}
+
+\texttt{DELETE\ /api/files/\{id\}}
+
+Usuwa plik o podanym ID, w przypadku wydarzenia - wraz z jego obiektami EventDate.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsection{Access Directory}\label{access-directory}
+
+\subsubsubsection{Get AccessDirectory By User}\label{get-accessdirectory-by-user}
+
+\texttt{GET\ /api/ad/user/\{user\}}
+
+Zwraca listę obiektów AccessDirectory dla podanego ID użytkownika.
+
+Lista jest pusta dla nieistniejącego użytkownika.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: lista obiektów AccessDirectory, kod 200 (OK)
+	\item Brak ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Get AccessDirectory By Directory}\label{get-accessdirectory-by-directory}
+
+\texttt{GET\ /api/ad/dir/\{dir\}}
+
+Zwraca listę obiektów AccessDirectory dla podanego ID katalogu.
+
+Lista jest pusta dla nieistniejącego katalogu.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: lista obiektów AccessDirectory, kod 200 (OK)
+	\item Brak ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Modify AccessDirectory}\label{modify-accessdirectory}
+
+\texttt{POST\ /api/ad}
+
+Tworzy lub aktualizuje obiekt AccessDirectory o podanych ID użytkownika i katalogu.
+
+Wymagane podanie obydwu ID w ciele zapytania.
+
+\begin{verbatim}
+{
+    "id": {
+        "userId": 4,
+        "directoryId": 3
+    },
+    "accessPrivilege": 1
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślne utworzenie/aktualizacja: obiekt AccessDirectory, kod 200 (OK) 
+	\item Nie istnieje któreś z ID: kod 404 (Not Found) 
+	\item Brak ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Delete AccessDirectory}\label{delete-accessdirectory}
+
+\texttt{DELETE\ /api/ad/\{user\}/\{dir\}}
+
+Usuwa obiekt AccessDirectory o podanych ID użytkownika i katalogu.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieją: kod 200 (OK) 
+	\item ID nie istnieją: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsection{Access File}\label{access-file}
+
+\subsubsubsection{Get AccessFile By User}\label{get-accessfile-by-user}
+
+\texttt{GET\ /api/af/user/\{user\}}
+
+Zwraca listę obiektów AccessFile dla podanego ID użytkownika.
+
+Lista jest pusta dla nieistniejącego użytkownika.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: lista obiektów AccessFile, kod 200 (OK) 
+	\item Brak ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Get AccessFile By File}\label{get-accessfile-by-file}
+
+\texttt{GET\ /api/af/file/\{file\}}
+
+Zwraca listę obiektów AccessFile dla podanego ID pliku.
+
+Lista jest pusta dla nieistniejącego pliku.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: lista obiektów AccessFile, kod 200 (OK) 
+	\item Brak ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Modify AccessFile}\label{modify-accessfile}
+
+\texttt{POST\ /api/af}
+
+Tworzy lub aktualizuje obiekt AccessFile o podanych ID użytkownika i pliku.
+
+Wymagane podanie obydwu ID w ciele zapytania.
+
+\begin{verbatim}
+{
+    "id": {
+        "userId": 4,
+        "fileId": 3
+    },
+    "accessPrivilege": 1
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślne utworzenie/aktualizacja: obiekt AccessFile, kod 200 (OK) 
+	\item Nie istnieje któreś z ID: kod 404 (Not Found) 
+	\item Brak ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Delete AccessFile}\label{delete-accessfile}
+
+\texttt{DELETE\ /api/af/\{user\}/\{file\}}
+
+Usuwa obiekt AccessFile o podanych ID użytkownika i pliku.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieją: kod 200 (OK) 
+	\item ID nie istnieją: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsection{Event Dates}\label{event-dates}
+
+\subsubsubsection{Get All EventDates}\label{get-all-eventdates}
+
+\texttt{GET\ /api/ed}
+
+Zwraca wszystkie obiekty EventDate.
+
+Odpowiedź: lista obiektów EventDate, kod 200 (OK)
+
+\subsubsubsection{Get EventDates By Event ID}\label{get-eventdates-by-event-id}
+
+\texttt{GET\ /api/ed?id=\{eventId\}}
+
+Zwraca obiekty EventDate dotyczące wydarzenia o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: lista obiektów EventDate, kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found) 
+	\item Nie podano ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Get EventDate By ID}\label{get-eventdate-by-id}
+
+\texttt{GET\ /api/ed/\{id\}}
+
+Zwraca obiekt EventDate o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: obiekt EventDate, kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found) 
+	\item Nie podano ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Create EventDate}\label{create-eventdate}
+
+\texttt{POST\ /api/ed}
+
+Tworzy obiekt EventDate.
+
+Wymagane jest podanie ID wydarzenia, a także początku i końca terminu. Wynik całkowity ustawiany jest na 0.
+
+\begin{verbatim}
+{
+    "event": 2,
+    "start" : "2024-10-18T12:00:00",
+    "end": "2024-10-18T12:30:00"
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślne utworzenie: nowy obiekt EventDate, kod 200 (OK) 
+	\item Brak ID/terminu początkowego/końcowego: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Delete EventDate}\label{delete-eventdate}
+
+\texttt{DELETE\ /api/ed/\{id\}}
+
+Usuwa obiekt EventDate o podanym ID, wraz z jego głosami.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsection{Votes}\label{votes}
+
+\subsubsubsection{Get Votes By EventDate ID}\label{get-votes-by-eventdate-id}
+
+\texttt{GET\ /api/votes/ed/\{id\}}
+
+Zwraca głosy na termin EventDate o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: lista obiektów głosów, kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found) 
+	\item Nie podano ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Get Current User's Vote By EventDate ID}\label{get-current-users-vote-by-eventdate-id}
+
+\texttt{GET\ /api/votes/myvote/\{id\}}
+
+Zwraca listę głosów oddanych przez aktualnie zalogowanego użytkownika na termin EventDate o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: lista obiektów głosów, kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found) 
+	\item Nie podano ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Cast Vote}\label{cast-vote}
+
+\texttt{POST\ /api/votes}
+
+Sprawdza, czy zalogowany użytkownik oddał głos na dany termin, jeżeli nie, to tworzy nowy głos, jeżeli tak, to aktualizuje istniejący. Modyfikuje wynik całkowity dla terminu EventDate.
+
+Wymagane podanie ID EventDate.
+
+\begin{verbatim}
+{
+    "eventDate": 1,
+    "score": 1
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślne oddanie/modyfikacja głosu: obiekt głosu, kod 200 (OK) 
+	\item Nie podano ID EventDate: kod 400 (Bad Request) 
+	\item Nie istnieje ID EventDate: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsubsection{Delete Vote}\label{delete-vote}
+
+\texttt{DELETE\ /api/vote/\{id\}}
+
+Usuwa głos o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsection{Notifications}\label{notifications}
+
+\subsubsubsection{Get All My Notifications}\label{get-all-my-notifications}
+
+\texttt{GET\ /api/notifs/mynotifs}
+
+Zwraca wszystkie wysłane powiadomienia aktualnie zalogowanego użytkownika.
+
+Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
+
+\subsubsubsection{Get All My Read/Unread Notifications}\label{get-all-my-readunread-notifications}
+
+\texttt{GET\ /api/notifs/mynotifs?read=\{read\}}
+
+Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w zależności od parametru read (true - odczytane, false - nieodczytane).
+
+Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
+
+\subsubsubsection{Get Current User's Notification By File ID}\label{get-current-users-notification-by-file-id}
+
+\texttt{GET\ /api/notifs/file/\{id\}}
+
+Zwraca listę niewysłanych powiadomień aktualnie zalogowanego użytkownika powiązanych z plikiem o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: lista obiektów powiadomień, kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found) 
+	\item Nie podano ID: kod 400 (Bad Request)
+\end{itemize}
+
+\subsubsubsection{Create Notification}\label{create-notification}
+
+\texttt{POST\ /api/notifs}
+
+Tworzy powiadomienie.
+
+Wymagane jest podanie ID użytkownika odbiorcy oraz pliku. Czas wysłania domyślnie ustawiany jest na czas utworzenia, powiadomienie jest domyślnie nieodczytane. Wysłanie odbywa się na podstawie porównania aktualnego czasu z czasem wysłania.
+
+\begin{verbatim}
+{
+  "user": 3,
+  "file": 3,
+  "message": "Test notif",
+  "sendTimeSetting": "2024-10-28T15:30:00"
+}
+\end{verbatim}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślne utworzenie: nowy obiekt powiadomienia, kod 200 (OK) 
+	\item Brak ID użytkownika/pliku: kod 400 (Bad Request) 
+	\item Nie istnieje ID użytkownika/pliku: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsubsection{Send Current User's Notifications}\label{send-current-users-notifications}
+
+\texttt{PUT\ /api/notifs/send}
+
+Wysyła powiadomienia aktualnie zalogowanego poprzez porównanie ich czasu wysłania z czasem aktualnym.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Poprawna aktualizacja powiadomień: kod 200 (OK) 
+	\item Nie znaleziono użytkownika: kod 404 (Not Found)
+\end{itemize}
+
+\subsubsubsection{Delete Notification}\label{delete-notification}
+
+\texttt{DELETE\ /api/notifs/\{id\}}
+
+Usuwa powiadomienie o podanym ID.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item ID istnieje: kod 200 (OK) 
+	\item ID nie istnieje: kod 404 (Not Found)
+\end{itemize}
 
 %\begin{figure}
 %\centering

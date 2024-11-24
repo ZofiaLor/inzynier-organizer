@@ -80,7 +80,7 @@ export class VotingPanelComponent implements OnInit {
         this.deleteVote(resp.body!.id);
       },
       error: err => {
-        console.log(err);
+        this.snackBarErrors(err, "Event date ");
       }
     })
   }
@@ -93,7 +93,7 @@ export class VotingPanelComponent implements OnInit {
         this.changeDateEmitter.emit();
       },
       error: err => {
-        console.log(err);
+        this.snackBarErrors(err, "Event date ");
       }
     })
   }
@@ -104,7 +104,7 @@ export class VotingPanelComponent implements OnInit {
         this.fetchEventDates();
       },
       error: err => {
-        console.log(err);
+        this.snackBarErrors(err, "Event date ");
       }
     })
   }
@@ -119,7 +119,7 @@ export class VotingPanelComponent implements OnInit {
         }
       },
       error: err => {
-        console.log(err);
+        this.snackBarErrors(err, "Event date ");
       }
     })
   }
@@ -130,7 +130,7 @@ export class VotingPanelComponent implements OnInit {
         this.votes.set(edId, resp.body!);
       },
       error: err => {
-        console.log(err);
+        this.snackBarErrors(err, "Vote ");
       }
     })
   }
@@ -141,7 +141,7 @@ export class VotingPanelComponent implements OnInit {
         this.fetchEventDates();
       },
       error: err => {
-        console.log(err);
+        this.snackBarErrors(err, "Vote ");
       }
     })
   }
@@ -152,7 +152,7 @@ export class VotingPanelComponent implements OnInit {
         this.fetchEventDates();
       },
       error: err => {
-        console.log(err);
+        this.snackBarErrors(err, "Vote ");
       }
     })
   }
@@ -163,10 +163,17 @@ export class VotingPanelComponent implements OnInit {
         this.fetchEventDates();
       },
       error: err => {
-        console.log(err);
+        this.snackBarErrors(err, "Vote ");
       }
     })
   }
 
+  snackBarErrors(err: any, element: string) {
+    if (err.status == 404) {
+      this.snackBar.open(element + " not found", undefined, {duration: 3000});
+    } else {
+      this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+    }
+  }
 
 }

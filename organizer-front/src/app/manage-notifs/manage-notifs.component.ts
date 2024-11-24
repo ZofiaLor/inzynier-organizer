@@ -16,6 +16,7 @@ import { NotificationService } from '../service/notification.service';
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { StorageService } from '../service/storage.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-manage-notifs',
@@ -47,15 +48,10 @@ export class ManageNotifsComponent implements OnInit{
     messageText: new FormControl('')
   })
 
-  constructor(private readonly fb: FormBuilder, private readonly notifService: NotificationService, private readonly storageService: StorageService) {}
+  constructor(private readonly fb: FormBuilder, private readonly notifService: NotificationService, private readonly storageService: StorageService, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.fetchFutureNotifs();
-    // // test
-    // var dt = DateTime.local(2017, 5, 15, 8, 30);
-    // console.log(dt.toISO());
-    // dt = dt.plus({days: 1, minutes: 40});
-    // console.log(dt.toISO());
   }
 
   addCustomDate(): void {
@@ -111,7 +107,7 @@ export class ManageNotifsComponent implements OnInit{
         this.fetchFutureNotifs();
       },
       error: err => {
-        console.log(err);
+        this.notifErrors(err);
       }
     })
   }
@@ -122,7 +118,7 @@ export class ManageNotifsComponent implements OnInit{
         this.notifs = resp.body!;
       },
       error: err => {
-        console.log(err);
+        this.notifErrors(err);
       }
     })
   }
@@ -133,9 +129,17 @@ export class ManageNotifsComponent implements OnInit{
         this.fetchFutureNotifs();
       },
       error: err => {
-        console.log(err);
+        this.notifErrors(err);
       }
     })
+  }
+
+  notifErrors(err: any) {
+    if (err.status == 404) {
+      this.snackBar.open("Notification not found", undefined, {duration: 3000});
+    } else {
+      this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+    }
   }
 
 }

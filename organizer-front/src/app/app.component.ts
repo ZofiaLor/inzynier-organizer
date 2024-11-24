@@ -11,6 +11,7 @@ import { StorageService } from './service/storage.service';
 import { AuthService } from './service/auth.service';
 import { NotificationService } from './service/notification.service';
 import { Subject, takeUntil } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy{
   private readonly _destroy$ = new Subject<void>();
 
   constructor (private readonly storageService: StorageService, private readonly authService: AuthService, private readonly notifService: NotificationService, 
-    private readonly router: Router) {}
+    private readonly router: Router, private snackBar: MatSnackBar) {}
   
   ngOnInit(): void {
     this.isLoggedIn = this.storageService.isLoggedIn();
@@ -57,13 +58,14 @@ export class AppComponent implements OnInit, OnDestroy{
         
       },
       error: (err) => {
-        console.log(err);
         if(err?.error?.text === 'Success'){
           this.storageService.clean();
           this.router.navigate(['/']).then(() => {
             window.location.reload();
           });
-          
+        } else {
+          this.isLoggedIn = true;
+          this.snackBar.open("Something went wrong...", undefined, {duration: 5000});
         }
       }
     })
@@ -82,12 +84,11 @@ export class AppComponent implements OnInit, OnDestroy{
             this.unreadNotifs = resp.body!.length;
           },
           error: err => {
-            console.log(err);
+            this.handleExpiredToken();
           }
         })
       },
       error: err => {
-        console.log("could not get notifs")
         this.handleExpiredToken();
       }
     })
@@ -96,14 +97,8 @@ export class AppComponent implements OnInit, OnDestroy{
 
   handleExpiredToken(): void {
     this.authService.refreshToken().pipe(takeUntil(this._destroy$)).subscribe({
-      next: resp => {
-        console.log("refreshed");
-      },
       error: err => {
-        if (err.status == 200) {
-          console.log("refresh from err");
-        } else {
-          console.log(err);
+        if (err.status != 200) {
           this.onLogout();
         }
       }

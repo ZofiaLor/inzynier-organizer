@@ -45,6 +45,7 @@ public class UserService {
     public List<UserDTO> getAllUsers() {
         var result = new ArrayList<UserDTO>();
         for (var user : repository.findAll()) {
+            user.setPassword("");
             result.add(mapper.userToUserDTO(user));
         }
         return result;
@@ -62,7 +63,9 @@ public class UserService {
 
     public UserDTO getUserById(Long id) {
         if(id == null) throw new NullPointerException();
-        return mapper.userToUserDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
+        User user = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        user.setPassword("");
+        return mapper.userToUserDTO(user);
     }
 
     public UserDTO getUserByIdSafe(Long id) {

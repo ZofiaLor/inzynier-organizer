@@ -17,6 +17,7 @@ import { AccessFile } from '../model/access-file';
 import { AccessDir } from '../model/access-dir';
 import { AccessService } from '../service/access.service';
 import { StorageService } from '../service/storage.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-file-tree',
@@ -32,7 +33,7 @@ export class FileTreeComponent implements OnInit{
   @Output() fileCreateEmitter = new EventEmitter();
 
   constructor (private readonly fileService: FileService, private readonly dirService: DirectoryService, private readonly accessService: AccessService,
-    private readonly storageService: StorageService, private readonly router: Router, private readonly route: ActivatedRoute) {}
+    private readonly storageService: StorageService, private readonly router: Router, private readonly route: ActivatedRoute, private snackBar: MatSnackBar) {}
 
   files: File[] = [];
   dirs: Directory[] = [];
@@ -103,7 +104,6 @@ export class FileTreeComponent implements OnInit{
   }
 
   clickEditDir(): void {
-    console.log(this.currentDir);
     if (this.currentDir === undefined) return;
     this.router.navigate([`dir/${this.currentDir!.id}`]).then(() => {
       this.itemSelectEmitter.emit();
@@ -125,9 +125,6 @@ export class FileTreeComponent implements OnInit{
         this.hasParent = false;
         this.fetchFilesInDir();
         this.fetchSubdirsInDir();
-      },
-      error: err => {
-        console.log(err);
       }
     });
   }
@@ -143,7 +140,7 @@ export class FileTreeComponent implements OnInit{
         this.fetchSubdirsInDir();
       },
       error: err => {
-        console.log(err);
+        this.onClickErrors(err);
       }
     });
   }
@@ -157,7 +154,7 @@ export class FileTreeComponent implements OnInit{
         this.fetchSharedFilesInDir();
       },
       error: err => {
-        console.log(err);
+        this.onClickErrors(err);
       }
     });
   }
@@ -171,7 +168,7 @@ export class FileTreeComponent implements OnInit{
         
       },
       error: err => {
-        console.log(err);
+        this.onClickErrors(err);
       }
     });
   }
@@ -188,7 +185,7 @@ export class FileTreeComponent implements OnInit{
           this.fetchSubdirsInDir();
         },
         error: err => {
-          console.log(err);
+          this.onClickErrors(err);
         }
       });
     }
@@ -211,7 +208,7 @@ export class FileTreeComponent implements OnInit{
           this.fetchSharedSubdirsInDir();
         },
         error: err => {
-          console.log(err);
+          this.onClickErrors(err);
         }
       });
     }
@@ -236,12 +233,11 @@ export class FileTreeComponent implements OnInit{
         });
       },
       error: err => {
-        console.log(err);
+        this.onClickErrors(err);
       }
     });
   }
 
-  //TODO for some reason, passing the file array as parameter doesnt seem to modify it by reference
   fetchSharedFilesInDir(): void {
     if (this.sharedCurrentDir === undefined) return;
     this.fileService.getFilesInDirectory(this.sharedCurrentDir!.id).pipe(takeUntil(this._destroy$)).subscribe({
@@ -261,7 +257,7 @@ export class FileTreeComponent implements OnInit{
         });
       },
       error: err => {
-        console.log(err);
+        this.onClickErrors(err);
       }
     });
   }
@@ -285,7 +281,7 @@ export class FileTreeComponent implements OnInit{
         });
       },
       error: err => {
-        console.log(err);
+        this.onClickErrors(err);
       }
     });
   }
@@ -309,7 +305,7 @@ export class FileTreeComponent implements OnInit{
         });
       },
       error: err => {
-        console.log(err);
+        this.onClickErrors(err);
       }
     });
   }
@@ -323,7 +319,7 @@ export class FileTreeComponent implements OnInit{
         this.fetchFilesFromAF();
       },
       error: err => {
-        console.log(err);
+        this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
       }
     })
   }
@@ -336,7 +332,7 @@ export class FileTreeComponent implements OnInit{
           this.sharedFiles.push(resp.body!);
         },
         error: err => {
-          console.log(err);
+          this.onClickErrors(err);
         }
       })
     }
@@ -351,7 +347,7 @@ export class FileTreeComponent implements OnInit{
         this.fetchDirsFromAD();
       },
       error: err => {
-        console.log(err);
+        this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
       }
     })
   }
@@ -364,9 +360,19 @@ export class FileTreeComponent implements OnInit{
           this.sharedDirs.push(resp.body!);
         },
         error: err => {
-          console.log(err);
+          this.onClickErrors(err);
         }
       })
+    }
+  }
+
+  onClickErrors(err: any) {
+    if (err.status == 403) {
+      this.snackBar.open("You don't have access to view this resource", undefined, {duration: 3000});
+    } else if (err.status == 404) {
+      this.snackBar.open("This resource does not exist", undefined, {duration: 3000});
+    } else {
+      this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
     }
   }
 

@@ -7,6 +7,7 @@ import { NotificationService } from '../service/notification.service';
 import { Notification } from '../model/notification';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-notifs-view',
@@ -19,7 +20,7 @@ export class NotifsViewComponent implements OnInit{
   private readonly _destroy$ = new Subject<void>();
   notifs: Notification[] = [];
 
-  constructor (private readonly notifService: NotificationService, private readonly router: Router) {}
+  constructor (private readonly notifService: NotificationService, private readonly router: Router, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.fetchAllNotifs();
@@ -35,7 +36,7 @@ export class NotifsViewComponent implements OnInit{
         this.notifs = resp.body!;
       },
       error: err => {
-        console.log(err);
+        this.notifErrors(err);
       }
     })
   }
@@ -46,7 +47,7 @@ export class NotifsViewComponent implements OnInit{
         this.notifs = resp.body!;
       },
       error: err => {
-        console.log(err);
+        this.notifErrors(err);
       }
     })
   }
@@ -55,11 +56,10 @@ export class NotifsViewComponent implements OnInit{
     notif.read = read;
     this.notifService.updateNotif(notif).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        console.log(resp);
         notif = resp.body!;
       },
       error: err => {
-        console.log(err);
+        this.notifErrors(err);
       }
     })
   }
@@ -70,10 +70,17 @@ export class NotifsViewComponent implements OnInit{
         this.fetchAllNotifs();
       },
       error: err => {
-        console.log(err);
+        this.notifErrors(err);
       }
     })
   }
 
+  notifErrors(err: any) {
+    if (err.status == 404) {
+      this.snackBar.open("Notification not found", undefined, {duration: 3000});
+    } else {
+      this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+    }
+  }
 
 }

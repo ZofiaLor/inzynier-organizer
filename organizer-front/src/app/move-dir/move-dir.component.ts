@@ -6,6 +6,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import { DirectoryService } from '../service/directory.service';
 import { Directory } from '../model/directory';
 import { Subject, takeUntil } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-move-dir',
@@ -25,7 +26,7 @@ export class MoveDirComponent implements OnChanges {
   dirs: Directory[] = [];
   hasParent = false;
 
-  constructor (private readonly dirService: DirectoryService) {}
+  constructor (private readonly dirService: DirectoryService, private snackBar: MatSnackBar) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.origParentId == undefined) return;
@@ -37,7 +38,7 @@ export class MoveDirComponent implements OnChanges {
         this.fetchSubdirsInDir();
       },
       error: err => {
-        console.log(err);
+        this.getterErrors(err);
       }
     })
   }
@@ -67,7 +68,7 @@ export class MoveDirComponent implements OnChanges {
           this.fetchSubdirsInDir();
         },
         error: err => {
-          console.log(err);
+          this.getterErrors(err);
         }
       });
     }
@@ -81,7 +82,7 @@ export class MoveDirComponent implements OnChanges {
         this.fetchSubdirsInDir();
       },
       error: err => {
-        console.log(err);
+        this.getterErrors(err);
       }
     });
   }
@@ -104,8 +105,18 @@ export class MoveDirComponent implements OnChanges {
         });
       },
       error: err => {
-        console.log(err);
+        this.getterErrors(err);
       }
     });
+  }
+
+  getterErrors(err: any) {
+    if (err.status == 403) {
+      this.snackBar.open("You don't have access to view this folder", undefined, {duration: 3000});
+    } else if (err.status == 404) {
+      this.snackBar.open("This folder could not be found", undefined, {duration: 3000});
+    } else {
+      this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+    }
   }
 }

@@ -123,17 +123,17 @@ export class FileViewComponent implements OnInit{
     // only the owner can create
     this.dirService.getDirById(dirId).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
+        this.currentDir = dirId;
         if (resp.body!.owner == this.storageService.getUser()!.id) {
           this._typeToCreate = typeId;
-          this.currentDir = dirId;
           this.setUpNewFile();
           this.onChange();
         } else {
-          console.log(resp);
+          this.snackBar.open("You cannot create items in folders you don't own", undefined, {duration: 3000});
         }
       },
       error: err => {
-        console.log(err);
+        this.getterErrors(err, "folder");
       }
     })
     
@@ -175,7 +175,7 @@ export class FileViewComponent implements OnInit{
         this.task = {id: 0, name: "Unnamed Task", textContent: "", finished: false, creationDate: "", owner: 0, parent: this.currentDir!};
         break;
       default:
-        console.log("Incorrect type");
+        this.snackBar.open("Could not parse url to set up new resource", undefined, {duration: 3000});
         break;
     }
   }
@@ -185,10 +185,14 @@ export class FileViewComponent implements OnInit{
       this.dirService.deleteDir(this.dir.id).pipe(takeUntil(this._destroy$)).subscribe({
         next: resp => {
           this.dir = undefined;
-          this.router.navigate(['']);
+          this.router.navigate(['/']);
         },
         error: err => {
-          console.log(err);
+          if (err.status == 404) {
+            this.snackBar.open("Folder not found", undefined, {duration: 3000});
+          } else {
+            this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+          }
         }
       })
     } else {
@@ -198,11 +202,14 @@ export class FileViewComponent implements OnInit{
         this.event = undefined;
         this.note = undefined;
         this.task = undefined;
-        this.router.navigate(['']);
-        // this.refreshDirs.emit();
+        this.router.navigate(['/']);
       },
       error: err => {
-        console.log(err);
+        if (err == 404) {
+          this.snackBar.open("File not found", undefined, {duration: 3000});
+        } else {
+          this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+        }
       }
     });
     }
@@ -267,7 +274,6 @@ export class FileViewComponent implements OnInit{
   }
 
   onChangeEventDate() {
-    console.log(this.event);
     this.inVotingPanel = false;
     this.fileService.updateEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
@@ -276,7 +282,7 @@ export class FileViewComponent implements OnInit{
         this.refreshDirs.emit();
       },
       error: err => {
-        console.log(err);
+        this.modifyErrors(err, "event");
       }
     });
   }
@@ -308,7 +314,7 @@ export class FileViewComponent implements OnInit{
         this.router.navigate([`dir/${this.dir!.id}`]);
       },
       error: err => {
-        console.log(err);
+        this.modifyErrors(err, "folder");
       }
     });
   }
@@ -321,7 +327,7 @@ export class FileViewComponent implements OnInit{
         this.refreshDirs.emit();
       },
       error: err => {
-        console.log(err);
+        this.modifyErrors(err, "folder");
       }
     });
   }
@@ -335,7 +341,7 @@ export class FileViewComponent implements OnInit{
         this.refreshDirs.emit();
       },
       error: err => {
-        console.log(err);
+        this.modifyErrors(err, "note");
       }
     });
   }
@@ -350,7 +356,7 @@ export class FileViewComponent implements OnInit{
         this.router.navigate([`file/${this._file!.id}`]);
       },
       error: err => {
-        console.log(err);
+        this.modifyErrors(err, "note");
       }
     });
   }
@@ -375,7 +381,7 @@ export class FileViewComponent implements OnInit{
         this.refreshDirs.emit();
       },
       error: err => {
-        console.log(err);
+        this.modifyErrors(err, "event");
       }
     });
   }
@@ -401,7 +407,7 @@ export class FileViewComponent implements OnInit{
         this.router.navigate([`file/${this._file!.id}`]);
       },
       error: err => {
-        console.log(err);
+        this.modifyErrors(err, "event");
       }
     });
   }
@@ -417,7 +423,7 @@ export class FileViewComponent implements OnInit{
         this.refreshDirs.emit();
       },
       error: err => {
-        console.log(err);
+        this.modifyErrors(err, "task");
       }
     });
   }
@@ -434,7 +440,7 @@ export class FileViewComponent implements OnInit{
         this.router.navigate([`file/${this._file!.id}`]);
       },
       error: err => {
-        console.log(err);
+        this.modifyErrors(err, "task");
       }
     });
   }
@@ -493,7 +499,7 @@ export class FileViewComponent implements OnInit{
               this.canEdit = resp.body!;
             },
             error: err => {
-              console.log(err);
+              this.getterErrors(err, "file");
             }
           });
         }
@@ -502,7 +508,7 @@ export class FileViewComponent implements OnInit{
         this.onChange();
       },
       error: err => {
-        console.log(err);
+        this.getterErrors(err, "file");
       }
     });
   }
@@ -518,7 +524,7 @@ export class FileViewComponent implements OnInit{
               this.canEdit = resp.body!;
             },
             error: err => {
-              console.log(err);
+              this.getterErrors(err, "folder");
             }
           });
         }
@@ -526,9 +532,29 @@ export class FileViewComponent implements OnInit{
         this.onChange();
       },
       error: err => {
-        console.log(err);
+        this.getterErrors(err, "folder");
       }
     });
+  }
+
+  getterErrors(err: any, resource: string) {
+    if (err.status == 403) {
+      this.snackBar.open("You don't have access to view this " + resource, undefined, {duration: 3000});
+    } else if (err.status == 404) {
+      this.snackBar.open("This " + resource + " could not be found", undefined, {duration: 3000});
+    } else {
+      this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+    }
+  }
+
+  modifyErrors(err: any, resource: string) {
+    if (err.status == 403) {
+      this.snackBar.open("You don't have access to edit this " + resource, undefined, {duration: 3000});
+    } else if (err.status == 404) {
+      this.snackBar.open("This " + resource + " could not be found", undefined, {duration: 3000});
+    } else {
+      this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+    }
   }
 
 }

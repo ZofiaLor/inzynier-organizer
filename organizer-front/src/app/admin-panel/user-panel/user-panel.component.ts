@@ -10,6 +10,7 @@ import { User } from '../../model/user';
 import { Subject, takeUntil } from 'rxjs';
 import { StorageService } from '../../service/storage.service';
 import { AuthService } from '../../service/auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-user-panel',
@@ -25,15 +26,19 @@ export class UserPanelComponent implements OnInit{
   columns: string[] = ["id", "username", "name", "email"];
   isCurrentUser: boolean = false;
   isAdminSelected: boolean = false;
-  constructor (private userService: UserService, private storageService: StorageService, private authService: AuthService) {}
+  blockAccess = false;
+  constructor (private userService: UserService, private storageService: StorageService, private authService: AuthService, private snackBar: MatSnackBar) {}
   ngOnInit(): void {
     this.userService.getAllUsers().pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        console.log(resp);
         this.userData = resp.body!;
       },
       error: err => {
-        console.log(err);
+        if (err.status == 403) {
+          this.blockAccess = true;
+        } else {
+          this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+        }
       }
     })
   }
@@ -41,13 +46,12 @@ export class UserPanelComponent implements OnInit{
   selectUser(id: number): void {
     this.userService.getUserById(id).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
-        console.log(resp);
         this.user = resp.body!;
         this.isCurrentUser = this.user.username == this.storageService.getUser()?.username;
         this.isAdminSelected = this.user.role == "ROLE_ADMIN";
       },
       error: err => {
-        console.log(err);
+        this.errorSnackBar(err);
       }
     })
   }
@@ -59,7 +63,7 @@ export class UserPanelComponent implements OnInit{
         this.isAdminSelected = this.user.role == "ROLE_ADMIN";
       },
       error: err => {
-        console.log(err);
+        this.errorSnackBar(err);
       }
     })
   }
@@ -71,7 +75,7 @@ export class UserPanelComponent implements OnInit{
         this.isAdminSelected = this.user.role == "ROLE_ADMIN";
       },
       error: err => {
-        console.log(err);
+        this.errorSnackBar(err);
       }
     })
   }
@@ -83,9 +87,23 @@ export class UserPanelComponent implements OnInit{
         window.location.reload();
       },
       error: err => {
-        console.log(err);
+        if (err.status == 404) {
+          this.snackBar.open("This user could not be found", undefined, {duration: 3000});
+        } else if (err.status == 403) {
+          this.snackBar.open("You can't delete your own account from this panel!", undefined, {duration: 3000});
+        } else {
+          this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+        }
       }
     })
+  }
+
+  errorSnackBar(err: any) {
+    if (err.status == 404) {
+      this.snackBar.open("This user could not be found", undefined, {duration: 3000});
+    } else {
+      this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+    }
   }
 
 }

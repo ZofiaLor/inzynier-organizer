@@ -48,15 +48,11 @@ export class ManageAccessComponent implements OnChanges, OnInit{
     this.userService.getAllUsersSafe().pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.userBrowseData = resp.body!;
-      },
-      error: err => {
-        console.log(err);
       }
     });
   }
 
   onGrantAccess(access: number) {
-    console.log(this.userAddedList.selectedOptions);
     if (this.isSharedFile) {
       for (var selected of this.userAddedList.selectedOptions.selected) {
         let af: AccessFile = {id: {userId: this.userAddedData[parseInt(selected.value)].id, fileId: this.sharedItemId!}, accessPrivilege: access};
@@ -116,7 +112,7 @@ export class ManageAccessComponent implements OnChanges, OnInit{
         this.fetchUsersFromAF();
       },
       error: err => {
-        console.log(err);
+        this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
       }
     })
   }
@@ -128,7 +124,7 @@ export class ManageAccessComponent implements OnChanges, OnInit{
         this.fetchUsersFromAD();
       },
       error: err => {
-        console.log(err);
+        this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
       }
     })
   }
@@ -136,13 +132,12 @@ export class ManageAccessComponent implements OnChanges, OnInit{
   fetchUsersFromAF(): void {
     this.userAddedData = [];
     for (var af of this.afs) {
-      console.log(af);
       this.userService.getUserByIdSafe(af.id.userId).pipe(takeUntil(this._destroy$)).subscribe({
         next: resp => {
           this.userAddedData.push(resp.body!);
         },
         error: err => {
-          console.log(err);
+          this.accessErrors(err, "User");
         }
       })
     }
@@ -156,7 +151,7 @@ export class ManageAccessComponent implements OnChanges, OnInit{
           this.userAddedData.push(resp.body!);
         },
         error: err => {
-          console.log(err);
+          this.accessErrors(err, "User");
         }
       })
     }
@@ -168,53 +163,49 @@ export class ManageAccessComponent implements OnChanges, OnInit{
         this.user = resp.body!;
       },
       error: err => {
-        console.log(err);
+        this.accessErrors(err, "User");
       }
     })
   }
 
   modifyAF(af: AccessFile): void {
     this.accessService.modifyAF(af).pipe(takeUntil(this._destroy$)).subscribe({
-      next: resp => {
-        console.log(resp.body!);
-      },
       error: err => {
-        console.log(err);
+        this.accessErrors(err, "Access entry");
       }
-    })
+    });
   }
 
   modifyAD(ad: AccessDir): void {
     this.accessService.modifyAD(ad).pipe(takeUntil(this._destroy$)).subscribe({
-      next: resp => {
-        console.log(resp.body!);
-      },
       error: err => {
-        console.log(err);
+        this.accessErrors(err, "Access entry");
       }
-    })
+    });
   }
 
   deleteAF(userId: number, fileId: number) {
     this.accessService.deleteAF(userId, fileId).pipe(takeUntil(this._destroy$)).subscribe({
-      next: resp => {
-        console.log(resp.body!);
-      },
       error: err => {
-        console.log(err);
+        this.accessErrors(err, "Access entry");
       }
     })
   }
 
   deleteAD(userId: number, dirId: number) {
     this.accessService.deleteAD(userId, dirId).pipe(takeUntil(this._destroy$)).subscribe({
-      next: resp => {
-        console.log(resp.body!);
-      },
       error: err => {
-        console.log(err);
+        this.accessErrors(err, "Access entry");
       }
     })
+  }
+
+  accessErrors(err: any, element: string) {
+    if (err.status == 404) {
+      this.snackBar.open(element+ " not found", undefined, {duration: 3000});
+    } else {
+      this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
+    }
   }
 
 }

@@ -65,16 +65,13 @@ export class ProfileComponent implements OnInit {
     this.user!.username = this.form.controls.username.value!;
     this.user!.name = this.form.controls.name.value!;
     this.user!.email = this.form.controls.email.value!;
-    console.log(this.user);
     this.userService.updateUser(this.user!).subscribe({
       next: resp => {
-        console.log(resp);
         this.storageService.saveUser(resp.body!);
         this.user = resp.body!;
         window.location.reload();
       },
       error: err => {
-        console.log(err);
         if (err.status == 403) {
           this.snackBar.open("This username is already taken!", undefined, {duration: 3000});
         } else if (err.status == 404 || err.status == 400) {
@@ -98,7 +95,6 @@ export class ProfileComponent implements OnInit {
         this.snackBar.open("You've successfully changed your password", undefined, {duration: 3000});
       },
       error: err => {
-        console.log(err);
         if (err.status == 403) {
           this.snackBar.open("Your password was incorrect", undefined, {duration: 3000});
         } else if (err.status == 200) {
@@ -119,7 +115,6 @@ export class ProfileComponent implements OnInit {
         });
       },
       error: err => {
-        console.log(err);
         this.storageService.clean();
         this.router.navigate(['/']).then(() => {
           window.location.reload();

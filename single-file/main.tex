@@ -349,7 +349,7 @@ escapeinside={@*}{*@},%
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 % pakiet minted
-%\usepackage{minted}
+\usepackage{minted}
 
 % pakiet wymaga specjalnego kompilowania:
 % pdflatex -shell-escape main.tex
@@ -836,8 +836,12 @@ W tym podrozdziale przedstawiono listę wszystkich endpointów wystawianych prze
 \subsubsection{Authorization}\label{authorization}
 
 \subsubsubsection{Log In}\label{log-in}
+\ksremark{Nie mamy w \LaTeX u subsubsubsection. Zamiast tego trzeba użyć paragraph.}
 
 \texttt{POST\ /api/auth/login}
+
+\ksremark{Pakiet minted pozwala na podanie tekstu bez konieczności dodawanie beksleszy.}
+\mintinline{bash}{POST /api/auth/login}
 
 Logowanie użytkownika.
 
@@ -850,6 +854,13 @@ Wymagane w ciele zapytania: nazwa użytkownika (username), hasło
     "password": "password"
 }
 \end{verbatim}
+\ksremark{Może użycie pakietu minted da ładniejszy wynik?}
+\begin{minted}{json}
+{
+    "username": "newUser",
+    "password": "password"
+}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -861,6 +872,8 @@ Odpowiedzi:
 \subsubsubsection{Log Out} 
 
 \texttt{POST\ /api/auth/logout}
+
+
 
 Wylogowanie użytkownika.
 

@@ -96,7 +96,6 @@ public abstract class UserMapper {
     @Mapping(source = "directories", target = "directories", qualifiedByName = "getListOfDirectories")
     @Mapping(source = "votes", target = "votes", qualifiedByName = "getListOfVotes")
     @Mapping(source = "notifications", target = "notifications", qualifiedByName = "getListOfNotifications")
-    //@Mapping(target = "username", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "role", ignore = true)
     public abstract void updateUserFromUserDTO(UserDTO userDTO, @MappingTarget User user);

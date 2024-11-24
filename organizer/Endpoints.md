@@ -16,8 +16,8 @@ Wymagane w ciele zapytania: nazwa użytkownika (username), hasło (password)
 ```
 
 Odpowiedzi:
-- Poprawne zalogowanie: "Success", kod 200 (OK)
-- Niepoprawne hasło/login: kod 403 (Forbidden)
+- Poprawne zalogowanie: obiekt użytkownika z pustym hasłem, kod 200 (OK)
+- Niepoprawne hasło/login: "Incorrect credentials", kod 403 (Forbidden)
 - Brak hasła/loginu: "Empty username or password", kod 400 (Bad Request)
 ### Log Out
 ```POST /api/auth/logout```
@@ -30,7 +30,7 @@ Brak wymaganego ciała zapytania.
 {}
 ```
 
-Odpowiedź: "Success", kod 200 (OK)
+Odpowiedź: "Success", puste ciasteczka w nagłówku, kod 200 (OK)
 ```
 Success
 ```
@@ -49,9 +49,28 @@ Wymagana nazwa użytkownika i hasło, opcjonalny adres email oraz imię (name). 
 }
 ```
 Odpowiedzi:
-- Poprawne zarejestrowanie: obiekt utworzonego użytkownika z zakodowanym hasłem i rolą ROLE_USER, kod 200 (OK)
+- Poprawne zarejestrowanie: obiekt utworzonego użytkownika z pustym hasłem i rolą ROLE_USER, kod 200 (OK)
 - Próba zarejestrowania użytkownika o istniejącej już nazwie: kod 403 (Forbidden)
 - Brak nazwy użytkownika lub hasła: kod 400 (Bad Request)
+
+### Change Password
+```PUT /api/password```
+
+Pozwala na zmianę hasła użytkownika.
+
+Wymaga podania starego hasła, służącego do zatwierdzenia zmiany, oraz nowego hasła.
+
+```json
+{
+  "oldPassword": "pwdOld",
+  "newPassword": "pwdNew"
+}
+```
+Odpowiedzi:
+- Poprawna zmiana hasła: "Success", kod 200 (OK)
+- Brak podanego starego lub nowego hasła: kod 400 (Bad Request)
+- Użytkownik nie istnieje: kod 404 (Not Found)
+- Stare hasło jest niepoprawne: kod 403 (Forbidden)
 
 ### Grant/Revoke Admin Privilege
 ```PUT /api/auth/grant```
@@ -59,7 +78,7 @@ Odpowiedzi:
 
 Nadanie/odebranie roli Administratora użytkownikowi.
 
-Wymagana nazwa użytkownika.
+Wymagana nazwa użytkownika. Endpoint dostępny jest tylko administratorowi.
 ```json
 {
     "username": "newUser"
@@ -69,34 +88,49 @@ Odpowiedzi:
 - Poprawne nadanie/odebranie roli: obiekt użytkownika, kod 200 (OK)
 - Nieistniejąca nazwa użytkownika: kod 404 (Not Found)
 - Próba nadania/odebrania sobie roli: kod 400 (Bad Request)
+- Użytkownik nie jest administratorem: kod 403 (Forbidden)
+
+### Refresh Token
+```POST /api/refreshtoken```
+
+Odświeża JWT odpowiadający za autoryzację użytkownika, jeżeli refreshToken zapisany w ciasteczkach nie stracił ważności.
+
+Ciało zapytania jest ignorowane.
+
+Odpowiedzi:
+- Poprawne odświeżenie JWT: nowe ciasteczko JWT w nagłówku, kod 200 (OK)
+- refreshToken stracił ważność: kod 403 (Forbidden)
+- Nie znaleziono refreshToken w bazie danych: kod 404 (Not Found)
+- refreshToken w ciasteczku jest pusty lub null: kod 400 (Bad Request)
 
 ## Users
 
 ### Get All Users
 ```GET /api/users```
 
-Zwraca wszystkich użytkowników.
+Zwraca wszystkich użytkowników z pustymi hasłami. Endpoint dostępny tylko administratorowi.
+
+Odpowiedzi: 
+- Użytkownik jest administratorem: lista obiektów użytkowników, kod 200 (OK)
+- Użytkownik nie jest administratorem: kod 403 (Forbidden)
+
+### Get All Users Safe
+```GET /api/users/safe```
+
+Zwraca ID, nazwy użytkownika i nazwy wszystkich użytkowników.
 
 Odpowiedź: lista obiektów użytkowników, kod 200 (OK)
-
-### Get User By Username
-```GET /api/users/name/{username}```
-
-Zwraca użytkownika o podanej nazwie.
-
-Odpowiedzi:
-- Użytkownik istnieje: obiekt użytkownika, kod 200 (OK)
-- Użytkownik nie istnieje: kod 404 (Not Found)
 
 ### Get User By ID
 ```GET /api/users/{id}```
 
-Zwraca użytkownika o podanym ID.
+Zwraca użytkownika o podanym ID z pustym hasłem. Endpoint dostępny tylko administratorowi.
 
 Odpowiedzi:
 - Użytkownik istnieje: obiekt użytkownika, kod 200 (OK)
 - Użytkownik nie istnieje: kod 404 (Not Found)
 - Brak ID: kod 400 (Bad Request)
+- Użytkownik nie jest administratorem: kod 403 (Forbidden)
 
 ### Update User
 ```PUT /api/users```
@@ -111,11 +145,12 @@ Wymagane podanie ID użytkownika w ciele zapytania.
 }
 ```
 Parametry brane pod uwagę:
+- username
 - name
 - email
 
 Odpowiedzi:
-- Pomyślna aktualizacja: obiekt użytkownika, kod 200 (OK)
+- Pomyślna aktualizacja: obiekt użytkownika z pustym hasłem, kod 200 (OK)
 - Nie znaleziono ID: kod 404 (Not Found)
 - Próba zmiany nazwy użytkownika na już istniejącą/nie podano ID: kod 400 (Bad Request)
 
@@ -123,30 +158,26 @@ Odpowiedzi:
 
 ```DELETE /api/users/{id}```
 
-Usuwa użytkownika o podanym ID, wraz z jego katalogami, głosami i powiadomieniami.
+Usuwa użytkownika o podanym ID, wraz z jego katalogami, głosami i powiadomieniami. Endpoint dostępny tylko administratorowi.
 
 Odpowiedzi:
 - ID istnieje: kod 200 (OK)
 - ID nie istnieje: kod 404 (Not Found)
+- Próba usunięcia własnego użytkownika/użytkownik nie jest administratorem: kod 403 (Forbidden)
+
+### Delete My User
+
+```DELETE /api/users/delete```
+
+Wylogowuje i usuwa aktualnie zalogowanego użytkownika, wraz z jego katalogami, głosami i powiadomieniami.
+
+Odpowiedzi:
+- Poprawne usunięcie: puste ciasteczka w nagłówku, kod 200 (OK)
+- Nie znaleziono użytkownika: kod 404 (Not Found)
 
 ## Directories
 
-### Get All Directories
-
-```GET /api/directories```
-
-Zwraca wszystkie katalogi.
-
-Odpowiedź: lista obiektów katalogów, kod 200 (OK)
-
-### Get All My Directories
-```GET /api/directories/mydirs```
-
-Zwraca wszystkie katalogi aktualnie zalogowanego użytkownika.
-
-Odpowiedź: lista obiektów katalogów, kod 200 (OK)
-
-### Get All My Base Directory
+### Get My Base Directory
 ```GET /api/directories/basedirs```
 
 Zwraca katalog bazowy aktualnie zalogowanego użytkownika.
@@ -174,6 +205,16 @@ Odpowiedzi:
 - ID nie istnieje: kod 404 (Not Found)
 - Nie podano ID: kod 400 (Bad Request)
 - Brak dostępu: kod 403 (Forbidden)
+
+### Check Directory Edit Access
+```GET /api/directories/check/{id}```
+
+Sprawdza, czy aktualnie zalogowany użytkownik posiada prawa do edycji katalogu o danym ID.
+
+Odpowiedzi:
+- ID istnieje: true jeżeli użytkownik może edytować katalog, false jeżeli nie, kod 200 (OK)
+- Nie podano ID: kod 400 (Bad Request)
+- ID nie istnieje: kod 404 (Not Found)
 
 ### Create Directory
 ```POST /api/directories```
@@ -224,20 +265,6 @@ Odpowiedzi:
 
 ## Files
 
-### Get All Files
-```GET /api/files```
-
-Zwraca wszystkie pliki.
-
-Odpowiedź: lista obiektów plików, kod 200 (OK)
-
-### Get All My Files
-```GET /api/files/myfiles```
-
-Zwraca wszystkie pliki aktualnie zalogowanego użytkownika.
-
-Odpowiedź: lista obiektów plików, kod 200 (OK)
-
 ### Get Files In Directory
 ```GET /api/files/dir/{id}```
 
@@ -258,6 +285,16 @@ Odpowiedzi:
 - ID nie istnieje: kod 404 (Not Found)
 - Nie podano ID: kod 400 (Bad Request)
 - Brak dostępu: kod 403 (Forbidden)
+
+### Check File Edit Access
+```GET /api/files/check/{id}```
+
+Sprawdza, czy aktualnie zalogowany użytkownik posiada prawa do edycji pliku o danym ID.
+
+Odpowiedzi:
+- ID istnieje: true jeżeli użytkownik może edytować plik, false jeżeli nie, kod 200 (OK)
+- Nie podano ID: kod 400 (Bad Request)
+- ID nie istnieje: kod 404 (Not Found)
 
 ### Create Event
 ```POST /api/files/event```
@@ -395,30 +432,26 @@ Odpowiedzi:
 
 ## Access Directory
 
-### Get All AccessDirectories
-```GET /api/ad```
-
-Zwraca wszystkie obiekty AccessDirectory.
-
-Odpowiedź: lista obiektów AccessDirectory, kod 200 (OK)
-
 ### Get AccessDirectory By User
 ```GET /api/ad/user/{user}```
 
 Zwraca listę obiektów AccessDirectory dla podanego ID użytkownika.
 
+Lista jest pusta dla nieistniejącego użytkownika.
+
 Odpowiedzi:
 - ID istnieje: lista obiektów AccessDirectory, kod 200 (OK)
 - Brak ID: kod 400 (Bad Request)
 
-### Get AccessDirectory By User And Directory
-```GET /api/ad/{user}/{dir}```
+### Get AccessDirectory By Directory
+```GET /api/ad/dir/{dir}```
 
-Zwraca obiekt AccessDirectory dla podanego ID użytkownika i katalogu.
+Zwraca listę obiektów AccessDirectory dla podanego ID katalogu.
+
+Lista jest pusta dla nieistniejącego katalogu.
 
 Odpowiedzi:
-- ID istnieją: obiekt AccessDirectory, kod 200 (OK)
-- Nie istnieje obiekt z podanymi ID: kod 404 (Not Found)
+- ID istnieje: lista obiektów AccessDirectory, kod 200 (OK)
 - Brak ID: kod 400 (Bad Request)
 
 ### Modify AccessDirectory
@@ -453,30 +486,26 @@ Odpowiedzi:
 
 ## Access File
 
-### Get All AccessFiles
-```GET /api/af```
-
-Zwraca wszystkie obiekty AccessFile.
-
-Odpowiedź: lista obiektów AccessFile, kod 200 (OK)
-
 ### Get AccessFile By User
 ```GET /api/af/user/{user}```
 
 Zwraca listę obiektów AccessFile dla podanego ID użytkownika.
 
+Lista jest pusta dla nieistniejącego użytkownika.
+
 Odpowiedzi:
 - ID istnieje: lista obiektów AccessFile, kod 200 (OK)
 - Brak ID: kod 400 (Bad Request)
 
-### Get AccessFile By User And File
-```GET /api/af/{user}/{file}```
+### Get AccessFile By File
+```GET /api/af/file/{file}```
 
-Zwraca obiekt AccessFile dla podanego ID użytkownika i pliku.
+Zwraca listę obiektów AccessFile dla podanego ID pliku.
+
+Lista jest pusta dla nieistniejącego pliku.
 
 Odpowiedzi:
-- ID istnieją: obiekt AccessFile, kod 200 (OK)
-- Nie istnieje obiekt z podanymi ID: kod 404 (Not Found)
+- ID istnieje: lista obiektów AccessFile, kod 200 (OK)
 - Brak ID: kod 400 (Bad Request)
 
 ### Modify AccessFile
@@ -555,27 +584,6 @@ Odpowiedzi:
 - Pomyślne utworzenie: nowy obiekt EventDate, kod 200 (OK)
 - Brak ID/terminu początkowego/końcowego: kod 400 (Bad Request)
 
-### Update EventDate
-```PUT /api/ed```
-
-Aktualizuje obiekt EventDate.
-
-Wymagane podanie ID obiektu w ciele zapytania.
-```json
-{
-    "id": 2,
-    "end": "2024-10-18T12:40:00"
-}
-```
-Parametry brane pod uwagę:
-- start
-- end
-
-Odpowiedzi:
-- Pomyślna aktualizacja: obiekt EventDate, kod 200 (OK)
-- Nie podano ID: kod 400 (Bad Request)
-- Nie znaleziono ID: kod 404 (Not Found)
-
 ### Delete EventDate
 
 ```DELETE /api/ed/{id}```
@@ -588,24 +596,6 @@ Odpowiedzi:
 
 ## Votes
 
-### Get All Votes
-
-```GET /api/votes```
-
-Zwraca wszystkie głosy.
-
-Odpowiedź: lista obiektów głosów, kod 200 (OK)
-
-### Get Votes By User ID
-```GET /api/votes/user/{id}```
-
-Zwraca głosy użytkownika o podanym ID.
-
-Odpowiedzi:
-- ID istnieje: lista obiektów głosów, kod 200 (OK)
-- ID nie istnieje: kod 404 (Not Found)
-- Nie podano ID: kod 400 (Bad Request)
-
 ### Get Votes By EventDate ID
 ```GET /api/votes/ed/{id}```
 
@@ -616,13 +606,13 @@ Odpowiedzi:
 - ID nie istnieje: kod 404 (Not Found)
 - Nie podano ID: kod 400 (Bad Request)
 
-### Get Vote By ID
-```GET /api/votes/{id}```
+### Get Current User's Vote By EventDate ID
+```GET /api/votes/myvote/{id}```
 
-Zwraca głos o podanym ID.
+Zwraca listę głosów oddanych przez aktualnie zalogowanego użytkownika na termin EventDate o podanym ID.
 
 Odpowiedzi:
-- ID istnieje: obiekt głosu, kod 200 (OK)
+- ID istnieje: lista obiektów głosów, kod 200 (OK)
 - ID nie istnieje: kod 404 (Not Found)
 - Nie podano ID: kod 400 (Bad Request)
 
@@ -644,26 +634,6 @@ Odpowiedzi:
 - Nie podano ID EventDate: kod 400 (Bad Request)
 - Nie istnieje ID EventDate: kod 404 (Not Found)
 
-### Update Vote
-```PUT /api/votes```
-
-Aktualizuje głos.
-
-Wymagane podanie ID głosu w ciele zapytania.
-```json
-{
-    "id": 1,
-    "score": 1
-}
-```
-Parametry brane pod uwagę:
-- score
-
-Odpowiedzi:
-- Pomyślna aktualizacja: obiekt głosu, kod 200 (OK)
-- Nie podano ID: kod 400 (Bad Request)
-- Nie istnieje ID: kod 404 (Not Found)
-
 ### Delete Vote
 
 ```DELETE /api/vote/{id}```
@@ -675,21 +645,6 @@ Odpowiedzi:
 - ID nie istnieje: kod 404 (Not Found)
 
 ## Notifications
-
-### Get All Notifications
-
-```GET /api/notifs```
-
-Zwraca wszystkie powiadomienia.
-
-Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
-
-### Get All My Notifications
-```GET /api/notifs/mynotifs```
-
-Zwraca wszystkie powiadomienia aktualnie zalogowanego użytkownika.
-
-Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
 ### Get All My Notifications
 ```GET /api/notifs/mynotifs```
@@ -705,13 +660,13 @@ Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogow
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
-### Get Notification By ID
-```GET /api/notifs/{id}```
+### Get Current User's Notification By File ID
+```GET /api/notifs/file/{id}```
 
-Zwraca powiadomienie o podanym ID.
+Zwraca listę niewysłanych powiadomień aktualnie zalogowanego użytkownika powiązanych z plikiem o podanym ID.
 
 Odpowiedzi:
-- ID istnieje: obiekt powiadomienia, kod 200 (OK)
+- ID istnieje: lista obiektów powiadomień, kod 200 (OK)
 - ID nie istnieje: kod 404 (Not Found)
 - Nie podano ID: kod 400 (Bad Request)
 
@@ -734,34 +689,14 @@ Odpowiedzi:
 - Brak ID użytkownika/pliku: kod 400 (Bad Request)
 - Nie istnieje ID użytkownika/pliku: kod 404 (Not Found)
 
-### Update Notification
-```PUT /api/notifs```
-
-Aktualizuje powiadomienie.
-
-Wymagane podanie ID powiadomienia w ciele zapytania.
-```json
-{
-    "id": 1,
-    "read": true
-}
-```
-Parametry brane pod uwagę:
-- message
-- sendTimeSetting
-- isRead
-
-Odpowiedzi:
-- Pomyślna aktualizacja: obiekt powiadomienia, kod 200 (OK)
-- Nie podano ID: kod 400 (Bad Request)
-- Nie znaleziono ID: kod 404 (Not Found)
-
-### Send Notifications
+### Send Current User's Notifications
 ```PUT /api/notifs/send```
 
-Wysyła powiadomienia poprzez porównanie ich czasu wysłania z czasem aktualnym.
+Wysyła powiadomienia aktualnie zalogowanego poprzez porównanie ich czasu wysłania z czasem aktualnym.
 
-Odpowiedź: kod 200 (OK)
+Odpowiedzi: 
+- Poprawna aktualizacja powiadomień: kod 200 (OK)
+- Nie znaleziono użytkownika: kod 404 (Not Found)
 
 ### Delete Notification
 

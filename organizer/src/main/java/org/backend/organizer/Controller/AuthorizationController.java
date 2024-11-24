@@ -52,6 +52,7 @@ public class AuthorizationController {
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(userPrincipal.getUser().getId());
 
             ResponseCookie jwtRefreshCookie = jwtService.generateRefreshJwtCookie(refreshToken.getToken());
+            userPrincipal.getUser().setPassword("");
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
                     .body(mapper.userToUserDTO(userPrincipal.getUser()));
         } catch (NullPointerException ex) {

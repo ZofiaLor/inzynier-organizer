@@ -26,14 +26,6 @@ public class VoteService {
     @Autowired
     EventDateRepository eventDateRepository;
 
-    public List<VoteDTO> getAllVotes() {
-        var result = new ArrayList<VoteDTO>();
-        for (var vote : repository.findAll()) {
-            result.add(mapper.voteToVoteDTO(vote));
-        }
-        return result;
-    }
-
     public List<VoteDTO> getVotesByEventDateId(Long id) {
         if (id == null) throw new NullPointerException();
         EventDate eventDate = eventDateRepository.findById(id).orElseThrow(EntityNotFoundException::new);

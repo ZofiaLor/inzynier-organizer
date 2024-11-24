@@ -85,6 +85,7 @@ public class UserService {
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
         user = repository.save(user);
+        user.setPassword("");
         DirectoryDTO dir = new DirectoryDTO();
         dir.setName("Base Directory");
         directoryService.createDirectory(dir, user.getUsername(), true);
@@ -139,7 +140,9 @@ public class UserService {
         if (newRole.equals("ROLE_ADMIN") || newRole.equals("ROLE_USER")) {
             user.setRole(newRole);
         }
-        return mapper.userToUserDTO(repository.save(user));
+        repository.save(user);
+        user.setPassword("");
+        return mapper.userToUserDTO(user);
     }
 
     public UserDTO updateUser(UserDTO userUpdates) {
@@ -147,7 +150,9 @@ public class UserService {
         User user = repository.findById(userUpdates.getId()).orElseThrow(EntityNotFoundException::new);
         if (!Objects.equals(user.getUsername(), userUpdates.getUsername()) && repository.existsByUsername(userUpdates.getUsername())) throw new IllegalArgumentException();
         mapper.updateUserFromUserDTO(userUpdates, user);
-        return mapper.userToUserDTO(repository.save(user));
+        repository.save(user);
+        user.setPassword("");
+        return mapper.userToUserDTO(user);
     }
 
     public void deleteUser(Long id, String username) {

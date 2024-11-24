@@ -24,11 +24,6 @@ public class VoteController {
     @Autowired
     JWTService jwtService;
 
-    @GetMapping("")
-    public ResponseEntity<List<VoteDTO>> getAllVotes() {
-        return new ResponseEntity<>(service.getAllVotes(), HttpStatus.OK);
-    }
-
     @GetMapping("/ed/{id}")
     public ResponseEntity<List<VoteDTO>> getVotesByEventDateId(@PathVariable("id") Long id) {
         try {

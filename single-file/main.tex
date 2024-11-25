@@ -835,25 +835,25 @@ Zależności między klasami przedstawiono na rys. \ref{fig:erd}.
 
 \begin{figure}
 \centering
-\includegraphics{./ERD.png}
+\includegraphics[width=\textwidth]{./ERD.png}
 \caption{Schemat ERD klas w bazie danych.}
 \label{fig:erd}
 \end{figure}
 
 Tabele w bazie danych posiadają następujące atrybuty:
 \begin{itemize}
-	\item AccessDirectory(directory_id (PK, FK), user_id (PK, FK), access_privilege)
-	\item AccessFile(file_id (PK, FK), user_id (PK, FK), access_privilege)
-	\item Directory(id (PK), name, owner_id (FK), parent_id (FK))
-	\item EventDate(id (PK), start, end, total_score, event_id (FK))
-	\item File(id (PK), file_type, creation_date, name, text_content, start_date, end_date, location, deadline, is_finished, owner_id (FK), parent_id (FK))
-	\item Notification(id (PK), message, send_time_setting, is_sent, is_read, file_id (FK), user_id (FK))
-	\item RefreshToken(id (PK), token, expiry_date, user_id (FK))
+	\item AccessDirectory(directory\_id (PK, FK), user\_id (PK, FK), access\_privilege)
+	\item AccessFile(file\_id (PK, FK), user\_id (PK, FK), access\_privilege)
+	\item Directory(id (PK), name, owner\_id (FK), parent\_id (FK))
+	\item EventDate(id (PK), start, end, total\_score, event\_id (FK))
+	\item File(id (PK), file\_type, creation\_date, name, text\_content, start\_date, end\_date, location, deadline, is\_finished, owner\_id (FK), parent\_id (FK))
+	\item Notification(id (PK), message, send\_time\_setting, is\_sent, is\_read, file\_id (FK), user\_id (FK))
+	\item RefreshToken(id (PK), token, expiry\_date, user\_id (FK))
 	\item User(id (PK), username, password, name, email, role)
-	\item Vote(id (PK), score, user_id (FK), event_date_id (FK))
+	\item Vote(id (PK), score, user\_id (FK), event\_date\_id (FK))
 \end{itemize}
 
-Do zaimplementowania dziedziczenia klas Event, Note i Task po klasie bazowej wybrano strategię Singe Table Inheritance. W bazie danych wszystkie klasy reprezentowane są przez tę samą tabelę File, która zawiera kolumny atrybutów wszystkich dziedziczących klas, a także ukrytą kolumnę file_type, pozwalającą frameworkowi na rozróżnienie typów podczas mapowania obiektowo-relacyjnego. Rozwiązanie takie pozwala również na odczytanie jednocześnie wszystkich typów plików, co jest przydatne podczas wyświetlania ich w eksploratorze.
+Do zaimplementowania dziedziczenia klas Event, Note i Task po klasie bazowej wybrano strategię Singe Table Inheritance. W bazie danych wszystkie klasy reprezentowane są przez tę samą tabelę File, która zawiera kolumny atrybutów wszystkich dziedziczących klas, a także ukrytą kolumnę file\_type, pozwalającą frameworkowi na rozróżnienie typów podczas mapowania obiektowo-relacyjnego. Rozwiązanie takie pozwala również na odczytanie jednocześnie wszystkich typów plików, co jest przydatne podczas wyświetlania ich w eksploratorze.
 
 Rozwiązanie MappedSuperclass zostało odrzucone, ponieważ nie tworzy ono tabeli klasy bazowej, przez co nie może ona być w relacji z żadną inną klasą. Rozwiązania Joined Table oraz Table Per Class mogłyby wykorzystane, jednak są mniej optymalne z perspektywy założonego działania.
 
@@ -863,12 +863,8 @@ W tym podrozdziale przedstawiono listę wszystkich endpointów wystawianych prze
 
 \subsubsection{Authorization}\label{authorization}
 
-\subsubsubsection{Log In}\label{log-in}
-\ksremark{Nie mamy w \LaTeX u subsubsubsection. Zamiast tego trzeba użyć paragraph.}
+\paragraph{Log In}\label{log-in}
 
-\texttt{POST\ /api/auth/login}
-
-\ksremark{Pakiet minted pozwala na podanie tekstu bez konieczności dodawanie beksleszy.}
 \mintinline{bash}{POST /api/auth/login}
 
 Logowanie użytkownika.
@@ -876,13 +872,6 @@ Logowanie użytkownika.
 Wymagane w ciele zapytania: nazwa użytkownika (username), hasło
 (password)
 
-\begin{verbatim}
-{
-    "username": "newUser",
-    "password": "password"
-}
-\end{verbatim}
-\ksremark{Może użycie pakietu minted da ładniejszy wynik?}
 \begin{minted}{json}
 {
     "username": "newUser",
@@ -897,9 +886,9 @@ Odpowiedzi:
 	\item Brak hasła/loginu: ,,Empty username or password'', kod 400 (Bad Request) 
 \end{itemize}
 
-\subsubsubsection{Log Out} 
+\paragraph{Log Out} 
 
-\texttt{POST\ /api/auth/logout}
+\mintinline{bash}{POST /api/auth/logout}
 
 
 
@@ -907,28 +896,28 @@ Wylogowanie użytkownika.
 
 Brak wymaganego ciała zapytania.
 
-\begin{verbatim}
+\begin{minted}{json}
 {}
-\end{verbatim}
+\end{minted}
 
 Odpowiedź: ,,Success'', puste ciasteczka w nagłówku, kod 200 (OK)
 
-\subsubsubsection{Register}\label{register}
+\paragraph{Register}\label{register}
 
-\texttt{POST\ /api/auth/register}
+\mintinline{bash}{POST /api/auth/register}
 
 Rejestracja nowego użytkownika i założenie jego katalogu bazowego Base Directory.
 
 Wymagana nazwa użytkownika i hasło, opcjonalny adres email oraz imię (name). Pozostałe parametry są ignorowane.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "username": "someUser",
     "password": "password",
     "email": "some@email.com",
     "name": "Some User"
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -937,20 +926,20 @@ Odpowiedzi:
 	\item Brak nazwy użytkownika lub hasła: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Change Password}\label{change-password}
+\paragraph{Change Password}\label{change-password}
 
-\texttt{PUT\ /api/password}
+\mintinline{bash}{PUT /api/password}
 
 Pozwala na zmianę hasła użytkownika.
 
 Wymaga podania starego hasła, służącego do zatwierdzenia zmiany, oraz nowego hasła.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "oldPassword": "pwdOld",
   "newPassword": "pwdNew"
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -961,19 +950,19 @@ Odpowiedzi:
 \end{itemize}
 
 
-\subsubsubsection{Grant/Revoke Admin Privilege}\label{grantrevoke-admin-privilege}
+\paragraph{Grant/Revoke Admin Privilege}\label{grantrevoke-admin-privilege}
 
-\texttt{PUT\ /api/auth/grant} \texttt{PUT\ /api/auth/revoke}
+\mintinline{bash}{PUT /api/auth/grant} \mintinline{bash}{PUT /api/auth/revoke}
 
 Nadanie/odebranie roli Administratora użytkownikowi.
 
 Wymagana nazwa użytkownika. Endpoint dostępny jest tylko administratorowi.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "username": "newUser"
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -984,9 +973,9 @@ Odpowiedzi:
 \end{itemize}
 
 
-\subsubsubsection{Refresh Token}\label{refresh-token}
+\paragraph{Refresh Token}\label{refresh-token}
 
-\texttt{POST\ /api/refreshtoken}
+\mintinline{bash}{POST /api/refreshtoken}
 
 Odświeża JWT odpowiadający za autoryzację użytkownika, jeżeli refreshToken zapisany w ciasteczkach nie stracił ważności.
 
@@ -1003,9 +992,9 @@ Odpowiedzi:
 
 \subsubsection{Users}\label{users}
 
-\subsubsubsection{Get All Users}\label{get-all-users}
+\paragraph{Get All Users}\label{get-all-users}
 
-\texttt{GET\ /api/users}
+\mintinline{bash}{GET /api/users}
 
 Zwraca wszystkich użytkowników z pustymi hasłami. Endpoint dostępny tylko administratorowi.
 
@@ -1015,17 +1004,17 @@ Odpowiedzi:
 	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Get All Users Safe}\label{get-all-users-safe}
+\paragraph{Get All Users Safe}\label{get-all-users-safe}
 
-\texttt{GET\ /api/users/safe}
+\mintinline{bash}{GET /api/users/safe}
 
 Zwraca ID, nazwy użytkownika i nazwy wszystkich użytkowników.
 
 Odpowiedź: lista obiektów użytkowników, kod 200 (OK)
 
-\subsubsubsection{Get User By ID}\label{get-user-by-id}
+\paragraph{Get User By ID}\label{get-user-by-id}
 
-\texttt{GET\ /api/users/\{id\}}
+\mintinline{bash}{GET /api/users/\{id\}}
 
 Zwraca użytkownika o podanym ID z pustym hasłem. Endpoint dostępny tylko administratorowi.
 
@@ -1037,20 +1026,20 @@ Odpowiedzi:
 	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Update User}\label{update-user}
+\paragraph{Update User}\label{update-user}
 
-\texttt{PUT\ /api/users}
+\mintinline{bash}{PUT /api/users}
 
 Aktualizuje użytkownika.
 
 Wymagane podanie ID użytkownika w ciele zapytania.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "id": 5,
     "name": "New User 2"
 }
-\end{verbatim}
+\end{minted}
 
 Parametry brane pod uwagę: 
 \begin{itemize}
@@ -1064,9 +1053,9 @@ Odpowiedzi:
 	\item  Próba zmiany nazwy użytkownika na już istniejącą/nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Delete User}\label{delete-user}
+\paragraph{Delete User}\label{delete-user}
 
-\texttt{DELETE\ /api/users/\{id\}}
+\mintinline{bash}{DELETE /api/users/\{id\}}
 
 Usuwa użytkownika o podanym ID, wraz z jego katalogami, głosami i powiadomieniami. Endpoint dostępny tylko administratorowi.
 
@@ -1077,9 +1066,9 @@ Odpowiedzi:
 	\item Próba usunięcia własnego użytkownika/użytkownik nie jest administratorem: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Delete My User}\label{delete-my-user}
+\paragraph{Delete My User}\label{delete-my-user}
 
-\texttt{DELETE\ /api/users/delete}
+\mintinline{bash}{DELETE /api/users/delete}
 
 Wylogowuje i usuwa aktualnie zalogowanego użytkownika, wraz z jego katalogami, głosami i powiadomieniami.
 
@@ -1091,17 +1080,17 @@ Odpowiedzi:
 
 \subsubsection{Directories}\label{directories}
 
-\subsubsubsection{Get My Base Directory}\label{get-my-base-directory}
+\paragraph{Get My Base Directory}\label{get-my-base-directory}
 
-\texttt{GET\ /api/directories/basedirs}
+\mintinline{bash}{GET /api/directories/basedirs}
 
 Zwraca katalog bazowy aktualnie zalogowanego użytkownika.
 
 Odpowiedź: obiekt katalogu bazowego, kod 200 (OK)
 
-\subsubsubsection{Get Directories By Parent ID}\label{get-directories-by-parent-id}
+\paragraph{Get Directories By Parent ID}\label{get-directories-by-parent-id}
 
-\texttt{GET\ /api/directories/subdirs/\{id\}}
+\mintinline{bash}{GET /api/directories/subdirs/\{id\}}
 
 Zwraca katalogi podrzędne katalogu o podanym ID.
 
@@ -1113,9 +1102,9 @@ Odpowiedzi:
 	\item Brak dostępu: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Get Directory By ID}\label{get-directory-by-id}
+\paragraph{Get Directory By ID}\label{get-directory-by-id}
 
-\texttt{GET\ /api/directories/\{id\}}
+\mintinline{bash}{GET /api/directories/\{id\}}
 
 Zwraca katalog o podanym ID.
 
@@ -1127,9 +1116,9 @@ Odpowiedzi:
 	\item Brak dostępu: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Check Directory Edit Access}\label{check-directory-edit-access}
+\paragraph{Check Directory Edit Access}\label{check-directory-edit-access}
 
-\texttt{GET\ /api/directories/check/\{id\}}
+\mintinline{bash}{GET /api/directories/check/\{id\}}
 
 Sprawdza, czy aktualnie zalogowany użytkownik posiada prawa do edycji katalogu o danym ID.
 
@@ -1140,20 +1129,20 @@ Odpowiedzi:
 	\item ID nie istnieje: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsubsection{Create Directory}\label{create-directory}
+\paragraph{Create Directory}\label{create-directory}
 
-\texttt{POST\ /api/directories}
+\mintinline{bash}{POST /api/directories}
 
 Tworzy nowy katalog.
 
 Wymagane ID rodzica, można podać nazwę. W przypadku niepodania nazwy, domyślnie ustawiana jest ona na ,,Unnamed Directory''.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "name": "Test Directory",
     "parent": 3
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1161,20 +1150,20 @@ Odpowiedzi:
 	\item Brak ID rodzica: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Update Directory}\label{update-directory}
+\paragraph{Update Directory}\label{update-directory}
 
-\texttt{PUT\ /api/directories}
+\mintinline{bash}{PUT /api/directories}
 
 Aktualizuje katalog.
 
 Wymagane podanie ID katalogu w ciele zapytania.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "id": 2,
     "name": "Some Directory"
 }
-\end{verbatim}
+\end{minted}
 
 Parametry brane pod uwagę: 
 \begin{itemize}
@@ -1189,9 +1178,9 @@ Odpowiedzi:
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Delete Directory}\label{delete-directory}
+\paragraph{Delete Directory}\label{delete-directory}
 
-\texttt{DELETE\ /api/directories/\{id\}}
+\mintinline{bash}{DELETE /api/directories/\{id\}}
 
 Usuwa katalog o podanym ID, wraz z jego plikami.
 
@@ -1203,9 +1192,9 @@ Odpowiedzi:
 
 \subsubsection{Files}\label{files}
 
-\subsubsubsection{Get Files In Directory}\label{get-files-in-directory}
+\paragraph{Get Files In Directory}\label{get-files-in-directory}
 
-\texttt{GET\ /api/files/dir/\{id\}}
+\mintinline{bash}{GET /api/files/dir/\{id\}}
 
 Zwraca wszystkie pliki w katalogu o podanym ID.
 
@@ -1216,9 +1205,9 @@ Odpowiedzi:
 	\item Brak dostępu: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Get File By ID}\label{get-file-by-id}
+\paragraph{Get File By ID}\label{get-file-by-id}
 
-\texttt{GET\ /api/files/\{id\}}
+\mintinline{bash}{GET /api/files/\{id\}}
 
 Zwraca katalog o podanym ID.
 
@@ -1230,9 +1219,9 @@ Odpowiedzi:
 	\item Brak dostępu: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Check File Edit Access}\label{check-file-edit-access}
+\paragraph{Check File Edit Access}\label{check-file-edit-access}
 
-\texttt{GET\ /api/files/check/\{id\}}
+\mintinline{bash}{GET /api/files/check/\{id\}}
 
 Sprawdza, czy aktualnie zalogowany użytkownik posiada prawa do edycji pliku o danym ID.
 
@@ -1243,22 +1232,22 @@ Odpowiedzi:
 	\item ID nie istnieje: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsubsection{Create Event}\label{create-event}
+\paragraph{Create Event}\label{create-event}
 
-\texttt{POST\ /api/files/event}
+\mintinline{bash}{POST /api/files/event}
 
 Tworzy nowe wydarzenie.
 
 Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Event''.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "name": "My First Event",
     "parent": 3,
     "textContent": "Hello World! This is my first event",
     "location": "Katowice"
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1266,20 +1255,20 @@ Odpowiedzi:
 	\item Nie podano ID rodzica: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Update Event}\label{update-event}
+\paragraph{Update Event}\label{update-event}
 
-\texttt{PUT\ /api/files/event}
+\mintinline{bash}{PUT /api/files/event}
 
 Aktualizuje wydarzenie.
 
 Wymagane podanie ID wydarzenia w ciele zapytania.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "id": 2,
     "location": "Gliwice"
 }
-\end{verbatim}
+\end{minted}
 
 Parametry brane pod uwagę: 
 \begin{itemize}
@@ -1294,21 +1283,21 @@ Odpowiedzi:
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Create Note}\label{create-note}
+\paragraph{Create Note}\label{create-note}
 
-\texttt{POST\ /api/files/note}
+\mintinline{bash}{POST /api/files/note}
 
 Tworzy nową notatkę.
 
 Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Note''.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "name": "My First Note",
   "parent": 3,
   "textContent": "Hello World! This is my first note"
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1316,20 +1305,20 @@ Odpowiedzi:
 	\item Nie podano ID rodzica: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Update Note}\label{update-note}
+\paragraph{Update Note}\label{update-note}
 
-\texttt{PUT\ /api/files/note}
+\mintinline{bash}{PUT /api/files/note}
 
 Aktualizuje notatkę.
 
 Wymagane podanie ID notatki w ciele zapytania.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "id": 1,
   "name": "My Note"
 }
-\end{verbatim}
+\end{minted}
 
 Parametry brane pod uwagę: 
 \begin{itemize}
@@ -1344,22 +1333,22 @@ Odpowiedzi:
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Create Task}\label{create-task}
+\paragraph{Create Task}\label{create-task}
 
-\texttt{POST\ /api/files/task}
+\mintinline{bash}{POST /api/files/task}
 
 Tworzy nowe zadanie.
 
 Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Task''.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "name": "My First Task",
   "parent": 2,
   "textContent": "Hello World! This is my first task",
   "isFinished": false
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1367,20 +1356,20 @@ Odpowiedzi:
 	\item Nie podano ID rodzica: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Update Task}\label{update-task}
+\paragraph{Update Task}\label{update-task}
 
-\texttt{PUT\ /api/files/task}
+\mintinline{bash}{PUT /api/files/task}
 
 Aktualizuje zadanie.
 
 Wymagane podanie ID zadania w ciele zapytania.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "id": 3,
   "isFinished": true
 }
-\end{verbatim}
+\end{minted}
 
 Parametry brane pod uwagę: 
 \begin{itemize}
@@ -1395,9 +1384,9 @@ Odpowiedzi:
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
 
-\subsubsubsection{Delete File}\label{delete-file}
+\paragraph{Delete File}\label{delete-file}
 
-\texttt{DELETE\ /api/files/\{id\}}
+\mintinline{bash}{DELETE /api/files/\{id\}}
 
 Usuwa plik o podanym ID, w przypadku wydarzenia - wraz z jego obiektami EventDate.
 
@@ -1409,9 +1398,9 @@ Odpowiedzi:
 
 \subsubsection{Access Directory}\label{access-directory}
 
-\subsubsubsection{Get AccessDirectory By User}\label{get-accessdirectory-by-user}
+\paragraph{Get AccessDirectory By User}\label{get-accessdirectory-by-user}
 
-\texttt{GET\ /api/ad/user/\{user\}}
+\mintinline{bash}{GET /api/ad/user/\{user\}}
 
 Zwraca listę obiektów AccessDirectory dla podanego ID użytkownika.
 
@@ -1423,9 +1412,9 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Get AccessDirectory By Directory}\label{get-accessdirectory-by-directory}
+\paragraph{Get AccessDirectory By Directory}\label{get-accessdirectory-by-directory}
 
-\texttt{GET\ /api/ad/dir/\{dir\}}
+\mintinline{bash}{GET /api/ad/dir/\{dir\}}
 
 Zwraca listę obiektów AccessDirectory dla podanego ID katalogu.
 
@@ -1437,15 +1426,15 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Modify AccessDirectory}\label{modify-accessdirectory}
+\paragraph{Modify AccessDirectory}\label{modify-accessdirectory}
 
-\texttt{POST\ /api/ad}
+\mintinline{bash}{POST /api/ad}
 
 Tworzy lub aktualizuje obiekt AccessDirectory o podanych ID użytkownika i katalogu.
 
 Wymagane podanie obydwu ID w ciele zapytania.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "id": {
         "userId": 4,
@@ -1453,7 +1442,7 @@ Wymagane podanie obydwu ID w ciele zapytania.
     },
     "accessPrivilege": 1
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1462,9 +1451,9 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Delete AccessDirectory}\label{delete-accessdirectory}
+\paragraph{Delete AccessDirectory}\label{delete-accessdirectory}
 
-\texttt{DELETE\ /api/ad/\{user\}/\{dir\}}
+\mintinline{bash}{DELETE /api/ad/\{user\}/\{dir\}}
 
 Usuwa obiekt AccessDirectory o podanych ID użytkownika i katalogu.
 
@@ -1476,9 +1465,9 @@ Odpowiedzi:
 
 \subsubsection{Access File}\label{access-file}
 
-\subsubsubsection{Get AccessFile By User}\label{get-accessfile-by-user}
+\paragraph{Get AccessFile By User}\label{get-accessfile-by-user}
 
-\texttt{GET\ /api/af/user/\{user\}}
+\mintinline{bash}{GET /api/af/user/\{user\}}
 
 Zwraca listę obiektów AccessFile dla podanego ID użytkownika.
 
@@ -1490,9 +1479,9 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Get AccessFile By File}\label{get-accessfile-by-file}
+\paragraph{Get AccessFile By File}\label{get-accessfile-by-file}
 
-\texttt{GET\ /api/af/file/\{file\}}
+\mintinline{bash}{GET /api/af/file/\{file\}}
 
 Zwraca listę obiektów AccessFile dla podanego ID pliku.
 
@@ -1504,15 +1493,15 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Modify AccessFile}\label{modify-accessfile}
+\paragraph{Modify AccessFile}\label{modify-accessfile}
 
-\texttt{POST\ /api/af}
+\mintinline{bash}{POST /api/af}
 
 Tworzy lub aktualizuje obiekt AccessFile o podanych ID użytkownika i pliku.
 
 Wymagane podanie obydwu ID w ciele zapytania.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "id": {
         "userId": 4,
@@ -1520,7 +1509,7 @@ Wymagane podanie obydwu ID w ciele zapytania.
     },
     "accessPrivilege": 1
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1529,9 +1518,9 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Delete AccessFile}\label{delete-accessfile}
+\paragraph{Delete AccessFile}\label{delete-accessfile}
 
-\texttt{DELETE\ /api/af/\{user\}/\{file\}}
+\mintinline{bash}{DELETE /api/af/\{user\}/\{file\}}
 
 Usuwa obiekt AccessFile o podanych ID użytkownika i pliku.
 
@@ -1543,17 +1532,17 @@ Odpowiedzi:
 
 \subsubsection{Event Dates}\label{event-dates}
 
-\subsubsubsection{Get All EventDates}\label{get-all-eventdates}
+\paragraph{Get All EventDates}\label{get-all-eventdates}
 
-\texttt{GET\ /api/ed}
+\mintinline{bash}{GET /api/ed}
 
 Zwraca wszystkie obiekty EventDate.
 
 Odpowiedź: lista obiektów EventDate, kod 200 (OK)
 
-\subsubsubsection{Get EventDates By Event ID}\label{get-eventdates-by-event-id}
+\paragraph{Get EventDates By Event ID}\label{get-eventdates-by-event-id}
 
-\texttt{GET\ /api/ed?id=\{eventId\}}
+\mintinline{bash}{GET /api/ed?id=\{eventId\}}
 
 Zwraca obiekty EventDate dotyczące wydarzenia o podanym ID.
 
@@ -1564,9 +1553,9 @@ Odpowiedzi:
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Get EventDate By ID}\label{get-eventdate-by-id}
+\paragraph{Get EventDate By ID}\label{get-eventdate-by-id}
 
-\texttt{GET\ /api/ed/\{id\}}
+\mintinline{bash}{GET /api/ed/\{id\}}
 
 Zwraca obiekt EventDate o podanym ID.
 
@@ -1577,21 +1566,21 @@ Odpowiedzi:
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Create EventDate}\label{create-eventdate}
+\paragraph{Create EventDate}\label{create-eventdate}
 
-\texttt{POST\ /api/ed}
+\mintinline{bash}{POST /api/ed}
 
 Tworzy obiekt EventDate.
 
 Wymagane jest podanie ID wydarzenia, a także początku i końca terminu. Wynik całkowity ustawiany jest na 0.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "event": 2,
     "start" : "2024-10-18T12:00:00",
     "end": "2024-10-18T12:30:00"
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1599,9 +1588,9 @@ Odpowiedzi:
 	\item Brak ID/terminu początkowego/końcowego: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Delete EventDate}\label{delete-eventdate}
+\paragraph{Delete EventDate}\label{delete-eventdate}
 
-\texttt{DELETE\ /api/ed/\{id\}}
+\mintinline{bash}{DELETE /api/ed/\{id\}}
 
 Usuwa obiekt EventDate o podanym ID, wraz z jego głosami.
 
@@ -1613,9 +1602,9 @@ Odpowiedzi:
 
 \subsubsection{Votes}\label{votes}
 
-\subsubsubsection{Get Votes By EventDate ID}\label{get-votes-by-eventdate-id}
+\paragraph{Get Votes By EventDate ID}\label{get-votes-by-eventdate-id}
 
-\texttt{GET\ /api/votes/ed/\{id\}}
+\mintinline{bash}{GET /api/votes/ed/\{id\}}
 
 Zwraca głosy na termin EventDate o podanym ID.
 
@@ -1626,9 +1615,9 @@ Odpowiedzi:
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Get Current User's Vote By EventDate ID}\label{get-current-users-vote-by-eventdate-id}
+\paragraph{Get Current User's Vote By EventDate ID}\label{get-current-users-vote-by-eventdate-id}
 
-\texttt{GET\ /api/votes/myvote/\{id\}}
+\mintinline{bash}{GET /api/votes/myvote/\{id\}}
 
 Zwraca listę głosów oddanych przez aktualnie zalogowanego użytkownika na termin EventDate o podanym ID.
 
@@ -1639,20 +1628,20 @@ Odpowiedzi:
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Cast Vote}\label{cast-vote}
+\paragraph{Cast Vote}\label{cast-vote}
 
-\texttt{POST\ /api/votes}
+\mintinline{bash}{POST /api/votes}
 
 Sprawdza, czy zalogowany użytkownik oddał głos na dany termin, jeżeli nie, to tworzy nowy głos, jeżeli tak, to aktualizuje istniejący. Modyfikuje wynik całkowity dla terminu EventDate.
 
 Wymagane podanie ID EventDate.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
     "eventDate": 1,
     "score": 1
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1661,9 +1650,9 @@ Odpowiedzi:
 	\item Nie istnieje ID EventDate: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsubsection{Delete Vote}\label{delete-vote}
+\paragraph{Delete Vote}\label{delete-vote}
 
-\texttt{DELETE\ /api/vote/\{id\}}
+\mintinline{bash}{DELETE /api/vote/\{id\}}
 
 Usuwa głos o podanym ID.
 
@@ -1675,25 +1664,25 @@ Odpowiedzi:
 
 \subsubsection{Notifications}\label{notifications}
 
-\subsubsubsection{Get All My Notifications}\label{get-all-my-notifications}
+\paragraph{Get All My Notifications}\label{get-all-my-notifications}
 
-\texttt{GET\ /api/notifs/mynotifs}
+\mintinline{bash}{GET /api/notifs/mynotifs}
 
 Zwraca wszystkie wysłane powiadomienia aktualnie zalogowanego użytkownika.
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
-\subsubsubsection{Get All My Read/Unread Notifications}\label{get-all-my-readunread-notifications}
+\paragraph{Get All My Read/Unread Notifications}\label{get-all-my-readunread-notifications}
 
-\texttt{GET\ /api/notifs/mynotifs?read=\{read\}}
+\mintinline{bash}{GET /api/notifs/mynotifs?read=\{read\}}
 
 Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w zależności od parametru read (true - odczytane, false - nieodczytane).
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
-\subsubsubsection{Get Current User's Notification By File ID}\label{get-current-users-notification-by-file-id}
+\paragraph{Get Current User's Notification By File ID}\label{get-current-users-notification-by-file-id}
 
-\texttt{GET\ /api/notifs/file/\{id\}}
+\mintinline{bash}{GET /api/notifs/file/\{id\}}
 
 Zwraca listę niewysłanych powiadomień aktualnie zalogowanego użytkownika powiązanych z plikiem o podanym ID.
 
@@ -1704,22 +1693,22 @@ Odpowiedzi:
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\subsubsubsection{Create Notification}\label{create-notification}
+\paragraph{Create Notification}\label{create-notification}
 
-\texttt{POST\ /api/notifs}
+\mintinline{bash}{POST /api/notifs}
 
 Tworzy powiadomienie.
 
 Wymagane jest podanie ID użytkownika odbiorcy oraz pliku. Czas wysłania domyślnie ustawiany jest na czas utworzenia, powiadomienie jest domyślnie nieodczytane. Wysłanie odbywa się na podstawie porównania aktualnego czasu z czasem wysłania.
 
-\begin{verbatim}
+\begin{minted}{json}
 {
   "user": 3,
   "file": 3,
   "message": "Test notif",
   "sendTimeSetting": "2024-10-28T15:30:00"
 }
-\end{verbatim}
+\end{minted}
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1728,9 +1717,9 @@ Odpowiedzi:
 	\item Nie istnieje ID użytkownika/pliku: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsubsection{Send Current User's Notifications}\label{send-current-users-notifications}
+\paragraph{Send Current User's Notifications}\label{send-current-users-notifications}
 
-\texttt{PUT\ /api/notifs/send}
+\mintinline{bash}{PUT /api/notifs/send}
 
 Wysyła powiadomienia aktualnie zalogowanego poprzez porównanie ich czasu wysłania z czasem aktualnym.
 
@@ -1740,9 +1729,9 @@ Odpowiedzi:
 	\item Nie znaleziono użytkownika: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsubsection{Delete Notification}\label{delete-notification}
+\paragraph{Delete Notification}\label{delete-notification}
 
-\texttt{DELETE\ /api/notifs/\{id\}}
+\mintinline{bash}{DELETE /api/notifs/\{id\}}
 
 Usuwa powiadomienie o podanym ID.
 

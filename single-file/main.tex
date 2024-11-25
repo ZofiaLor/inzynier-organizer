@@ -829,6 +829,34 @@ class test : public basic
 \label{fig:pseudokod:listings}
 \end{figure}
 
+\subsection{Lista klas}
+
+Zależności między klasami przedstawiono na rys. \ref{fig:erd}.
+
+\begin{figure}
+\centering
+\includegraphics{./ERD.png}
+\caption{Schemat ERD klas w bazie danych.}
+\label{fig:erd}
+\end{figure}
+
+Tabele w bazie danych posiadają następujące atrybuty:
+\begin{itemize}
+	\item AccessDirectory(directory_id (PK, FK), user_id (PK, FK), access_privilege)
+	\item AccessFile(file_id (PK, FK), user_id (PK, FK), access_privilege)
+	\item Directory(id (PK), name, owner_id (FK), parent_id (FK))
+	\item EventDate(id (PK), start, end, total_score, event_id (FK))
+	\item File(id (PK), file_type, creation_date, name, text_content, start_date, end_date, location, deadline, is_finished, owner_id (FK), parent_id (FK))
+	\item Notification(id (PK), message, send_time_setting, is_sent, is_read, file_id (FK), user_id (FK))
+	\item RefreshToken(id (PK), token, expiry_date, user_id (FK))
+	\item User(id (PK), username, password, name, email, role)
+	\item Vote(id (PK), score, user_id (FK), event_date_id (FK))
+\end{itemize}
+
+Do zaimplementowania dziedziczenia klas Event, Note i Task po klasie bazowej wybrano strategię Singe Table Inheritance. W bazie danych wszystkie klasy reprezentowane są przez tę samą tabelę File, która zawiera kolumny atrybutów wszystkich dziedziczących klas, a także ukrytą kolumnę file_type, pozwalającą frameworkowi na rozróżnienie typów podczas mapowania obiektowo-relacyjnego. Rozwiązanie takie pozwala również na odczytanie jednocześnie wszystkich typów plików, co jest przydatne podczas wyświetlania ich w eksploratorze.
+
+Rozwiązanie MappedSuperclass zostało odrzucone, ponieważ nie tworzy ono tabeli klasy bazowej, przez co nie może ona być w relacji z żadną inną klasą. Rozwiązania Joined Table oraz Table Per Class mogłyby wykorzystane, jednak są mniej optymalne z perspektywy założonego działania.
+
 \subsection{Lista endpointów}
 
 W tym podrozdziale przedstawiono listę wszystkich endpointów wystawianych przez backend. Dla każdego opisano URL, ogólną zasadę działania, dane wejściowe oraz możliwe odpowiedzi.

@@ -23,12 +23,20 @@ export class UserPanelComponent implements OnInit{
   private readonly _destroy$ = new Subject<void>();
   userData: User[] = [];
   user?: User;
+  currentUser?: User;
+  isAdmin = false;
   columns: string[] = ["id", "username", "name", "email"];
   isCurrentUser: boolean = false;
   isAdminSelected: boolean = false;
   blockAccess = false;
   constructor (private userService: UserService, private storageService: StorageService, private authService: AuthService, private snackBar: MatSnackBar) {}
   ngOnInit(): void {
+    this.currentUser = this.storageService.getUser();
+    if (this.currentUser && this.currentUser.role == "ROLE_ADMIN") {
+      this.isAdmin = true;
+    } else {
+      return;
+    }
     this.userService.getAllUsers().pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.userData = resp.body!;

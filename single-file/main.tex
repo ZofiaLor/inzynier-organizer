@@ -546,12 +546,19 @@ escapeinside={@*}{*@},%
 \end{itemize}
 
 \section{Opis problemu}
+Aplikacja w dużym stopniu oparta jest o interakcję z użytkownikiem, który w każdym momencie użytkowania ma wiele dostępnych mu działań. Wyzwaniem jest więc nie zaprojektowanie złożonej logiki programu, a zapewnienie poprawnego działania dla wszelkich danych wejściowych pobranych od użytkownika. Zabezpieczenia takie muszą pojawić się od strony interfejsu, który powinien maksymalnie ograniczać możliwość wprowadzenia niepoprawnych danych, ale i od strony backendu, gdzie weryfikować należy przychodzące zapytania HTTP. Zawartość odpowiedzi HTTP jest łatwo dostępna w inspektorze przeglądarki, dlatego już na jej poziomie nie mogą być dostępne dane wrażliwe (hasła), a nie dopiero na poziomie interfejsu.
+
+Jedną z zalet aplikacji przeglądarkowych jest możliwość zapisywania odnośników do stron, na przykład do konkretnego pliku. Oznacza to jednak, że nawet dokładnie zaprojektowany interfejs nie pozwoli na pełną kontrolę ścieżki, którą użytkownik poruszać się będzie po programie. Zmieniając adres w przeglądarce, może on w dowolnym momencie usiłować dostać się do nieistniejących bądź nieudostępnionych mu zasobów.
+
+Drugim problemem związanym z wykorzystaniem odnośników jest fakt, że użycie ich wiąże się z przeładowywaniem aplikacji, a co za tym idzie -- z utratą przechowywanych w niej danych. Aby zachować ciągłość działania, każdorazowo konieczne są odwołania do bazy danych, a także pamięci przeglądarki: ciasteczek, pamięci lokalnej i pamięci sesji.
 
 \section{Istniejące rozwiązania}
 \subsection{Google Calendar}
 Popularną aplikacją służącą do zarządzania wydarzeniami i zadaniami jest Google Calendar. Zadania można dodać do kalendarza, ustawić ich termin oraz opis. Wydarzenia pozwalają ponadto między innymi na dodanie osób uczestniczących, miejsca wydarzenia i powiadomień.
 \subsection{Google Docs, Google Drive}
 Aplikacja Google Docs pozwala na tworzenie różnych rodzajów plików -- dokumentów tekstowych, prezentacji multimedialnych, arkuszy kalkulacyjnych -- i zapisywanie ich na dysku Google Drive. Pliki i foldery na dysku można udostępniać innym użytkownikom, dodając ich pojedynczo bądź grupowo, jak i udostępniając link. Udostępnienie ma trzy możliwe poziomy dostępu: tylko przeglądanie, komentowanie oraz edytowanie. Udostępnienie folderu przyznaje dostęp do wszystkich plików i podfolderów w nim się znajdujących.
+\subsection{Produkty Microsoft Office}
+Analogiczne funkcjonalności zapewniają aplikacje pakietu Microsoft Office. Programy typu OneNote, Word, PowerPoint, Excel pozwalają na tworzenie i udostępnianie plików różnych typów. Kalendarz pakietu Office pozwala na tworzenie wydarzeń, dodawanie do niego innych użytkowników i planowanie na ich podstawie spotkań w aplikacji Microsoft Teams.
 
 
 Wzory  
@@ -703,6 +710,17 @@ Jeśli „Specyfikacja zewnętrzna”:
 \item  scenariusze korzystania z systemu (ilustrowane zrzutami z ekranu lub generowanymi dokumentami)
 \end{itemize}
 
+\section{Uruchamianie}
+Do uruchomienia programu potrzebne są: JDK wersja 17, Docker (w systemie Linux zainstalować można sam silnik Docker, w systemie Windows potrzebna jest aplikacja Docker Desktop) oraz Node.js, wraz z NPM (wykorzystano wersję 20). Program wykorzystywać będzie porty: 3306 (baza danych), 8080 (back-end) i 4200 (front-end) -- należy więc zadbać, aby żadna inna aplikacja nie korzystała z nich podczas uruchamiania.
+
+Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania i uruchomienia projektu. Po rozpakowaniu plików źródłowych, w wybranym terminalu należy ustawić bieżący katalog na \mintinline{powershell}{organizer}. Znajdować się w nim powinny pliki \mintinline{powershell}{mvnw} oraz \mintinline{powershell}{mvnw.cmd}. Najpierw należy uruchomić kontener zawierający bazę danych poleceniem \mintinline{powershell}{docker compose up db}. Aby zbudować projekt należy użyć polecenia \mintinline{powershell}{.\mvnw.cmd install} w systemie Windows, bądź \mintinline{powershell}{./mvnw install} w systemie Linux. Polecenie automatycznie zainstaluje również narzędzie Maven w odpowiedniej wersji, jeśli nie znajdzie go na komputerze. Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{powershell}{target}, zawierający plik z rozszerzeniem .jar.
+
+Następnym krokiem jest uruchomienie back-endu w kontenerze Dockera. W tym celu można najpierw zatrzymać kontener z bazą danych, a wykonać polecenia \mintinline{powershell}{docker compose build} i \mintinline{powershell}{docker compose up -d}. Zalecane jest użycie przełącznika \mintinline{powershell}{-d}, aby uruchomić kontener w tle.
+
+Niektóre środowiska zintegrowane, takie jak IntelliJ IDEA, pozwalają na wykonanie powyższych poleceń (z wyjątkiem \mintinline{powershell}{docker compose build}) w z poziomu interfejsu graficznego.
+
+W celu uruchomienia front-endu należy ustawić bieżący katalog na \mintinline{powershell}{organizer-front} i wywołać polecenie \mintinline{powershell}{npm install -g @angular/cli} i \mintinline{powershell}{npm install} aby zainstalować potrzebne pakiety. Następnie należy wykonać polecenie \mintinline{powershell}{ng serve --proxy-config profxy.config.json}. W terminalu wypisany zostanie adres http://localhost:4200/, na który można nacisnąć lewym przyciskiem myszy, wciskając jednocześnie klawisz Ctrl, aby otworzyć go w domyślnej przeglądarce, lub też wpisać w jej polu adresu.
+
 %%%%%%%%%%%%%%%%%%%%%
 %% RYSUNEK Z PLIKU
 %
@@ -827,7 +845,7 @@ class test : public basic
 \label{fig:pseudokod:listings}
 \end{figure}
 
-\subsection{Lista klas}
+\section{Lista klas}
 
 Zależności między klasami przedstawiono na rys. \ref{fig:erd}.
 
@@ -855,11 +873,11 @@ Do zaimplementowania dziedziczenia klas \mintinline{java}{Event}, \mintinline{ja
 
 Rozwiązanie MappedSuperclass zostało odrzucone, ponieważ nie tworzy ono tabeli klasy bazowej, przez co nie może ona być w relacji z żadną inną klasą. Rozwiązania Joined Table oraz Table Per Class mogłyby wykorzystane, jednak są mniej optymalne z perspektywy założonego działania.
 
-\subsection{Lista endpointów}
+\section{Lista endpointów}
 
 W tym podrozdziale przedstawiono listę wszystkich endpointów wystawianych przez backend. Dla każdego opisano URL, ogólną zasadę działania, dane wejściowe oraz możliwe odpowiedzi.
 
-\subsubsection{Authorization}\label{authorization}
+\subsection{Authorization}\label{authorization}
 
 \paragraph{Log In}\label{log-in}
 
@@ -926,7 +944,7 @@ Odpowiedzi:
 
 \paragraph{Change Password}\label{change-password}
 
-\mintinline{bash}{PUT /api/password}
+\mintinline{bash}{PUT /api/auth/password}
 
 Pozwala na zmianę hasła użytkownika.
 
@@ -988,7 +1006,7 @@ Odpowiedzi:
 \end{itemize}
 
 
-\subsubsection{Users}\label{users}
+\subsection{Users}\label{users}
 
 \paragraph{Get All Users}\label{get-all-users}
 
@@ -1076,7 +1094,7 @@ Odpowiedzi:
 	\item  Nie znaleziono użytkownika: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsection{Directories}\label{directories}
+\subsection{Directories}\label{directories}
 
 \paragraph{Get My Base Directory}\label{get-my-base-directory}
 
@@ -1188,7 +1206,7 @@ Odpowiedzi:
 	\item ID nie istnieje: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsection{Files}\label{files}
+\subsection{Files}\label{files}
 
 \paragraph{Get Files In Directory}\label{get-files-in-directory}
 
@@ -1394,7 +1412,7 @@ Odpowiedzi:
 	\item ID nie istnieje: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsection{Access Directory}\label{access-directory}
+\subsection{Access Directory}\label{access-directory}
 
 \paragraph{Get AccessDirectory By User}\label{get-accessdirectory-by-user}
 
@@ -1461,7 +1479,7 @@ Odpowiedzi:
 	\item ID nie istnieją: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsection{Access File}\label{access-file}
+\subsection{Access File}\label{access-file}
 
 \paragraph{Get AccessFile By User}\label{get-accessfile-by-user}
 
@@ -1528,7 +1546,7 @@ Odpowiedzi:
 	\item ID nie istnieją: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsection{Event Dates}\label{event-dates}
+\subsection{Event Dates}\label{event-dates}
 
 \paragraph{Get All EventDates}\label{get-all-eventdates}
 
@@ -1598,7 +1616,7 @@ Odpowiedzi:
 	\item ID nie istnieje: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsection{Votes}\label{votes}
+\subsection{Votes}\label{votes}
 
 \paragraph{Get Votes By EventDate ID}\label{get-votes-by-eventdate-id}
 
@@ -1660,7 +1678,7 @@ Odpowiedzi:
 	\item ID nie istnieje: kod 404 (Not Found)
 \end{itemize}
 
-\subsubsection{Notifications}\label{notifications}
+\subsection{Notifications}\label{notifications}
 
 \paragraph{Get All My Notifications}\label{get-all-my-notifications}
 

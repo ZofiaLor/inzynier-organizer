@@ -39,6 +39,7 @@ public class AuthorizationController {
         try {
             UserDTO newUser = service.register(user);
             if (newUser == null) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            newUser.setPassword("");
             return new ResponseEntity<>(newUser, HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

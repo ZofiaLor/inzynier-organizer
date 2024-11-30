@@ -45,7 +45,7 @@ public class UserService {
     public List<UserDTO> getAllUsers() {
         var result = new ArrayList<UserDTO>();
         for (var user : repository.findAll()) {
-            user.setPassword("");
+//            user.setPassword("");
             result.add(mapper.userToUserDTO(user));
         }
         return result;
@@ -85,7 +85,6 @@ public class UserService {
         user.setPassword(encoder.encode(user.getPassword()));
         user.setRole("ROLE_USER");
         user = repository.save(user);
-        user.setPassword("");
         DirectoryDTO dir = new DirectoryDTO();
         dir.setName("Base Directory");
         directoryService.createDirectory(dir, user.getUsername(), true);

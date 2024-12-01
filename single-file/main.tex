@@ -689,6 +689,8 @@ Istotna również jest intuicyjność interfejsu użytkownika. Elementy interfej
 Do implementacji back-endu wybrano framework Spring \cite{bib:spring}, pozwalający m.in. na pisanie aplikacji z wykorzystaniem Java Persistence API (Spring Data JPA) oraz proste zaimplementowanie autentykacji i autoryzacji użytkowników (Spring Security). Za wybraniem tego frameworku zamiast np. Entity Framework \cite{bib:entityframework} przemawiała również posiadana już wiedza o REST API oraz chęć pogłębienia znajomości samego Springa.
 Wspieraną przez Spring bazę danych MySQL \cite{bib:mysql} oraz sam back-end postanowiono uruchomić w kontenerze Dockera \cite{bib:docker}.
 
+Do testowania back-endu niezależnie od front-endu wykorzystano aplikację Postman \cite{bib:postman}. Pozwala ona na bezpośrednie wysyłanie zapytań HTTP m.in. metodami GET, POST, PUT, DELETE z ciałem w wybranym formacie, a także na przykład na przeglądanie ciasteczek.
+
 Do wykonania front-endu posłużył framework Angular \cite{bib:angularnew,bib:angularold}. Podobnie jak w przypadku Springa, za tym wyborem przemawiało pragnienie pogłębienia wstępnej wiedzy o frameworku. Subiektywną zaletą jest też, w przeciwieństwie do popularniejszego \footnote{\url{https://trends.stackoverflow.co/?tags=reactjs,vue.js,angular,svelte,angularjs,vuejs3}, dostęp 08.11.2024} Reacta \cite{bib:react}, wyraźny rozdział na pliki HTML, CSS (SCSS) oraz TypeScript w ramach danego komponentu. 
 Wykorzystano również komponenty Angular Material \cite{bib:angularmaterial}, dzięki którym w prosty sposób uzyskać można estetycznie i spójnie wyglądający interfejs graficzny, zgodny z wytycznymi Material Design firmy Google \cite{bib:material}. Wykorzystanie gotowych komponentów pozwala na skupienie się na samej logice programu. Do operacji matematycznych na datach użyto biblioteki Luxon \cite{bib:luxon}.
 
@@ -1030,7 +1032,7 @@ Odpowiedź: lista obiektów użytkowników, kod 200 (OK)
 
 \paragraph{Get User By ID}\label{get-user-by-id}
 
-\mintinline{bash}{GET /api/users/\{id\}}
+\mintinline{bash}{GET /api/users/{id}}
 
 Zwraca użytkownika o podanym ID z pustym hasłem. Endpoint dostępny tylko administratorowi.
 
@@ -1040,6 +1042,19 @@ Odpowiedzi:
 	\item Użytkownik nie istnieje: kod 404 (Not Found) 
 	\item Brak ID: kod 400 (Bad Request) 
 	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
+\end{itemize}
+
+\paragraph{Get User By ID Safe}\label{get-user-by-id}
+
+\mintinline{bash}{GET /api/users/safe/{id}}
+
+Zwraca ID, nazwę użytkownika oraz nazwę dla użytkownika o podanym ID z pustym hasłem.
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Użytkownik istnieje: obiekt użytkownika, kod 200 (OK)
+	\item Użytkownik nie istnieje: kod 404 (Not Found) 
+	\item Brak ID: kod 400 (Bad Request) 
 \end{itemize}
 
 \paragraph{Update User}\label{update-user}
@@ -1071,7 +1086,7 @@ Odpowiedzi:
 
 \paragraph{Delete User}\label{delete-user}
 
-\mintinline{bash}{DELETE /api/users/\{id\}}
+\mintinline{bash}{DELETE /api/users/{id}}
 
 Usuwa użytkownika o podanym ID, wraz z jego katalogami, głosami i powiadomieniami. Endpoint dostępny tylko administratorowi.
 
@@ -1106,7 +1121,7 @@ Odpowiedź: obiekt katalogu bazowego, kod 200 (OK)
 
 \paragraph{Get Directories By Parent ID}\label{get-directories-by-parent-id}
 
-\mintinline{bash}{GET /api/directories/subdirs/\{id\}}
+\mintinline{bash}{GET /api/directories/subdirs/{id}}
 
 Zwraca katalogi podrzędne katalogu o podanym ID.
 
@@ -1120,7 +1135,7 @@ Odpowiedzi:
 
 \paragraph{Get Directory By ID}\label{get-directory-by-id}
 
-\mintinline{bash}{GET /api/directories/\{id\}}
+\mintinline{bash}{GET /api/directories/{id}}
 
 Zwraca katalog o podanym ID.
 
@@ -1134,7 +1149,7 @@ Odpowiedzi:
 
 \paragraph{Check Directory Edit Access}\label{check-directory-edit-access}
 
-\mintinline{bash}{GET /api/directories/check/\{id\}}
+\mintinline{bash}{GET /api/directories/check/{id}}
 
 Sprawdza, czy aktualnie zalogowany użytkownik posiada prawa do edycji katalogu o danym ID.
 
@@ -1164,6 +1179,8 @@ Odpowiedzi:
 \begin{itemize}
 	\item Poprawne utworzenie katalogu: obiekt nowego katalogu, kod 200 (OK) 
 	\item Brak ID rodzica: kod 400 (Bad Request)
+	\item Nie znaleziono ID rodzica: kod 404 (Not Found) 
+	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
 \end{itemize}
 
 \paragraph{Update Directory}\label{update-directory}
@@ -1189,7 +1206,7 @@ Parametry brane pod uwagę:
 Odpowiedzi: 
 \begin{itemize}
 	\item Pomyślna aktualizacja: obiekt katalogu, kod 200 (OK)
-	\item Brak obiektu: kod 400 (Bad Request) 
+	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (Bad Request) 
 	\item Nie znaleziono ID: kod 404 (Not Found) 
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
@@ -1210,7 +1227,7 @@ Odpowiedzi:
 
 \paragraph{Get Files In Directory}\label{get-files-in-directory}
 
-\mintinline{bash}{GET /api/files/dir/\{id\}}
+\mintinline{bash}{GET /api/files/dir/{id}}
 
 Zwraca wszystkie pliki w katalogu o podanym ID.
 
@@ -1223,7 +1240,7 @@ Odpowiedzi:
 
 \paragraph{Get File By ID}\label{get-file-by-id}
 
-\mintinline{bash}{GET /api/files/\{id\}}
+\mintinline{bash}{GET /api/files/{id}}
 
 Zwraca katalog o podanym ID.
 
@@ -1237,7 +1254,7 @@ Odpowiedzi:
 
 \paragraph{Check File Edit Access}\label{check-file-edit-access}
 
-\mintinline{bash}{GET /api/files/check/\{id\}}
+\mintinline{bash}{GET /api/files/check/{id}}
 
 Sprawdza, czy aktualnie zalogowany użytkownik posiada prawa do edycji pliku o danym ID.
 
@@ -1269,6 +1286,8 @@ Odpowiedzi:
 \begin{itemize}
 	\item Pomyślne utworzenie: obiekt nowego wydarzenia, kod 200 (OK) 
 	\item Nie podano ID rodzica: kod 400 (Bad Request)
+	\item Nie znaleziono ID rodzica: kod 404 (Not Found) 
+	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
 \end{itemize}
 
 \paragraph{Update Event}\label{update-event}
@@ -1294,7 +1313,7 @@ Parametry brane pod uwagę:
 Odpowiedzi: 
 \begin{itemize}
 	\item Pomyślna aktualizacja: obiekt wydarzenia, kod 200 (OK) 
-	\item Brak obiektu: kod 400 (Bad Request) 
+	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (Bad Request) 
 	\item Nie znaleziono ID: kod 404 (Not Found) 
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
@@ -1319,6 +1338,8 @@ Odpowiedzi:
 \begin{itemize}
 	\item Pomyślne utworzenie: obiekt nowej notatki, kod 200 (OK) 
 	\item Nie podano ID rodzica: kod 400 (Bad Request)
+	\item Nie znaleziono ID rodzica: kod 404 (Not Found) 
+	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
 \end{itemize}
 
 \paragraph{Update Note}\label{update-note}
@@ -1344,7 +1365,7 @@ Parametry brane pod uwagę:
 Odpowiedzi: 
 \begin{itemize}
 	\item Pomyślna aktualizacja: obiekt notatki, kod 200 (OK) 
-	\item Brak obiektu: kod 400 (Bad Request) 
+	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (Bad Request) 
 	\item Nie znaleziono ID: kod 404 (Not Found)
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
@@ -1370,6 +1391,8 @@ Odpowiedzi:
 \begin{itemize}
 	\item Pomyślne utworzenie: obiekt nowego zadania, kod 200 (OK) 
 	\item Nie podano ID rodzica: kod 400 (Bad Request)
+	\item Nie znaleziono ID rodzica: kod 404 (Not Found) 
+	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
 \end{itemize}
 
 \paragraph{Update Task}\label{update-task}
@@ -1395,14 +1418,14 @@ Parametry brane pod uwagę:
 Odpowiedzi: 
 \begin{itemize}
 	\item Pomyślna aktualizacja: obiekt zadania, kod 200 (OK) 
-	\item Brak obiektu: kod 400 (Bad Request) 
+	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (Bad Request) 
 	\item Nie znaleziono ID: kod 404 (Not Found)
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
 
 \paragraph{Delete File}\label{delete-file}
 
-\mintinline{bash}{DELETE /api/files/\{id\}}
+\mintinline{bash}{DELETE /api/files/{id}}
 
 Usuwa plik o podanym ID, w przypadku wydarzenia - wraz z jego obiektami EventDate.
 
@@ -1416,7 +1439,7 @@ Odpowiedzi:
 
 \paragraph{Get AccessDirectory By User}\label{get-accessdirectory-by-user}
 
-\mintinline{bash}{GET /api/ad/user/\{user\}}
+\mintinline{bash}{GET /api/ad/user/{user}}
 
 Zwraca listę obiektów AccessDirectory dla podanego ID użytkownika.
 
@@ -1430,7 +1453,7 @@ Odpowiedzi:
 
 \paragraph{Get AccessDirectory By Directory}\label{get-accessdirectory-by-directory}
 
-\mintinline{bash}{GET /api/ad/dir/\{dir\}}
+\mintinline{bash}{GET /api/ad/dir/{dir}}
 
 Zwraca listę obiektów AccessDirectory dla podanego ID katalogu.
 
@@ -1469,7 +1492,7 @@ Odpowiedzi:
 
 \paragraph{Delete AccessDirectory}\label{delete-accessdirectory}
 
-\mintinline{bash}{DELETE /api/ad/\{user\}/\{dir\}}
+\mintinline{bash}{DELETE /api/ad/{user}/{dir}}
 
 Usuwa obiekt AccessDirectory o podanych ID użytkownika i katalogu.
 
@@ -1483,7 +1506,7 @@ Odpowiedzi:
 
 \paragraph{Get AccessFile By User}\label{get-accessfile-by-user}
 
-\mintinline{bash}{GET /api/af/user/\{user\}}
+\mintinline{bash}{GET /api/af/user/{user}}
 
 Zwraca listę obiektów AccessFile dla podanego ID użytkownika.
 
@@ -1497,7 +1520,7 @@ Odpowiedzi:
 
 \paragraph{Get AccessFile By File}\label{get-accessfile-by-file}
 
-\mintinline{bash}{GET /api/af/file/\{file\}}
+\mintinline{bash}{GET /api/af/file/{file}}
 
 Zwraca listę obiektów AccessFile dla podanego ID pliku.
 
@@ -1536,7 +1559,7 @@ Odpowiedzi:
 
 \paragraph{Delete AccessFile}\label{delete-accessfile}
 
-\mintinline{bash}{DELETE /api/af/\{user\}/\{file\}}
+\mintinline{bash}{DELETE /api/af/{user}/{file}}
 
 Usuwa obiekt AccessFile o podanych ID użytkownika i pliku.
 
@@ -1558,7 +1581,7 @@ Odpowiedź: lista obiektów EventDate, kod 200 (OK)
 
 \paragraph{Get EventDates By Event ID}\label{get-eventdates-by-event-id}
 
-\mintinline{bash}{GET /api/ed?id=\{eventId\}}
+\mintinline{bash}{GET /api/ed?id={eventId}}
 
 Zwraca obiekty EventDate dotyczące wydarzenia o podanym ID.
 
@@ -1571,7 +1594,7 @@ Odpowiedzi:
 
 \paragraph{Get EventDate By ID}\label{get-eventdate-by-id}
 
-\mintinline{bash}{GET /api/ed/\{id\}}
+\mintinline{bash}{GET /api/ed/{id}}
 
 Zwraca obiekt EventDate o podanym ID.
 
@@ -1606,7 +1629,7 @@ Odpowiedzi:
 
 \paragraph{Delete EventDate}\label{delete-eventdate}
 
-\mintinline{bash}{DELETE /api/ed/\{id\}}
+\mintinline{bash}{DELETE /api/ed/{id}}
 
 Usuwa obiekt EventDate o podanym ID, wraz z jego głosami.
 
@@ -1620,7 +1643,7 @@ Odpowiedzi:
 
 \paragraph{Get Votes By EventDate ID}\label{get-votes-by-eventdate-id}
 
-\mintinline{bash}{GET /api/votes/ed/\{id\}}
+\mintinline{bash}{GET /api/votes/ed/{id}}
 
 Zwraca głosy na termin EventDate o podanym ID.
 
@@ -1633,7 +1656,7 @@ Odpowiedzi:
 
 \paragraph{Get Current User's Vote By EventDate ID}\label{get-current-users-vote-by-eventdate-id}
 
-\mintinline{bash}{GET /api/votes/myvote/\{id\}}
+\mintinline{bash}{GET /api/votes/myvote/{id}}
 
 Zwraca listę głosów oddanych przez aktualnie zalogowanego użytkownika na termin EventDate o podanym ID.
 
@@ -1668,7 +1691,7 @@ Odpowiedzi:
 
 \paragraph{Delete Vote}\label{delete-vote}
 
-\mintinline{bash}{DELETE /api/vote/\{id\}}
+\mintinline{bash}{DELETE /api/vote/{id}}
 
 Usuwa głos o podanym ID.
 
@@ -1690,7 +1713,7 @@ Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
 \paragraph{Get All My Read/Unread Notifications}\label{get-all-my-readunread-notifications}
 
-\mintinline{bash}{GET /api/notifs/mynotifs?read=\{read\}}
+\mintinline{bash}{GET /api/notifs/mynotifs?read={read}}
 
 Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w zależności od parametru read (true - odczytane, false - nieodczytane).
 
@@ -1698,7 +1721,7 @@ Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
 \paragraph{Get Current User's Notification By File ID}\label{get-current-users-notification-by-file-id}
 
-\mintinline{bash}{GET /api/notifs/file/\{id\}}
+\mintinline{bash}{GET /api/notifs/file/{id}}
 
 Zwraca listę niewysłanych powiadomień aktualnie zalogowanego użytkownika powiązanych z plikiem o podanym ID.
 
@@ -1747,7 +1770,7 @@ Odpowiedzi:
 
 \paragraph{Delete Notification}\label{delete-notification}
 
-\mintinline{bash}{DELETE /api/notifs/\{id\}}
+\mintinline{bash}{DELETE /api/notifs/{id}}
 
 Usuwa powiadomienie o podanym ID.
 
@@ -1788,6 +1811,147 @@ Odpowiedzi:
 \item wykryte i usunięte błędy
 \item opcjonalnie wyniki badań eksperymentalnych
 \end{itemize}
+
+Testowanie aplikacji wymaga sprawdzenia, czy jest ona odporna na nieprawidłowe dane wejściowe, oraz czy dla danych poprawnych zachowuje się zgodnie z oczekiwaniami. Przetestować pod tym kątem należy zarówno back-end, jak i front-end.
+
+W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne z wymienionymi w podrozdziale ,,Lista Endpointów''. Z kolei front-end powinien już na poziomie interfejsu w jak największym stopniu ograniczyć możliwość wprowadzenia błędnych danych.
+
+\subsection{Testowanie back-endu}
+
+Testowanie rozpoczęto od sprawdzenia przypadków użycia dla użytkownika niezalogowanego. Większość endpointów wymaga autentykacji, sprawdzono więc, że zwracają one bez niej kod 403 (Forbidden). Przykład takiego zapytania pokazano na rys. \ref{fig:send-notifs-403}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{./SendNotifs403.png}
+\caption{Zrzut ekranu z programu Postman przedstawiający próbę użycia endpointu, do którego użytkownik nie posiada dostępu.}
+\label{fig:send-notifs-403}
+\end{figure}
+
+Przy rejestracji, zgodnie z założeniami, otrzymano kod 400 gdy w ciele zapytania brakowało hasła lub nazwy użytkownika, oraz kod 403 gdy wpisano nazwę użytkownika występującą już w bazie danych. Dla poprawnych danych:
+\begin{minted}{json}
+{
+	"username": "test",
+	"password": "password",
+	"name": "Test User"
+}
+\end{minted}
+Otrzymano odpowiedź:
+\begin{minted}{json}
+{
+	"id": 22,
+	"username": "test",
+	"name": "Test User",
+	"email": null,
+	"password": "",
+	"role": "ROLE_USER",
+	"directories": null,
+	"votes": null,
+	"notifications": null
+}
+\end{minted}
+Odpowiedź nie zawiera już hasła -- zostało ono zakodowane i zapisane w bazie.
+
+Podobnie przetestowano logowanie: dla brakujących danych otrzymano kod 400 i informację ,,Empty username or password'', dla nieistniejącego loginu i nieprawidłowego hasła -- kod 403 i informację ,,Incorrect credentials''. Dla poprawnych danych logowania:
+\begin{minted}{json}
+{
+	"username": "test",
+	"password": "password"
+}
+\end{minted}
+Otrzymano odpowiedź:
+\begin{minted}{json}
+{
+	"id": 22,
+	"username": "test",
+	"name": "Test User",
+	"email": null,
+	"password": "",
+	"role": "ROLE_USER",
+	"directories": [
+		26
+	],
+	"votes": [],
+	"notifications": []
+}
+\end{minted}
+Obiekt użytkownika został pobrany z bazy danych. Automatycznie utworzony został katalog bazowy, który jest jedynym katalogiem użytkownika nieposiadającym katalogu nadrzędnego.
+
+Ponadto wygenerowane zostały dwa ciasteczka:
+\begin{minted}{json}
+organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNzMzMDc1MTYxLCJleHAiOjE3MzMxNjE1NjF9.UOpUtCw0G1TgcEf9ufIk2T00JqQ8ARo61cZJnYslPdU; Path=/; HttpOnly; Expires=Mon, 02 Dec 2024 17:46:00 GMT;
+organizerRefreshJwt=1ee7c994-e296-4a12-a636-8cf39380a1e8; Path=/api/auth/refreshtoken; HttpOnly; Expires=Mon, 02 Dec 2024 23:46:00 GMT;
+\end{minted}
+
+Następnie przetestowano przypadki użycia dla użytkownika zwykłego.
+
+Wylogowanie przebiega zawsze pomyślnie, można je powtarzać nawet będąc już wylogowanym bez negatywnych skutków. W wyniku wylogowania obydwa ciasteczka stają się puste.
+
+Próba dostępu do endpointu dostępnego tylko administratorowi, na przykład nadania roli administratora, skutkuje kodem 403 odpowiedzi.
+
+Przetestowano tworzenie nowych elementów. Kody błędów 400, 403 i 404 są zwracane zgodnie z oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach. Kolumna textContent jest typu ,,TEXT'' -- jest to typ danych bazy MySQL o rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ ,,TINYTEXT'', mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie front-endu. Back-end nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{./ChangeName256.png}
+\caption{Zrzut ekranu z programu Postman przedstawiający nieudaną próbę zmiany nazwy katalogu na tekst o długości 256 znaków.}
+\label{fig:change-name-256}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{./ChangeName255.png}
+\caption{Zrzut ekranu z programu Postman przedstawiający udaną próbę zmiany nazwy katalogu na tekst o długości 255 znaków.}
+\label{fig:change-name-255}
+\end{figure}
+
+Z takim samym wynikiem przeprowadzono testy edycji nazw i zawartości elementów. Notatki, wydarzenia oraz zadania posiadają osobne endpointy do ich edycji. Próba edycji elementu przy użyciu niewłaściwego endpointu, na przykład wydarzenia używając \mintinline{bash}{PUT /api/files/note}, skutkuje kodem 404.
+
+Element można przenieść tylko do istniejącego katalogu, należącego do tego samego użytkownika. Back-end nie blokuje sytuacji, w której użytkownik przemieszcza elementy innego użytkownika. Ignorowane są przypadki, gdy podejmowana jest próba przeniesienia katalogu bazowego, bądź ustawienia katalogu nadrzędnego na ten sam katalog:
+\begin{minted}{json}
+{
+	"id": 29,
+	"parent": 29
+}
+\end{minted}
+Odpowiedź:
+\begin{minted}{json}
+{
+	"id": 29,
+	"name": "Child Directory",
+	"owner": 22,
+	"parent": 26,
+	"children": [
+		30
+	],
+	"files": []
+}
+\end{minted}
+
+Możliwe jest jednak przeniesienie katalogu do jego katalogu podrzędnego. Skutkować to może nieskończoną pętlą weryfikacji dostępu dla użytkowników niebędących właścicielami tego katalogu, a sam katalog nie będzie widoczny dla użytkownika w interfejsie graficznym. Zdecydowano się nie weryfikować tej sytuacji na poziomie back-endu ze względu na potencjalną dużą złożoność algorytmu sprawdzającego -- konieczne byłoby sprawdzenie całej hierarchii katalogów poniżej edytowanego. Sytuację uniemożliwiono na poziomie front-endu. Zmianę można też łatwo cofnąć kolejną edycją, zmieniając ponownie katalog nadrzędny.
+
+Przetestowano odczytywanie elementów, odpowiedzi były zgodne z wymienionymi na liście endpointów.
+
+Sprawdzanie uprawnień do edycji zwraca kod 404 dla nieistniejącego elementu, ,,true'' lub ,,false'' odpowiednio kiedy użytkownik posiada lub nie posiada uprawnień do edycji elementu.
+
+Przetestowano działanie algorytmu dostępu dla użytkownika o ID 4. Zdefiniowano dla niego dostęp do katalogu 3 z poziomem dostępu 1 (odczyt) oraz do plików 1 i 2 z poziomem dostępu 2 (edycja). Struktura wymienionych plików:
+\begin{minted}{bash}
+katalog 1
+	katalog 2
+		katalog 11
+			plik 2
+	katalog 3
+		plik 1
+		plik 3
+\end{minted}
+Próba odczytu plików 1, 2 i 3 oraz katalogu 3 przebiega pomyślnie. Wysłanie zapytania GET dla katalogów 1, 2 i 11 skutkuje kodem 403. Pomyślnie przebiega edycja plików 1 i 2, natomiast dla pliku 3 otrzymywany jest kod 403.
+
+
+
+\subsection{Wykryte i usunięte błędy}
+
+Autentykacja: podczas logowania generowane są dwa ciasteczka: organizerJwt oraz organizerRefreshJwt. Drugie z ciasteczek służy do odświeżania pierwszego, powinno więc mieć dłuższy czas ważności. Przez przypadek do obydwu ciasteczek przypisywano tę samą wartość maxAge.
+
+Tworzenie elementu: dodano obsługę sytuacji, gdzie katalog nadrzędny o podanym ID nie istnieje lub należy do innego użytkownika.
 
 \begin{table}
 \centering

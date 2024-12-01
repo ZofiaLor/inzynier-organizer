@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class NoteService {
@@ -35,6 +36,10 @@ public class NoteService {
         User owner = userRepository.findByUsername(username);
         note.setCreationDate(LocalDateTime.now());
         note.setOwner(owner);
+        Directory parent = directoryRepository.findById(newNote.getParent()).orElseThrow(EntityNotFoundException::new);
+        if (parent.getOwner() != owner) {
+            throw new IllegalArgumentException();
+        }
         if (newNote.getName() == null) note.setName("Unnamed Note");
         return mapper.noteToNoteDTO(repository.save(note));
     }
@@ -43,6 +48,12 @@ public class NoteService {
         if (noteUpdates == null) throw new NullPointerException();
         Note note = repository.findById(noteUpdates.getId()).orElseThrow(EntityNotFoundException::new);
         FileService.checkAccess(2, note.getId(), note.getOwner(), username, note.getParent(), userRepository, directoryRepository, afService, adService);
+        if (noteUpdates.getParent() != null && !Objects.equals(noteUpdates.getParent(), note.getParent().getId())) {
+            Directory parent = directoryRepository.findById(noteUpdates.getParent()).orElseThrow(EntityNotFoundException::new);
+            if (parent.getOwner() != note.getOwner()) {
+                throw new IllegalArgumentException();
+            }
+        }
         mapper.updateNoteFromNoteDTO(noteUpdates, note);
         return mapper.noteToNoteDTO(repository.save(note));
     }

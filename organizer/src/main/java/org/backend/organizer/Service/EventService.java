@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class EventService {
@@ -35,6 +36,10 @@ public class EventService {
         User owner = userRepository.findByUsername(username);
         Event.setCreationDate(LocalDateTime.now());
         Event.setOwner(owner);
+        Directory parent = directoryRepository.findById(newEvent.getParent()).orElseThrow(EntityNotFoundException::new);
+        if (parent.getOwner() != owner) {
+            throw new IllegalArgumentException();
+        }
         if (newEvent.getName() == null) Event.setName("Unnamed Event");
         return mapper.eventToEventDTO(repository.save(Event));
     }
@@ -43,6 +48,12 @@ public class EventService {
         if (EventUpdates == null) throw new NullPointerException();
         Event event = repository.findById(EventUpdates.getId()).orElseThrow(EntityNotFoundException::new);
         FileService.checkAccess(2, event.getId(), event.getOwner(), username, event.getParent(), userRepository, directoryRepository, afService, adService);
+        if (EventUpdates.getParent() != null && !Objects.equals(EventUpdates.getParent(), event.getParent().getId())) {
+            Directory parent = directoryRepository.findById(EventUpdates.getParent()).orElseThrow(EntityNotFoundException::new);
+            if (parent.getOwner() != event.getOwner()) {
+                throw new IllegalArgumentException();
+            }
+        }
         mapper.updateEventFromEventDTO(EventUpdates, event);
         return mapper.eventToEventDTO(repository.save(event));
     }

@@ -12,13 +12,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.WebUtils;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
@@ -32,6 +30,8 @@ public class JWTService {
     private String secretKey = "";
     @Value("${organizer.app.jwtExpirationMs}")
     private int jwtExpirationMs;
+    @Value("${organizer.app.jwtRefreshExpirationMs}")
+    private int jwtRefreshExpirationMs;
 
     @Value("${organizer.app.jwtCookieName}")
     private String jwtCookie;
@@ -67,18 +67,18 @@ public class JWTService {
 
     public ResponseCookie generateJwtCookie(UserPrincipal userPrincipal) {
         String jwt = generateToken(userPrincipal.getUsername());
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(24 * 60 * 60).httpOnly(true).build();
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(jwtExpirationMs / 1000).httpOnly(true).build();
         return cookie;
     }
 
     public ResponseCookie generateJwtCookie(User user) {
         String jwt = generateToken(user.getUsername());
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(24 * 60 * 60).httpOnly(true).build();
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/").maxAge(jwtExpirationMs / 1000).httpOnly(true).build();
         return cookie;
     }
 
     public ResponseCookie generateRefreshJwtCookie(String refreshToken) {
-        return generateCookie(jwtRefreshCookie, refreshToken, "/api/auth/refreshtoken");
+        return generateRefreshCookie(jwtRefreshCookie, refreshToken, "/api/auth/refreshtoken");
     }
 
     public ResponseCookie getCleanJwtCookie() {
@@ -122,8 +122,8 @@ public class JWTService {
                 .compact();
     }
 
-    private ResponseCookie generateCookie(String name, String value, String path) {
-        ResponseCookie cookie = ResponseCookie.from(name, value).path(path).maxAge(24 * 60 * 60).httpOnly(true).build();
+    private ResponseCookie generateRefreshCookie(String name, String value, String path) {
+        ResponseCookie cookie = ResponseCookie.from(name, value).path(path).maxAge(jwtRefreshExpirationMs / 1000).httpOnly(true).build();
         return cookie;
     }
 

@@ -117,8 +117,10 @@ public class AuthorizationController {
                 refreshTokenService.verifyExpiration(token);
                 User user = token.getUser();
                 ResponseCookie jwtCookie = jwtService.generateJwtCookie(user);
+                token = refreshTokenService.createRefreshToken(user.getId());
+                ResponseCookie jwtRefreshCookie = jwtService.generateRefreshJwtCookie(token.getToken());
                 return ResponseEntity.ok()
-                        .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                        .header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).header(HttpHeaders.SET_COOKIE, jwtRefreshCookie.toString())
                         .body("Success");
             } catch (IllegalArgumentException ex) {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);

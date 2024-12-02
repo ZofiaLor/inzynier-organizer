@@ -98,7 +98,7 @@ public class DirectoryService {
     public void deleteDirectory(Long id, String username) {
         User user = userRepository.findByUsername(username);
         Directory directory = repository.findById(id).orElseThrow(EntityNotFoundException::new);
-        if (directory.getParent() == null || directory.getOwner() == user) throw new IllegalArgumentException();
+        if (directory.getParent() == null || directory.getOwner() != user) throw new IllegalArgumentException();
         repository.deleteById(id);
     }
 

@@ -43,7 +43,7 @@ public class RefreshTokenService {
         Optional<RefreshToken> optToken = this.repository.findByUser(user);
         if (optToken.isPresent()) {
             optToken.get().setExpiryDate(refreshToken.getExpiryDate());
-            return optToken.get();
+            return repository.save(optToken.get());
         }
 
         refreshToken = repository.save(refreshToken);

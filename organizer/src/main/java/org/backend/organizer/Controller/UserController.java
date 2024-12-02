@@ -61,9 +61,10 @@ public class UserController {
     }
 
     @PutMapping("")
-    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO user) {
+    public ResponseEntity<UserDTO> updateUser(HttpServletRequest request, @RequestBody UserDTO user) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(service.updateUser(user), HttpStatus.OK);
+            return new ResponseEntity<>(service.updateUser(user, username), HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } catch (NullPointerException ex){

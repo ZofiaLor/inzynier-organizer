@@ -148,10 +148,15 @@ public class UserService {
         return mapper.userToUserDTO(user);
     }
 
-    public UserDTO updateUser(UserDTO userUpdates) {
-        if (userUpdates == null | userUpdates.getId() == null) throw new NullPointerException();
+    public UserDTO updateUser(UserDTO userUpdates, String username) {
+        if (userUpdates == null || userUpdates.getId() == null) throw new NullPointerException();
+        User currentUser = repository.findByUsername(username);
         User user = repository.findById(userUpdates.getId()).orElseThrow(EntityNotFoundException::new);
-        if (!Objects.equals(user.getUsername(), userUpdates.getUsername()) && repository.existsByUsername(userUpdates.getUsername())) throw new IllegalArgumentException();
+        if (currentUser != user) throw new IllegalArgumentException();
+        if (userUpdates.getUsername() != null) {
+            if (!Objects.equals(user.getUsername(), userUpdates.getUsername()) && repository.existsByUsername(userUpdates.getUsername())) throw new IllegalArgumentException();
+            if (userUpdates.getUsername().isEmpty()) throw new IllegalArgumentException();
+        }
         mapper.updateUserFromUserDTO(userUpdates, user);
         repository.save(user);
         user.setPassword("");

@@ -561,11 +561,11 @@ Aplikacja Google Docs pozwala na tworzenie różnych rodzajów plików -- dokume
 Analogiczne funkcjonalności zapewniają aplikacje pakietu Microsoft Office. Programy typu OneNote, Word, PowerPoint, Excel pozwalają na tworzenie i udostępnianie plików różnych typów. Kalendarz pakietu Office pozwala na tworzenie wydarzeń, dodawanie do niego innych użytkowników i planowanie na ich podstawie spotkań w aplikacji Microsoft Teams.
 
 
-Wzory  
-\begin{align}
-y = \frac{\partial x}{\partial t}
-\end{align}
-jak i pojedyncze symbole $x$ i $y$  składa się w trybie matematycznym.
+% Wzory  
+% \begin{align}
+% y = \frac{\partial x}{\partial t}
+% \end{align}
+% jak i pojedyncze symbole $x$ i $y$  składa się w trybie matematycznym.
 
 
 %\begin{Definition}\label{def:1}
@@ -772,31 +772,31 @@ W celu uruchomienia front-endu należy ustawić bieżący katalog na \mintinline
 
 
  
-\begin{figure}
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-    y tick label style={
-        /pgf/number format/.cd,
-            fixed,   % po zakomentowaniu os rzednych jest indeksowana wykladniczo
-            fixed zerofill, % 1.0 zamiast 1
-            precision=1,
-        /tikz/.cd
-    },
-    x tick label style={
-        /pgf/number format/.cd,
-            fixed,
-            fixed zerofill,
-            precision=2,
-        /tikz/.cd
-    }
-]
-\addplot [domain=0.0:0.1] {rnd};
-\end{axis} 
-\end{tikzpicture}
-\caption{Podpis rysunku po rysunkiem.}
-\label{fig:2}
-\end{figure}
+% \begin{figure}
+% \centering
+% \begin{tikzpicture}
+% \begin{axis}[
+%     y tick label style={
+%         /pgf/number format/.cd,
+%             fixed,   % po zakomentowaniu os rzednych jest indeksowana wykladniczo
+%             fixed zerofill, % 1.0 zamiast 1
+%             precision=1,
+%         /tikz/.cd
+%     },
+%     x tick label style={
+%         /pgf/number format/.cd,
+%             fixed,
+%             fixed zerofill,
+%             precision=2,
+%         /tikz/.cd
+%     }
+% ]
+% \addplot [domain=0.0:0.1] {rnd};
+% \end{axis} 
+% \end{tikzpicture}
+% \caption{Podpis rysunku po rysunkiem.}
+% \label{fig:2}
+% \end{figure}
 
 
 
@@ -829,23 +829,23 @@ Dłuższe fragmenty lepiej jest umieszczać jako rysunek, np. kod na rys \ref{fi
 , a naprawdę długie fragmenty – w załączniku.
 
 
-\begin{figure}
-\centering
-\begin{lstlisting}
-class test : public basic
-{
-    public:
-      test (int a);
-      friend std::ostream operator<<(std::ostream & s, 
-                                     const test & t);
-    protected:
-      int _a;  
+% \begin{figure}
+% \centering
+% \begin{lstlisting}
+% class test : public basic
+% {
+%     public:
+%       test (int a);
+%       friend std::ostream operator<<(std::ostream & s, 
+%                                      const test & t);
+%     protected:
+%       int _a;  
       
-};
-\end{lstlisting}
-\caption{Pseudokod w \texttt{listings}.}
-\label{fig:pseudokod:listings}
-\end{figure}
+% };
+% \end{lstlisting}
+% \caption{Pseudokod w \texttt{listings}.}
+% \label{fig:pseudokod:listings}
+% \end{figure}
 
 \section{Lista klas}
 
@@ -1063,7 +1063,7 @@ Odpowiedzi:
 
 Aktualizuje użytkownika.
 
-Wymagane podanie ID użytkownika w ciele zapytania.
+Wymagane podanie ID użytkownika w ciele zapytania. Możliwa jest tylko aktualizacja własnego użytkownika.
 
 \begin{minted}{json}
 {
@@ -1081,7 +1081,8 @@ Odpowiedzi:
 \begin{itemize}
 	\item Pomyślna aktualizacja: obiekt użytkownika z pustym hasłem, kod 200 (OK) 
 	\item Nie znaleziono ID: kod 404 (Not Found) 
-	\item  Próba zmiany nazwy użytkownika na już istniejącą/nie podano ID: kod 400 (Bad Request)
+	\item Nie podano ID: kod 400 (Bad Request)
+	\item Próba zmiany nazwy użytkownika na już istniejącą lub pustą/zmiany użytkownika innego niż aktualnie zalogowany: kod 403 (Forbidden)
 \end{itemize}
 
 \paragraph{Delete User}\label{delete-user}
@@ -1611,7 +1612,7 @@ Odpowiedzi:
 
 Tworzy obiekt EventDate.
 
-Wymagane jest podanie ID wydarzenia, a także początku i końca terminu. Wynik całkowity ustawiany jest na 0.
+Wymagane jest podanie ID wydarzenia, a także początku i końca terminu. Wynik całkowity ustawiany jest na 0. Wydarzenie musi istnieć i należeć do tworzącego obiekt użytkownika.
 
 \begin{minted}{json}
 {
@@ -1625,18 +1626,21 @@ Odpowiedzi:
 \begin{itemize}
 	\item Pomyślne utworzenie: nowy obiekt EventDate, kod 200 (OK) 
 	\item Brak ID/terminu początkowego/końcowego: kod 400 (Bad Request)
+	\item Wydarzenie nie istnieje: kod 404 (Not Found) 
+	\item Wydarzenie należy do innego użytkownika: kod 403 (Forbidden) 
 \end{itemize}
 
 \paragraph{Delete EventDate}\label{delete-eventdate}
 
 \mintinline{bash}{DELETE /api/ed/{id}}
 
-Usuwa obiekt EventDate o podanym ID, wraz z jego głosami.
+Usuwa obiekt EventDate o podanym ID, wraz z jego głosami. Wydarzenie należeć musi do usuwającego obiekt użytkownika.
 
 Odpowiedzi: 
 \begin{itemize}
 	\item ID istnieje: kod 200 (OK) 
 	\item ID nie istnieje: kod 404 (Not Found)
+	\item Wydarzenie należy do innego użytkownika: kod 403 (Forbidden) 
 \end{itemize}
 
 \subsection{Votes}\label{votes}
@@ -1886,9 +1890,20 @@ Następnie przetestowano przypadki użycia dla użytkownika zwykłego.
 
 Wylogowanie przebiega zawsze pomyślnie, można je powtarzać nawet będąc już wylogowanym bez negatywnych skutków. W wyniku wylogowania obydwa ciasteczka stają się puste.
 
+Przetestowano działanie odświeżania ciasteczka organizerJwt. Przed odświeżeniem ciasteczka miały następujące wartości:
+\begin{minted}{json}
+organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzMzMTY2NDA4LCJleHAiOjE3MzMyNTI4MDh9._JyoQNrhYdpdl3EPM8NFg29c0HwLm5nMidQ8Fh4Wsik; Path=/; HttpOnly; Expires=Tue, 03 Dec 2024 19:06:48 GMT;
+organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refreshtoken; HttpOnly; Expires=Wed, 04 Dec 2024 01:06:48 GMT;
+\end{minted}
+Po wykonaniu odświeżenia:
+\begin{minted}{json}
+organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzMzMTY2NDg0LCJleHAiOjE3MzMyNTI4ODR9.ekR8DYMFlny3pKLKaunjOtXXTE3qH8dTfEFGYdaSpNs; Path=/; HttpOnly; Expires=Tue, 03 Dec 2024 19:08:04 GMT;
+organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refreshtoken; HttpOnly; Expires=Wed, 04 Dec 2024 01:08:04 GMT;
+\end{minted}
+
 Próba dostępu do endpointu dostępnego tylko administratorowi, na przykład nadania roli administratora, skutkuje kodem 403 odpowiedzi.
 
-Przetestowano tworzenie nowych elementów. Kody błędów 400, 403 i 404 są zwracane zgodnie z oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach. Kolumna textContent jest typu ,,TEXT'' -- jest to typ danych bazy MySQL o rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ ,,TINYTEXT'', mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie front-endu. Back-end nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego.
+Przetestowano tworzenie nowych elementów. Kody błędów 400, 403 i 404 są zwracane zgodnie z oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach -- w przeciwnym razie zwracany jest kod 403. Kolumna textContent jest typu ,,TEXT'' -- jest to typ danych bazy MySQL o rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ ,,TINYTEXT'', mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie front-endu. Back-end nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego.
 
 \begin{figure}
 \centering
@@ -1927,9 +1942,28 @@ Odpowiedź:
 }
 \end{minted}
 
-Możliwe jest jednak przeniesienie katalogu do jego katalogu podrzędnego. Skutkować to może nieskończoną pętlą weryfikacji dostępu dla użytkowników niebędących właścicielami tego katalogu, a sam katalog nie będzie widoczny dla użytkownika w interfejsie graficznym. Zdecydowano się nie weryfikować tej sytuacji na poziomie back-endu ze względu na potencjalną dużą złożoność algorytmu sprawdzającego -- konieczne byłoby sprawdzenie całej hierarchii katalogów poniżej edytowanego. Sytuację uniemożliwiono na poziomie front-endu. Zmianę można też łatwo cofnąć kolejną edycją, zmieniając ponownie katalog nadrzędny.
+Możliwe jest jednak przeniesienie katalogu do jego katalogu podrzędnego. Skutkować to może nieskończoną pętlą weryfikacji dostępu dla użytkowników niebędących właścicielami tego katalogu i błędem bazy danych podczas usuwania, a sam katalog nie będzie widoczny dla użytkownika w interfejsie graficznym. Zdecydowano się nie weryfikować tej sytuacji na poziomie back-endu ze względu na potencjalną dużą złożoność algorytmu sprawdzającego -- konieczne byłoby sprawdzenie całej hierarchii katalogów poniżej edytowanego. Sytuację uniemożliwiono na poziomie front-endu. Zmianę można też łatwo cofnąć kolejną edycją, zmieniając ponownie katalog nadrzędny.
 
 Przetestowano odczytywanie elementów, odpowiedzi były zgodne z wymienionymi na liście endpointów.
+
+W katalogu o ID 29 umieszczono katalog podrzędny oraz plik:
+\begin{minted}{json}
+{
+	"id": 29,
+	"name": "Child Directory",
+	"owner": 22,
+	"parent": 26,
+	"children": [
+		30
+	],
+	"files": [
+		15
+	]
+}
+\end{minted}
+Następnie usunięto katalog 29. Próba odczytu katalogu 29, 30 oraz pliku 15 skutkuje błędem 404 -- zawartość katalogu została kaskadowo usunięta.
+
+W przypadku katalogu bazowego, próba usunięcia skutkuje kodem błędu 403.
 
 Sprawdzanie uprawnień do edycji zwraca kod 404 dla nieistniejącego elementu, ,,true'' lub ,,false'' odpowiednio kiedy użytkownik posiada lub nie posiada uprawnień do edycji elementu.
 
@@ -1945,40 +1979,181 @@ katalog 1
 \end{minted}
 Próba odczytu plików 1, 2 i 3 oraz katalogu 3 przebiega pomyślnie. Wysłanie zapytania GET dla katalogów 1, 2 i 11 skutkuje kodem 403. Pomyślnie przebiega edycja plików 1 i 2, natomiast dla pliku 3 otrzymywany jest kod 403.
 
+12 grudnia 2024 roku o godzinie 18:10 dla użytkownika 4 dodano powiadomienie do pliku 1. 
+\begin{minted}{json}
+{
+	"id": 6,
+	"user": 4,
+	"file": 1,
+	"message": "Test notif",
+	"sendTimeSetting": "2024-12-02T18:15:00",
+	"read": false,
+	"sent": false
+}
+\end{minted}
+Wysłano od razu zapytanie Send Notifications. Zapytanie Get All Notifications dla użytkownika zwraca pustą listę, a zapytanie Get All Unsent Notifications dla pliku zwraca listę zawierającą to powiadomienie. Po godzinie 18:15 powtórzono wysłanie powiadomień i ponownie wykonano dwa zapytania Get. Tym razem powiadomienie zwrócone zostało przez endpoint \mintinline{bash}{GET /api/notifs/mynotifs} zwróciło listę z powiadomieniem, którego wartość pola \mintinline{sql}{sent} została zmieniona na \mintinline{sql}{true}. Lista niewysłanych powiadomień jest pusta.
 
+Utworzono powiadomienie z wcześniejszym terminem wysłania.
+\begin{minted}{json}
+{
+	"id": 7,
+	"user": 4,
+	"file": 1,
+	"message": "Test notif 2",
+	"sendTimeSetting": "2024-12-02T17:15:00",
+	"read": false,
+	"sent": true
+}
+\end{minted}
+Powiadomienie od początku jest wysłane.
+
+Możliwe jest również dodanie powiadomienia do pliku, do którego dany użytkownik nie ma dostępu. Nie zablokowano takiej możliwości na poziomie back-endu -- dodanie do pliku powiadomienia nie wpływa na dostęp do samego pliku. Podobnie możliwe jest też dodanie powiadomienia dla użytkownika innego niż zalogowany.
+
+Próba utworzenia obiektu EventDate dla wydarzenia należącego do innego użytkownika skutkuje kodem 403, dla nieistniejącego wydarzenia -- kodem 404. Podanie ID pliku innego niż wydarzenie również zwraca kod 404. Próba utworzenia wydarzenia z pustym terminem początkowym zwraca kod 400, można jednak nie podać terminu końcowego:
+\begin{minted}{json}
+{
+	"id": 7,
+	"event": 16,
+	"votes": null,
+	"totalScore": 0,
+	"start": "2024-11-18T12:00:00",
+	"end": null
+}
+\end{minted}
+
+Oddawanie wielu głosów na ten sam termin EventDate modyfikuje wartość \mintinline{sql}{score}, nie dodaje kolejnych głosów. Zalogowano się jako inny użytkownik i oddano głos: wartość \mintinline{sql}{totalScore} dla terminu jest każdorazowo przeliczana, jest równa sumie punktów z każdego głosu. Nie jest sprawdzane, czy głosujący ma dostęp do wydarzenia.
+
+Zwykły użytkownik nie może listować pełnych danych innych użytkowników (kod 403), może jednak skorzystać z bezpiecznego endpointu -- dla wszystkich użytkowników oraz użytkownika o konkretnym ID. Fragment odpowiedzi dla bezpiecznego listowania wszystkich użytkowników:
+\begin{minted}{json}
+{
+	"id": 4,
+	"username": "newUser",
+	"name": "User",
+	"email": "",
+	"password": null,
+	"role": null,
+	"directories": null,
+	"votes": null,
+	"notifications": null
+},
+{
+	"id": 5,
+	"username": "newUser2",
+	"name": "New User 2",
+	"email": "",
+	"password": null,
+	"role": null,
+	"directories": null,
+	"votes": null,
+	"notifications": null
+},
+\end{minted}
+
+Próba edycji danych innego użytkownika niż zalogowany skutkuje kodem błędu 403. Nie można też zmienić nazwy na inną występującą już w bazie. Wyjątkiem jest podanie własnej nazwy użytkownika. Podanie pustego ciągu znaków jako nowa nazwa użytkownika zwraca kod 403. Zmiany hasła i roli są ignorowane. Na puste ciągi znaków można zmieniać pola \mintinline{sql}{name} oraz \mintinline{sql}{email}.
+
+Przetestowano zmianę hasła. Jeżeli nie podane zostanie stare lub nowe hasło otrzymywany jest kod 400. Dla niepoprawnego starego hasła zwracany jest kod 403. Zmieniono hasło w poprawny sposób i spróbowano zalogować się przy pomocy starego i nowego hasła -- operacja przebiegła pomyślnie dla hasła nowego. 
+
+Zwykły użytkownik może usunąć tylko swoje konto. Usunięto użytkownika:
+\begin{minted}{json}
+{
+	"id": 22,
+	"username": "test",
+	"name": "Test User",
+	"email": null,
+	"password": "",
+	"role": "ROLE_USER",
+	"directories": [
+		26
+	],
+	"votes": [
+		13
+	],
+	"notifications": []
+}
+\end{minted}
+Automatycznie nastąpiło wylogowanie -- endpointy dostępne każdemu zalogowanemu użytkownikowi zwracają kod 403, ciasteczka organizerJwt i organizerRefreshJwt są puste. Zalogowano się na konto innego użytkownika. Próby odczytu katalogu o ID 26 i głosów dla terminów wydarzeń użytkownika zwracają kod 404.
+
+Zalogowano się jako administrator. Możliwe było wylistowanie pełnych danych użytkowników (nie licząc haseł). Fragment odpowiedzi:
+\begin{minted}{json}
+{
+	"id": 4,
+	"username": "newUser",
+	"name": "User",
+	"email": "newuser@email.com",
+	"password": "",
+	"role": "ROLE_ADMIN",
+	"directories": [
+		4,
+		12,
+		13
+	],
+	"votes": [
+		1,
+		7,
+		9,
+		11
+	],
+	"notifications": [
+		6,
+		7,
+		8
+	]
+},
+{
+	"id": 5,
+	"username": "newUser2",
+	"name": "New User 2",
+	"email": "newuser2@email.com",
+	"password": "",
+	"role": "ROLE_USER",
+	"directories": [
+		5
+	],
+	"votes": [],
+	"notifications": []
+},
+\end{minted}
+
+Nadano i odebrano innym użytkownikom rolę administratora. Próba zmiany własnej roli zwróciła kod 400.
+
+Próba usunięcia własnego użytkownika poprzez endpoint administratora zwraca kod 403. Usunięcie innego użytkownika przebiegło pomyślnie.
 
 \subsection{Wykryte i usunięte błędy}
 
 Autentykacja: podczas logowania generowane są dwa ciasteczka: organizerJwt oraz organizerRefreshJwt. Drugie z ciasteczek służy do odświeżania pierwszego, powinno więc mieć dłuższy czas ważności. Przez przypadek do obydwu ciasteczek przypisywano tę samą wartość maxAge.
 
+Odświeżanie ciasteczek: odświeżane było jedynie ciasteczko organizerJwt zamiast obydwu. 
+
 Tworzenie elementu: dodano obsługę sytuacji, gdzie katalog nadrzędny o podanym ID nie istnieje lub należy do innego użytkownika.
 
-\begin{table}
-\centering
-\caption{Nagłówek tabeli jest nad tabelą.}
-\label{id:tab:wyniki}
-\begin{tabular}{rrrrrrrr}
-\toprule
-	         &                                     \multicolumn{7}{c}{metoda}                                      \\
-	         \cmidrule{2-8}
-	         &         &         &        \multicolumn{3}{c}{alg. 3}        & \multicolumn{2}{c}{alg. 4, $\gamma = 2$} \\
-	         \cmidrule(r){4-6}\cmidrule(r){7-8}
-	$\zeta$ &     alg. 1 &   alg. 2 & $\alpha= 1.5$ & $\alpha= 2$ & $\alpha= 3$ &   $\beta = 0.1$  &   $\beta = -0.1$ \\
-\midrule
-	       0 &  8.3250 & 1.45305 &       7.5791 &    14.8517 &    20.0028 & 1.16396 &                       1.1365 \\
-	       5 &  0.6111 & 2.27126 &       6.9952 &    13.8560 &    18.6064 & 1.18659 &                       1.1630 \\
-	      10 & 11.6126 & 2.69218 &       6.2520 &    12.5202 &    16.8278 & 1.23180 &                       1.2045 \\
-	      15 &  0.5665 & 2.95046 &       5.7753 &    11.4588 &    15.4837 & 1.25131 &                       1.2614 \\
-	      20 & 15.8728 & 3.07225 &       5.3071 &    10.3935 &    13.8738 & 1.25307 &                       1.2217 \\
-	      25 &  0.9791 & 3.19034 &       5.4575 &     9.9533 &    13.0721 & 1.27104 &                       1.2640 \\
-	      30 &  2.0228 & 3.27474 &       5.7461 &     9.7164 &    12.2637 & 1.33404 &                       1.3209 \\
-	      35 & 13.4210 & 3.36086 &       6.6735 &    10.0442 &    12.0270 & 1.35385 &                       1.3059 \\
-	      40 & 13.2226 & 3.36420 &       7.7248 &    10.4495 &    12.0379 & 1.34919 &                       1.2768 \\
-	      45 & 12.8445 & 3.47436 &       8.5539 &    10.8552 &    12.2773 & 1.42303 &                       1.4362 \\
-	      50 & 12.9245 & 3.58228 &       9.2702 &    11.2183 &    12.3990 & 1.40922 &                       1.3724 \\
-\bottomrule
-\end{tabular}
-\end{table}  
+Usuwanie elementu: element powinien móc usunąć jedynie jego właściciel. Przypadkowo zrealizowano sytuację odwrotną: wszyscy użytkownicy niebędący właścicielem mogli usuwać elementy.
+
+% \begin{table}
+% \centering
+% \caption{Nagłówek tabeli jest nad tabelą.}
+% \label{id:tab:wyniki}
+% \begin{tabular}{rrrrrrrr}
+% \toprule
+% 	         &                                     \multicolumn{7}{c}{metoda}                                      \\
+% 	         \cmidrule{2-8}
+% 	         &         &         &        \multicolumn{3}{c}{alg. 3}        & \multicolumn{2}{c}{alg. 4, $\gamma = 2$} \\
+% 	         \cmidrule(r){4-6}\cmidrule(r){7-8}
+% 	$\zeta$ &     alg. 1 &   alg. 2 & $\alpha= 1.5$ & $\alpha= 2$ & $\alpha= 3$ &   $\beta = 0.1$  &   $\beta = -0.1$ \\
+% \midrule
+% 	       0 &  8.3250 & 1.45305 &       7.5791 &    14.8517 &    20.0028 & 1.16396 &                       1.1365 \\
+% 	       5 &  0.6111 & 2.27126 &       6.9952 &    13.8560 &    18.6064 & 1.18659 &                       1.1630 \\
+% 	      10 & 11.6126 & 2.69218 &       6.2520 &    12.5202 &    16.8278 & 1.23180 &                       1.2045 \\
+% 	      15 &  0.5665 & 2.95046 &       5.7753 &    11.4588 &    15.4837 & 1.25131 &                       1.2614 \\
+% 	      20 & 15.8728 & 3.07225 &       5.3071 &    10.3935 &    13.8738 & 1.25307 &                       1.2217 \\
+% 	      25 &  0.9791 & 3.19034 &       5.4575 &     9.9533 &    13.0721 & 1.27104 &                       1.2640 \\
+% 	      30 &  2.0228 & 3.27474 &       5.7461 &     9.7164 &    12.2637 & 1.33404 &                       1.3209 \\
+% 	      35 & 13.4210 & 3.36086 &       6.6735 &    10.0442 &    12.0270 & 1.35385 &                       1.3059 \\
+% 	      40 & 13.2226 & 3.36420 &       7.7248 &    10.4495 &    12.0379 & 1.34919 &                       1.2768 \\
+% 	      45 & 12.8445 & 3.47436 &       8.5539 &    10.8552 &    12.2773 & 1.42303 &                       1.4362 \\
+% 	      50 & 12.9245 & 3.58228 &       9.2702 &    11.2183 &    12.3990 & 1.40922 &                       1.3724 \\
+% \bottomrule
+% \end{tabular}
+% \end{table}  
 
 
 

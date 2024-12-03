@@ -546,7 +546,7 @@ escapeinside={@*}{*@},%
 \end{itemize}
 
 \section{Opis problemu}
-Aplikacja w dużym stopniu oparta jest o \ksremark{W znaczeniu przenośnym napiszemy tylko i wyłącznie „oparty na”. W znaczeniu dosłownym wybór przyimków „na” i „o” wynika z geometrii sytuacji. Jeżeli przedmiot oparcia jest pionowy, to wtedy „o”, np. „oparty o ścianę, drzewo, drzwi”. W innych przypadkach – „na”, np. „dom oparty na fundamencie betonowym”.} interakcję z użytkownikiem, który w każdym momencie użytkowania ma wiele dostępnych mu działań. Wyzwaniem jest więc nie zaprojektowanie złożonej logiki programu, a zapewnienie poprawnego działania dla wszelkich danych wejściowych pobranych od użytkownika. Zabezpieczenia takie muszą pojawić się od strony interfejsu, który powinien maksymalnie ograniczać możliwość wprowadzenia niepoprawnych danych, ale i od strony backendu, gdzie weryfikować należy przychodzące zapytania HTTP. Zawartość odpowiedzi HTTP jest łatwo dostępna w inspektorze przeglądarki, dlatego już na jej poziomie nie mogą być dostępne dane wrażliwe (hasła), a nie dopiero na poziomie interfejsu.
+Aplikacja w dużym stopniu oparta jest na interakcji z użytkownikiem, który w każdym momencie użytkowania ma wiele dostępnych mu działań. Wyzwaniem jest więc nie zaprojektowanie złożonej logiki programu, a zapewnienie poprawnego działania dla wszelkich danych wejściowych pobranych od użytkownika. Zabezpieczenia takie muszą pojawić się od strony interfejsu, który powinien maksymalnie ograniczać możliwość wprowadzenia niepoprawnych danych, ale i od strony backendu, gdzie weryfikować należy przychodzące zapytania HTTP. Zawartość odpowiedzi HTTP jest łatwo dostępna w inspektorze przeglądarki, dlatego już na jej poziomie nie mogą być dostępne dane wrażliwe (hasła), a nie dopiero na poziomie interfejsu.
 
 Jedną z zalet aplikacji przeglądarkowych jest możliwość zapisywania odnośników do stron, na przykład do konkretnego pliku. Oznacza to jednak, że nawet dokładnie zaprojektowany interfejs nie pozwoli na pełną kontrolę ścieżki, którą użytkownik poruszać się będzie po programie. Zmieniając adres w przeglądarce, może on w dowolnym momencie usiłować dostać się do nieistniejących bądź nieudostępnionych mu zasobów.
 
@@ -726,7 +726,6 @@ Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania 
 
 
 \subsubsection{Linux}
-\ksremark{Nie wiem, czy to poniżej jest poprawne, ale coś w tym styly bym napisał.}
 \begin{enumerate}
    \item Należy rozpakować pliki źródłowe:
 
@@ -744,7 +743,61 @@ Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bas
 \mintinline{bash}{./mvnw install}
 
  Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{bash}{target}, zawierający plik z rozszerzeniem \mintinline{bash}{.jar}.
+
+	\item Przed uruchomieniem back-endu można zatrzymać kontener z bazą danych. Jeżeli korzysta się z programu Docker Desktop, wystarczy nacisnąć przycisk ,,stop'' przy kontenerze ,,db''.
+
+	Aby zatrzymać kontener z poziomu terminala należy najpierw znaleźć jego identyfikator używając polecenia 
+
+	\mintinline{bash}{docker ps}.
+
+	Przykładowym wynikiem tego polecenia jest
+
+	\begin{minted}{bash}
+		CONTAINER ID   IMAGE       COMMAND                  CREATED       STATUS              PORTS                               NAMES
+	c22ebdb94057   mysql:5.7   "docker-entrypoint.s…"   7 weeks ago   Up About a minute   0.0.0.0:3306->3306/tcp, 33060/tcp   organizer-db
+	\end{minted}
+
+	Następnie należy wykonać polecenie
+
+	\mintinline{bash}{docker stop <CONTAINER ID>}
+
+	wstawiając w miejsce <CONTAINER ID> identyfikator odczytany w poprzednim kroku (tu: c22ebdb94057).
+
+	\item Obydwa kontenery należy zbudować poleceniem 
+
+	\mintinline{bash}{docker compose build},
+
+	a następnie uruchomić 
+
+	\mintinline{bash}{docker compose up -d}.
     \end{enumerate}
+
+W celu uruchomienia front-endu:
+
+\begin{enumerate}
+	 \item Należy zmienić bieżący katalog:
+
+	 \mintinline{bash}{cd organizer-front}
+
+	 \item Należy zainstalować wymagane pakiety poleceniami
+
+	 \mintinline{bash}{npm install -g @angular/cli} 
+	 
+	 oraz
+	 
+	 \mintinline{bash}{npm install}
+
+	 \item Aplikację należy uruchomić poleceniem
+
+	 \mintinline{bash}{ng serve --proxy-config profxy.config.json}
+
+	 \item W terminalu zostanie wypisany adres 
+
+	 \mintinline{bash}{http://localhost:4200/}.
+
+	Należy otworzyć go w wybranej przeglądarce wklejając go w polu adresu, bądź naciskając go lewym przyciskiem myszy, wciskając jednocześnie klawisz Ctrl.
+
+	 \end{enumerate}
 
 
 
@@ -1941,7 +1994,7 @@ organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refresh
 
 Próba dostępu do endpointu dostępnego tylko administratorowi, na przykład nadania roli administratora, skutkuje kodem 403 odpowiedzi.
 
-Przetestowano tworzenie nowych elementów. Kody błędów 400, 403 i 404 są zwracane zgodnie z oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach -- w przeciwnym razie zwracany jest kod 403. Kolumna textContent jest typu ,,TEXT'' \ksremark{To też w minted.} -- jest to typ danych bazy MySQL o rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ ,,TINYTEXT'', mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie front-endu. Back-end nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego.
+Przetestowano tworzenie nowych elementów. Kody błędów 400, 403 i 404 są zwracane zgodnie z oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach -- w przeciwnym razie zwracany jest kod 403. Kolumna textContent jest typu \mintinline{sql}{TEXT} -- jest to typ danych bazy MySQL o rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ \mintinline{sql}{TINYTEXT}, mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie front-endu. Back-end nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego.
 
 \begin{figure}
 \centering

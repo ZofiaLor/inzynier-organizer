@@ -1,8 +1,10 @@
 package org.backend.organizer.Controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.backend.organizer.DTO.EventDateDTO;
 import org.backend.organizer.Service.EventDateService;
+import org.backend.organizer.Service.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import java.util.List;
 public class EventDateController {
     @Autowired
     EventDateService service;
+    @Autowired
+    JWTService jwtService;
 
     @GetMapping("")
     public ResponseEntity<List<EventDateDTO>> getAllEventDates(@RequestParam(required = false) Long eventId) {
@@ -46,21 +50,29 @@ public class EventDateController {
     }
 
     @PostMapping("")
-    public ResponseEntity<EventDateDTO> createEventDate(@RequestBody EventDateDTO eventDateDTO) {
+    public ResponseEntity<EventDateDTO> createEventDate(HttpServletRequest request, @RequestBody EventDateDTO eventDateDTO) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(service.createEventDate(eventDateDTO), HttpStatus.OK);
+            return new ResponseEntity<>(service.createEventDate(eventDateDTO, username), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteEventDate(@PathVariable("id") Long id) {
+    public ResponseEntity<HttpStatus> deleteEventDate(HttpServletRequest request, @PathVariable("id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            service.deleteEventDate(id);
+            service.deleteEventDate(id, username);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 

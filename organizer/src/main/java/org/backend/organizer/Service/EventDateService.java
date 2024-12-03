@@ -5,8 +5,10 @@ import org.backend.organizer.DTO.EventDateDTO;
 import org.backend.organizer.Mapper.EventDateMapper;
 import org.backend.organizer.Model.Event;
 import org.backend.organizer.Model.EventDate;
+import org.backend.organizer.Model.User;
 import org.backend.organizer.Repository.EventDateRepository;
 import org.backend.organizer.Repository.EventRepository;
+import org.backend.organizer.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ public class EventDateService {
     EventDateMapper mapper;
     @Autowired
     EventRepository eventRepository;
+    @Autowired
+    UserRepository userRepository;
 
     public List<EventDateDTO> getAllEventDates() {
         var result = new ArrayList<EventDateDTO>();
@@ -45,15 +49,20 @@ public class EventDateService {
         return mapper.eventDateToEventDateDTO(repository.findById(id).orElseThrow(EntityNotFoundException::new));
     }
 
-    public EventDateDTO createEventDate(EventDateDTO eventDateDTO) {
+    public EventDateDTO createEventDate(EventDateDTO eventDateDTO, String username) {
         if (eventDateDTO.getEvent() == null | eventDateDTO.getStart() == null) throw new NullPointerException();
+        User user = userRepository.findByUsername(username);
+        Event event = eventRepository.findById(eventDateDTO.getEvent()).orElseThrow(EntityNotFoundException::new);
+        if (event.getOwner() != user) throw new IllegalArgumentException();
         EventDate eventDate = mapper.eventDateDTOToEventDate(eventDateDTO);
         eventDate.setTotalScore(0);
         return mapper.eventDateToEventDateDTO(repository.save(eventDate));
     }
 
-    public void deleteEventDate(Long id) {
-        if(!repository.existsById(id)) throw new EntityNotFoundException();
+    public void deleteEventDate(Long id, String username) {
+        EventDate eventDate = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.findByUsername(username);
+        if (eventDate.getEvent().getOwner() != user) throw new IllegalArgumentException();
         repository.deleteById(id);
     }
 }

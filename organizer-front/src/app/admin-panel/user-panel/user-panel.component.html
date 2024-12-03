@@ -1,3 +1,4 @@
+@if (isAdmin) {
 <div class="layoutBox-v" fxLayout="column" fxLayoutGap="50px">
     <div
       class="layoutBox-h"
@@ -52,3 +53,7 @@
 
     </div>
 </div>
+} @else {
+    <div class="centered"><mat-icon>shield</mat-icon><br/>This page is accessible for administrators only</div>
+}
+

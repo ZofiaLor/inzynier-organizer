@@ -3,12 +3,9 @@
     <div class="left-toolbar">
         <a class="title" routerLink=""><span>Organizer</span></a>
         @if (isLoggedIn && isAdmin) {
-            <button mat-raised-button [matMenuTriggerFor]="menu" color="accent" aria-label="Admin Panel">
+            <a routerLink="admin/users" mat-raised-button color="accent" aria-label="Admin Panel">
                 <mat-icon>shield</mat-icon> Admin Panel
-            </button>
-            <mat-menu #menu="matMenu">
-                <a routerLink="admin/users" mat-menu-item><mat-icon>group</mat-icon>User Panel</a>
-              </mat-menu>
+            </a>
         }
     </div>
     <div class="right-toolbar">

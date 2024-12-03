@@ -15,3 +15,16 @@
   mat-panel-title {
     color: #F44336;
   }
+
+.centered {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5em;
+    text-align:center;
+    .mat-icon {
+      transform: scale(2.0);
+      margin: 10px;
+    }
+}

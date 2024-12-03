@@ -68,6 +68,10 @@ public class DirectoryService {
         Directory directory = mapper.directoryDTOToDirectory(newDirectory);
         User owner = userRepository.findByUsername(username);
         directory.setOwner(owner);
+        Directory parent = repository.findById(newDirectory.getParent()).orElseThrow(EntityNotFoundException::new);
+        if (parent.getOwner() != owner) {
+            throw new IllegalArgumentException();
+        }
         if (newDirectory.getName() == null) directory.setName("Unnamed Directory");
         return mapper.directoryToDirectoryDTO(repository.save(directory));
     }
@@ -76,8 +80,17 @@ public class DirectoryService {
         if (directoryUpdates == null) throw new NullPointerException();
         Directory directory = repository.findById(directoryUpdates.getId()).orElseThrow(EntityNotFoundException::new);
         checkAccess(2, directoryUpdates.getId(), directory.getOwner(), username);
-        //TODO consider whether this solution (effectively ignoring) is better, or if it should throw IllegalArgumentException
-        if (Objects.equals(directoryUpdates.getId(), directoryUpdates.getParent())) directoryUpdates.setParent(directory.getParent().getId());
+        if(directoryUpdates.getParent() != null) {
+            if (directory.getParent() == null) directoryUpdates.setParent(null);
+            else if (Objects.equals(directoryUpdates.getId(), directoryUpdates.getParent())) directoryUpdates.setParent(directory.getParent().getId());
+            else if (!Objects.equals(directoryUpdates.getParent(), directory.getParent().getId())) {
+                Directory parent = repository.findById(directoryUpdates.getParent()).orElseThrow(EntityNotFoundException::new);
+                if (parent.getOwner() != directory.getOwner()) {
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
+
         mapper.updateDirectoryFromDirectoryDTO(directoryUpdates, directory);
         return mapper.directoryToDirectoryDTO(repository.save(directory));
     }
@@ -85,7 +98,7 @@ public class DirectoryService {
     public void deleteDirectory(Long id, String username) {
         User user = userRepository.findByUsername(username);
         Directory directory = repository.findById(id).orElseThrow(EntityNotFoundException::new);
-        if (directory.getParent() == null || directory.getOwner() == user) throw new IllegalArgumentException();
+        if (directory.getParent() == null || directory.getOwner() != user) throw new IllegalArgumentException();
         repository.deleteById(id);
     }
 

@@ -71,7 +71,7 @@
 % dane autora
 \newcommand{\FirstNameAuthor}{Zofia}
 \newcommand{\SurnameAuthor}{Lorenc}
-\newcommand{\IdAuthor}{300306$}   % numer albumu  (bez $\langle$ i $\rangle$)
+\newcommand{\IdAuthor}{300306}   % numer albumu  (bez $\langle$ i $\rangle$)
 
 % drugi autor:
 %\newcommand{\FirstNameCoauthor}{Imię}   % Jeżeli jest drugi autor, to tutaj należy podać imię.
@@ -83,9 +83,9 @@
 \newcommand{\IdCoauthor}{}  % Jeżeli praca ma tylko jednego autora, to dane drugiego autora zostają puste.
 %%%%%%%%%%
 
-\newcommand{\Supervisor}{Dr hab. inż. Krzysztof Simiński}     % dane promotora (bez $\langle$ i $\rangle$)
+\newcommand{\Supervisor}{dr hab. inż. Krzysztof Simiński}     % dane promotora (bez $\langle$ i $\rangle$)
 \newcommand{\Title}{Webowy organizer notatek, wydarzeń i zadań}           % tytuł pracy po polsku
-\newcommand{\TitleAlt}{Web organizer of notes, events and tasks}                     % thesis title in English
+\newcommand{\TitleAlt}{Web organizer of notes, events, and tasks}                     % thesis title in English
 \newcommand{\Program}{Informatyka}            % kierunek studiów  (bez $\langle$ i $\rangle$)
 \newcommand{\Specialisation}{Bazy Danych i Inżynieria Systemów}     % specjalność  (bez $\langle$ i $\rangle$)
 \newcommand{\Departament}{ALGORYTMIKI I OPROGRAMOWANIA}        % katedra promotora  (bez $\langle$ i $\rangle$)
@@ -546,7 +546,7 @@ escapeinside={@*}{*@},%
 \end{itemize}
 
 \section{Opis problemu}
-Aplikacja w dużym stopniu oparta jest o interakcję z użytkownikiem, który w każdym momencie użytkowania ma wiele dostępnych mu działań. Wyzwaniem jest więc nie zaprojektowanie złożonej logiki programu, a zapewnienie poprawnego działania dla wszelkich danych wejściowych pobranych od użytkownika. Zabezpieczenia takie muszą pojawić się od strony interfejsu, który powinien maksymalnie ograniczać możliwość wprowadzenia niepoprawnych danych, ale i od strony backendu, gdzie weryfikować należy przychodzące zapytania HTTP. Zawartość odpowiedzi HTTP jest łatwo dostępna w inspektorze przeglądarki, dlatego już na jej poziomie nie mogą być dostępne dane wrażliwe (hasła), a nie dopiero na poziomie interfejsu.
+Aplikacja w dużym stopniu oparta jest o \ksremark{W znaczeniu przenośnym napiszemy tylko i wyłącznie „oparty na”. W znaczeniu dosłownym wybór przyimków „na” i „o” wynika z geometrii sytuacji. Jeżeli przedmiot oparcia jest pionowy, to wtedy „o”, np. „oparty o ścianę, drzewo, drzwi”. W innych przypadkach – „na”, np. „dom oparty na fundamencie betonowym”.} interakcję z użytkownikiem, który w każdym momencie użytkowania ma wiele dostępnych mu działań. Wyzwaniem jest więc nie zaprojektowanie złożonej logiki programu, a zapewnienie poprawnego działania dla wszelkich danych wejściowych pobranych od użytkownika. Zabezpieczenia takie muszą pojawić się od strony interfejsu, który powinien maksymalnie ograniczać możliwość wprowadzenia niepoprawnych danych, ale i od strony backendu, gdzie weryfikować należy przychodzące zapytania HTTP. Zawartość odpowiedzi HTTP jest łatwo dostępna w inspektorze przeglądarki, dlatego już na jej poziomie nie mogą być dostępne dane wrażliwe (hasła), a nie dopiero na poziomie interfejsu.
 
 Jedną z zalet aplikacji przeglądarkowych jest możliwość zapisywania odnośników do stron, na przykład do konkretnego pliku. Oznacza to jednak, że nawet dokładnie zaprojektowany interfejs nie pozwoli na pełną kontrolę ścieżki, którą użytkownik poruszać się będzie po programie. Zmieniając adres w przeglądarce, może on w dowolnym momencie usiłować dostać się do nieistniejących bądź nieudostępnionych mu zasobów.
 
@@ -583,7 +583,7 @@ Analogiczne funkcjonalności zapewniają aplikacje pakietu Microsoft Office. Pro
 %%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
+ 
 
 % TODO
 \chapter{Wymagania i narzędzia}
@@ -713,15 +713,53 @@ Jeśli „Specyfikacja zewnętrzna”:
 \end{itemize}
 
 \section{Uruchamianie}
+\ksremark{Trochę inaczej bym to napisał. Tak, żeby szary użytkownik mógł iść prosto krok po kroku.}
+
+\subsection{Wymagania}
 Do uruchomienia programu potrzebne są: JDK wersja 17, Docker (w systemie Linux zainstalować można sam silnik Docker, w systemie Windows potrzebna jest aplikacja Docker Desktop) oraz Node.js, wraz z NPM (wykorzystano wersję 20). Program wykorzystywać będzie porty: 3306 (baza danych), 8080 (back-end) i 4200 (front-end) -- należy więc zadbać, aby żadna inna aplikacja nie korzystała z nich podczas uruchamiania.
 
-Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania i uruchomienia projektu. Po rozpakowaniu plików źródłowych, w wybranym terminalu należy ustawić bieżący katalog na \mintinline{powershell}{organizer}. Znajdować się w nim powinny pliki \mintinline{powershell}{mvnw} oraz \mintinline{powershell}{mvnw.cmd}. Najpierw należy uruchomić kontener zawierający bazę danych poleceniem \mintinline{powershell}{docker compose up db}. Aby zbudować projekt należy użyć polecenia \mintinline{powershell}{.\mvnw.cmd install} w systemie Windows, bądź \mintinline{powershell}{./mvnw install} w systemie Linux. Polecenie automatycznie zainstaluje również narzędzie Maven w odpowiedniej wersji, jeśli nie znajdzie go na komputerze. Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{powershell}{target}, zawierający plik z rozszerzeniem .jar.
+\subsection{Instalacja}
 
+Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania i uruchomienia projektu. 
+
+\ksremark{Skąd można pobrać źródła?}
+
+
+\subsubsection{Linux}
+\ksremark{Nie wiem, czy to poniżej jest poprawne, ale coś w tym styly bym napisał.}
+\begin{enumerate}
+   \item Należy rozpakować pliki źródłowe:
+
+ \mintinline{bash}{unzip organizer.zip}
+   \item W wybranym terminalu należy zmienić katalog: 
+
+\mintinline{bash}{cd organizer}
+
+Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bash}{mvnw.cmd}.
+   \item Następnie należy uruchomić kontener zawierający bazę danych poleceniem 
+
+\mintinline{bash}{docker compose up db}.
+   \item Aby zbudować projekt należy użyć polecenia 
+
+\mintinline{bash}{./mvnw install}
+
+ Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{bash}{target}, zawierający plik z rozszerzeniem \mintinline{bash}{.jar}.
+    \end{enumerate}
+
+
+
+Po rozpakowaniu plików źródłowych \ksremark{Skąd można pobrać źródła?}, w wybranym terminalu należy ustawić bieżący katalog na \mintinline{powershell}{organizer}. Znajdować się w nim powinny pliki \mintinline{powershell}{mvnw} oraz \mintinline{powershell}{mvnw.cmd}. Najpierw należy uruchomić kontener zawierający bazę danych poleceniem \mintinline{powershell}{docker compose up db}. Aby zbudować projekt należy użyć polecenia \mintinline{powershell}{.\mvnw.cmd install} w systemie Windows, bądź \mintinline{powershell}{./mvnw install} w systemie Linux. Polecenie automatycznie zainstaluje również narzędzie Maven w odpowiedniej wersji, jeśli nie znajdzie go na komputerze. Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{powershell}{target}, zawierający plik z rozszerzeniem \mintinline{bash}{.jar}.
+
+
+\subsubsection{Windows}
+
+Po rozpakowaniu plików źródłowych \ksremark{Skąd można pobrać źródła?}, w wybranym terminalu należy ustawić bieżący katalog na \mintinline{powershell}{organizer}. Znajdować się w nim powinny pliki \mintinline{powershell}{mvnw} oraz \mintinline{powershell}{mvnw.cmd}. Najpierw należy uruchomić kontener zawierający bazę danych poleceniem \mintinline{powershell}{docker compose up db}. Aby zbudować projekt należy użyć polecenia \mintinline{powershell}{./mvnw.cmd install} w systemie Windows, bądź \mintinline{powershell}{./mvnw install} w systemie Linux. Polecenie automatycznie zainstaluje również narzędzie Maven w odpowiedniej wersji, jeśli nie znajdzie go na komputerze. Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{powershell}{target}, zawierający plik z rozszerzeniem \mintinline{bash}{.jar}.
+ 
 Następnym krokiem jest uruchomienie back-endu w kontenerze Dockera. W tym celu można najpierw zatrzymać kontener z bazą danych, a wykonać polecenia \mintinline{powershell}{docker compose build} i \mintinline{powershell}{docker compose up -d}. Zalecane jest użycie przełącznika \mintinline{powershell}{-d}, aby uruchomić kontener w tle.
 
 Niektóre środowiska zintegrowane, takie jak IntelliJ IDEA, pozwalają na wykonanie powyższych poleceń (z wyjątkiem \mintinline{powershell}{docker compose build}) w z poziomu interfejsu graficznego.
 
-W celu uruchomienia front-endu należy ustawić bieżący katalog na \mintinline{powershell}{organizer-front} i wywołać polecenie \mintinline{powershell}{npm install -g @angular/cli} i \mintinline{powershell}{npm install} aby zainstalować potrzebne pakiety. Następnie należy wykonać polecenie \mintinline{powershell}{ng serve --proxy-config profxy.config.json}. W terminalu wypisany zostanie adres http://localhost:4200/, na który można nacisnąć lewym przyciskiem myszy, wciskając jednocześnie klawisz Ctrl, aby otworzyć go w domyślnej przeglądarce, lub też wpisać w jej polu adresu.
+W celu uruchomienia front-endu należy ustawić bieżący katalog na \mintinline{powershell}{organizer-front} i wywołać polecenie \mintinline{powershell}{npm install -g @angular/cli} i \mintinline{powershell}{npm install} aby zainstalować potrzebne pakiety. Następnie należy wykonać polecenie \mintinline{powershell}{ng serve --proxy-config profxy.config.json}. W terminalu wypisany zostanie adres \mintinline{bash}{http://localhost:4200/}, na który można nacisnąć lewym przyciskiem myszy, wciskając jednocześnie klawisz Ctrl, aby otworzyć go w domyślnej przeglądarce, lub też wpisać w jej polu adresu.
 
 %%%%%%%%%%%%%%%%%%%%%
 %% RYSUNEK Z PLIKU
@@ -858,7 +896,7 @@ Zależności między klasami przedstawiono na rys. \ref{fig:erd}.
 \label{fig:erd}
 \end{figure}
 
-Tabele w bazie danych posiadają następujące atrybuty:
+Tabele w bazie danych mają następujące atrybuty:
 \begin{itemize}
 	\item \mintinline{sql}{AccessDirectory(directory_id (PK, FK), user_id (PK, FK), access_privilege)} 
 	\item \mintinline{sql}{AccessFile(file_id (PK, FK), user_id (PK, FK), access_privilege)} 
@@ -871,7 +909,7 @@ Tabele w bazie danych posiadają następujące atrybuty:
 	\item \mintinline{sql}{Vote(id (PK), score, user_id (FK), event_date_id (FK))}
 \end{itemize}
 
-Do zaimplementowania dziedziczenia klas \mintinline{java}{Event}, \mintinline{java}{Note} i \mintinline{java}{Task} po klasie bazowej wybrano strategię Singe Table Inheritance. W bazie danych wszystkie klasy reprezentowane są przez tę samą tabelę \mintinline{sql}{File}, która zawiera kolumny atrybutów wszystkich dziedziczących klas, a także ukrytą kolumnę \mintinline{sql}{file_type}, pozwalającą frameworkowi na rozróżnienie typów podczas mapowania obiektowo-relacyjnego. Rozwiązanie takie pozwala również na odczytanie jednocześnie wszystkich typów plików, co jest przydatne podczas wyświetlania ich w eksploratorze.
+Do zaimplementowania dziedziczenia klas \mintinline{java}{Event}, \mintinline{java}{Note} i \mintinline{java}{Task} po klasie bazowej wybrano strategię \english{Singe Table Inheritance}. W bazie danych wszystkie klasy reprezentowane są przez tę samą tabelę \mintinline{sql}{File}, która zawiera kolumny atrybutów wszystkich dziedziczących klas, a także ukrytą kolumnę \mintinline{sql}{file_type}, pozwalającą frameworkowi na rozróżnienie typów podczas mapowania obiektowo-relacyjnego. Rozwiązanie takie pozwala również na odczytanie jednocześnie wszystkich typów plików, co jest przydatne podczas wyświetlania ich w eksploratorze.
 
 Rozwiązanie MappedSuperclass zostało odrzucone, ponieważ nie tworzy ono tabeli klasy bazowej, przez co nie może ona być w relacji z żadną inną klasą. Rozwiązania Joined Table oraz Table Per Class mogłyby wykorzystane, jednak są mniej optymalne z perspektywy założonego działania.
 
@@ -1816,13 +1854,13 @@ Odpowiedzi:
 \item opcjonalnie wyniki badań eksperymentalnych
 \end{itemize}
 
-Testowanie aplikacji wymaga sprawdzenia, czy jest ona odporna na nieprawidłowe dane wejściowe, oraz czy dla danych poprawnych zachowuje się zgodnie z oczekiwaniami. Przetestować pod tym kątem należy zarówno back-end, jak i front-end.
+Testowanie aplikacji wymaga sprawdzenia, czy jest ona odporna na nieprawidłowe dane wejściowe oraz czy dla danych poprawnych zachowuje się zgodnie z oczekiwaniami. Przetestować pod tym kątem należy zarówno back-end, jak i front-end.
 
-W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne z wymienionymi w podrozdziale ,,Lista Endpointów''. Z kolei front-end powinien już na poziomie interfejsu w jak największym stopniu ograniczyć możliwość wprowadzenia błędnych danych.
+W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne z wymienionymi w podrozdziale ,,Lista Endpointów'' \ksremark{odwołanie poprzez etykietę \LaTeX a}. Z kolei front-end powinien już na poziomie interfejsu w jak największym stopniu ograniczyć możliwość wprowadzenia błędnych danych.
 
 \subsection{Testowanie back-endu}
 
-Testowanie rozpoczęto od sprawdzenia przypadków użycia dla użytkownika niezalogowanego. Większość endpointów wymaga autentykacji, sprawdzono więc, że zwracają one bez niej kod 403 (Forbidden). Przykład takiego zapytania pokazano na rys. \ref{fig:send-notifs-403}
+Testowanie rozpoczęto od sprawdzenia przypadków użycia dla użytkownika niezalogowanego. Większość endpointów wymaga autentykacji, sprawdzono więc, że zwracają one bez niej kod 403 (Forbidden). Przykład takiego zapytania pokazano na rys. \ref{fig:send-notifs-403}.
 
 \begin{figure}
 \centering
@@ -1903,7 +1941,7 @@ organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refresh
 
 Próba dostępu do endpointu dostępnego tylko administratorowi, na przykład nadania roli administratora, skutkuje kodem 403 odpowiedzi.
 
-Przetestowano tworzenie nowych elementów. Kody błędów 400, 403 i 404 są zwracane zgodnie z oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach -- w przeciwnym razie zwracany jest kod 403. Kolumna textContent jest typu ,,TEXT'' -- jest to typ danych bazy MySQL o rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ ,,TINYTEXT'', mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie front-endu. Back-end nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego.
+Przetestowano tworzenie nowych elementów. Kody błędów 400, 403 i 404 są zwracane zgodnie z oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach -- w przeciwnym razie zwracany jest kod 403. Kolumna textContent jest typu ,,TEXT'' \ksremark{To też w minted.} -- jest to typ danych bazy MySQL o rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ ,,TINYTEXT'', mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie front-endu. Back-end nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego.
 
 \begin{figure}
 \centering

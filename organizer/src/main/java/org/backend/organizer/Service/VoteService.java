@@ -6,9 +6,7 @@ import org.backend.organizer.Mapper.VoteMapper;
 import org.backend.organizer.Model.EventDate;
 import org.backend.organizer.Model.User;
 import org.backend.organizer.Model.Vote;
-import org.backend.organizer.Repository.EventDateRepository;
-import org.backend.organizer.Repository.UserRepository;
-import org.backend.organizer.Repository.VoteRepository;
+import org.backend.organizer.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +23,14 @@ public class VoteService {
     UserRepository userRepository;
     @Autowired
     EventDateRepository eventDateRepository;
+    @Autowired
+    FileRepository fileRepository;
+    @Autowired
+    DirectoryRepository directoryRepository;
+    @Autowired
+    AccessDirectoryService adService;
+    @Autowired
+    AccessFileService afService;
 
     public List<VoteDTO> getVotesByEventDateId(Long id) {
         if (id == null) throw new NullPointerException();
@@ -48,6 +54,7 @@ public class VoteService {
         if (voteDTO.getEventDate() == null) throw new NullPointerException();
         EventDate eventDate = eventDateRepository.findById(voteDTO.getEventDate()).orElseThrow(EntityNotFoundException::new);
         User user = userRepository.findByUsername(username);
+        FileService.checkAccess(1, eventDate.getEvent().getId(), eventDate.getEvent().getOwner(), username, eventDate.getEvent().getParent(), userRepository, directoryRepository, afService, adService);
         Vote vote;
         if (repository.findByUserAndEventDate(user, eventDate).isEmpty()){
             vote = mapper.voteDTOToVote(voteDTO);
@@ -63,8 +70,10 @@ public class VoteService {
         return mapper.voteToVoteDTO(repository.save(vote));
     }
 
-    public void deleteVote(Long id) {
+    public void deleteVote(Long id, String username) {
         Vote vote = repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        User user = userRepository.findByUsername(username);
+        if (user != vote.getUser()) throw new IllegalArgumentException();
         EventDate eventDate = vote.getEventDate();
         eventDate.setTotalScore(eventDate.getTotalScore() - vote.getScore());
         eventDateRepository.save(eventDate);

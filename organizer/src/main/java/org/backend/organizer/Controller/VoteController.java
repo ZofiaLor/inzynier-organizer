@@ -56,16 +56,21 @@ public class VoteController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteVote(@PathVariable("id") Long id) {
+    public ResponseEntity<HttpStatus> deleteVote(HttpServletRequest request, @PathVariable("id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            service.deleteVote(id);
+            service.deleteVote(id, username);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 }

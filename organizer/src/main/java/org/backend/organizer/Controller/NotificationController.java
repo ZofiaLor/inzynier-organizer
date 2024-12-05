@@ -54,13 +54,16 @@ public class NotificationController {
     }
 
     @PostMapping("")
-    public ResponseEntity<NotificationDTO> createNotification(@RequestBody NotificationDTO notificationDTO) {
+    public ResponseEntity<NotificationDTO> createNotification(HttpServletRequest request, @RequestBody NotificationDTO notificationDTO) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(service.createNotification(notificationDTO), HttpStatus.OK);
+            return new ResponseEntity<>(service.createNotification(notificationDTO, username), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
@@ -77,23 +80,29 @@ public class NotificationController {
     }
 
     @PutMapping("")
-    public ResponseEntity<NotificationDTO> updateNotification(@RequestBody NotificationDTO notificationDTO) {
+    public ResponseEntity<NotificationDTO> updateNotification(HttpServletRequest request, @RequestBody NotificationDTO notificationDTO) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            return new ResponseEntity<>(service.updateNotification(notificationDTO), HttpStatus.OK);
+            return new ResponseEntity<>(service.updateNotification(notificationDTO, username), HttpStatus.OK);
         } catch (NullPointerException ex) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteNotification(@PathVariable("id") Long id) {
+    public ResponseEntity<HttpStatus> deleteNotification(HttpServletRequest request, @PathVariable("id") Long id) {
+        String username = jwtService.extractUsername(jwtService.getJwtFromCookies(request));
         try {
-            service.deleteNotification(id);
+            service.deleteNotification(id, username);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
     }
 }

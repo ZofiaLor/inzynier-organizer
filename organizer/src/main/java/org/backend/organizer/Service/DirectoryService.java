@@ -88,6 +88,9 @@ public class DirectoryService {
                 if (parent.getOwner() != directory.getOwner()) {
                     throw new IllegalArgumentException();
                 }
+                if (!this.canMoveDirectories(directory, parent)) {
+                    directoryUpdates.setParent(directory.getParent().getId());
+                }
             }
         }
 
@@ -100,6 +103,18 @@ public class DirectoryService {
         Directory directory = repository.findById(id).orElseThrow(EntityNotFoundException::new);
         if (directory.getParent() == null || directory.getOwner() != user) throw new IllegalArgumentException();
         repository.deleteById(id);
+    }
+
+    boolean canMoveDirectories(Directory movedDir, Directory newParent) {
+        boolean hasParent = true;
+        Directory checkedDir = newParent;
+        while (hasParent) {
+            if (checkedDir.getParent() == null) hasParent = false;
+            else if (checkedDir.getParent() == movedDir) return false;
+            else checkedDir = checkedDir.getParent();
+
+        }
+        return true;
     }
 
     void checkAccess(int accessLevel, Long id, User owner, String username) {

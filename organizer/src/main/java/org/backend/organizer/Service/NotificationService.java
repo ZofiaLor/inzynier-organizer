@@ -77,6 +77,14 @@ public class NotificationService {
         }
     }
 
+    public NotificationDTO updateNotification(NotificationDTO notificationUpdates) {
+        if (notificationUpdates == null) throw new NullPointerException();
+        Notification notification = repository.findById(notificationUpdates.getId()).orElseThrow(EntityNotFoundException::new);
+        mapper.updateNotificationFromNotificationDTO(notificationUpdates, notification);
+        notification.setSent(LocalDateTime.now().isAfter(notification.getSendTimeSetting()));
+        return mapper.notificationToNotificationDTO(repository.save(notification));
+    }
+
     public void deleteNotification(Long id) {
         if(!repository.existsById(id)) throw new EntityNotFoundException();
         repository.deleteById(id);

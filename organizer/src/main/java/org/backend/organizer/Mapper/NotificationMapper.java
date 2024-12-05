@@ -47,4 +47,12 @@ public abstract class NotificationMapper {
         if (id == null) return null;
         return fileRepository.getReferenceById(id);
     }
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    @Mapping(target = "user", ignore = true)
+    @Mapping(target = "file", ignore = true)
+    @Mapping(target = "sent", ignore = true)
+    @Mapping(target = "message", ignore = true)
+    @Mapping(target = "sendTimeSetting", ignore = true)
+    public abstract void updateNotificationFromNotificationDTO(NotificationDTO notificationDTO, @MappingTarget Notification notification);
 }

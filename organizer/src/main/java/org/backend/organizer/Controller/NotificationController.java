@@ -76,6 +76,17 @@ public class NotificationController {
 
     }
 
+    @PutMapping("")
+    public ResponseEntity<NotificationDTO> updateNotification(@RequestBody NotificationDTO notificationDTO) {
+        try {
+            return new ResponseEntity<>(service.updateNotification(notificationDTO), HttpStatus.OK);
+        } catch (NullPointerException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (EntityNotFoundException ex) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteNotification(@PathVariable("id") Long id) {
         try {

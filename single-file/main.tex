@@ -601,9 +601,9 @@ Analogiczne funkcjonalności zapewniają aplikacje pakietu Microsoft Office. Pro
 \subsection{Użytkownicy}
 Znaczna większość funkcjonalności aplikacji wymaga, aby znany był aktualnie zalogowany użytkownik -- od edycji profilu po przeglądanie plików. Ponadto istnieć powinien użytkownik specjalny (administrator), który zarządzać może pozostałymi użytkownikami. Wyróżnić można więc 3 rodzaje użytkowników:
 \begin{description}
-	\item [U.1] User -- użytkownik zwykły: edytuje profil, tworzy, przegląda, modyfikuje, usuwa, udostępnia elementy.
-	\item [U.2] Admin -- administrator: posiada dostęp do wszystkich funkcjonalności użytkownika zwykłego, zarządza użytkownikami -- nadaje i odbiera uprawnienia administratorskie, usuwa użytkowników.
-	\item [U.3] Anonymous -- użytkownik niezalogowany: loguje lub rejestruje się.
+	\item \label{user1} [U.1] User -- użytkownik zwykły: edytuje profil, tworzy, przegląda, modyfikuje, usuwa, udostępnia elementy.
+	\item \label{user2} [U.2] Admin -- administrator: posiada dostęp do wszystkich funkcjonalności użytkownika zwykłego, zarządza użytkownikami -- nadaje i odbiera uprawnienia administratorskie, usuwa użytkowników.
+	\item \label{user3} [U.3] Anonymous -- użytkownik niezalogowany: loguje lub rejestruje się.
 \end{description}	
 
 Zależności między użytkownikami przedstawiono na rys. \ref{fig:uml-users}.
@@ -621,31 +621,31 @@ Dostępne użytkownikowi funkcje aplikacji można ogólnie podzielić na operacj
 \begin{itemize}
 	\item [F.1.] Autentykacja użytkowników
 	\begin{itemize}
-		\item [F.1.1.] Logowanie użytkownika U.3. na istniejące konto przy pomocy nazwy użytkownika oraz hasła.
-		\item [F.1.2.] Wylogowanie zalogowanego użytkownika (U.1., U.2.).
+		\item [F.1.1.] Logowanie użytkownika U.3. \ref{user3} na istniejące konto przy pomocy nazwy użytkownika oraz hasła.
+		\item [F.1.2.] Wylogowanie zalogowanego użytkownika (U.1., U.2. \ref{user1}\ref{user2}).
 		\item [F.1.3.] Rejestracja nowego użytkownika w systemie, umożliwiająca następnie zalogowanie (por. F.1.1.).
 	\end{itemize}
 	\item [F.2.] Zarządzanie elementami.
 	\begin{itemize}
 		\item [F.2.1.] Tworzenie nowego elementu.
-		\item [F.2.2.] Wyświetlenie elementu. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5.).
+		\item [F.2.2.] Wyświetlenie elementu. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5. \ref{func25}).
 		\item [F.2.3.] Edycja elementu.
 		\begin{itemize}
 			\item [F.2.3.1.] Przeniesienie do innego katalogu.
 			\item [F.2.3.2.] Zmiana nazwy.
-			\item [F.2.3.3.] Mofyfikacja zawartości. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5.).
+			\item [F.2.3.3.] Mofyfikacja zawartości. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5. \ref{func25}).
 			\item [F.2.3.4.] Modyfikacja opcji powiadomień.
 			\item [F.2.3.5.] Oddawanie głosu na termin wydarzenia.
 		\end{itemize}
 		\item [F.2.4.] Usunięcie elementu.
-		\item [F.2.5.] Przydział dostępu innym użytkownikom do elementów.
+		\item \label{func25} [F.2.5.] Przydział dostępu innym użytkownikom do elementów.
 	\end{itemize}
 	\item [F.3.] Zarządzanie kontem użytkownika.
 	\begin{itemize}
 		\item [F.3.1.] Edycja danych.
 		\item [F.3.2.] Usunięcie konta.
 	\end{itemize}
-	\item [F.4.] Zarządzanie użytkownikami przez administratora (U.2.).
+	\item [F.4.] Zarządzanie użytkownikami przez administratora (U.2. \ref{user2}).
 	\begin{itemize}
 		\item [F.4.1.] Wyświetlenie wszystkich użytkowników systemu.
 		\item [F.4.2.] Wyświetlenie jednego użytkownika.
@@ -713,23 +713,27 @@ Jeśli „Specyfikacja zewnętrzna”:
 \end{itemize}
 
 \section{Uruchamianie}
-\ksremark{Trochę inaczej bym to napisał. Tak, żeby szary użytkownik mógł iść prosto krok po kroku.}
 
 \subsection{Wymagania}
 Do uruchomienia programu potrzebne są: JDK wersja 17, Docker (w systemie Linux zainstalować można sam silnik Docker, w systemie Windows potrzebna jest aplikacja Docker Desktop) oraz Node.js, wraz z NPM (wykorzystano wersję 20). Program wykorzystywać będzie porty: 3306 (baza danych), 8080 (back-end) i 4200 (front-end) -- należy więc zadbać, aby żadna inna aplikacja nie korzystała z nich podczas uruchamiania.
 
 \subsection{Instalacja}
 
-Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania i uruchomienia projektu. 
+Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania i uruchomienia projektu. Pliki źródłowe projektu są dostępne w repozytorium pod adresem \url{https://github.com/ZofiaLor/inzynier-organizer}.
 
-\ksremark{Skąd można pobrać źródła?}
-
-
-\subsubsection{Linux}
+\subsubsection{Back-end i baza danych}
 \begin{enumerate}
-   \item Należy rozpakować pliki źródłowe:
+   \item Należy rozpakować pliki źródłowe. Można zrobić to w interfejsie graficznym, lub wywołując w wybranym terminalu komendę:
+   \begin{itemize}
+		\item Dla systemu Linux
 
- \mintinline{bash}{unzip organizer.zip}
+		\mintinline{bash}{unzip inzynier-organizer-main.zip}
+
+		\item Dla systemu Windows
+
+		\mintinline{bash}{tar -xf .\inzynier-organizer-main.zip}
+   \end{itemize}
+
    \item W wybranym terminalu należy zmienić katalog: 
 
 \mintinline{bash}{cd organizer}
@@ -740,7 +744,15 @@ Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bas
 \mintinline{bash}{docker compose up db}.
    \item Aby zbudować projekt należy użyć polecenia 
 
-\mintinline{bash}{./mvnw install}
+   \begin{itemize}
+	\item Dla systemu Linux
+
+	\mintinline{bash}{./mvnw install}
+
+	\item Dla systemu Windows
+
+	\mintinline{bash}{.\mvnw.cmd install}
+\end{itemize}
 
  Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{bash}{target}, zawierający plik z rozszerzeniem \mintinline{bash}{.jar}.
 
@@ -752,9 +764,9 @@ Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bas
 
 	Przykładowym wynikiem tego polecenia jest
 
-	\begin{minted}{bash}
-		CONTAINER ID   IMAGE       COMMAND                  CREATED       STATUS              PORTS                               NAMES
-	c22ebdb94057   mysql:5.7   "docker-entrypoint.s…"   7 weeks ago   Up About a minute   0.0.0.0:3306->3306/tcp, 33060/tcp   organizer-db
+	\begin{minted}[breaklines]{bash}
+CONTAINER ID   IMAGE       COMMAND                  CREATED       STATUS              PORTS                               NAMES
+c22ebdb94057   mysql:5.7   "docker-entrypoint.s…"   7 weeks ago   Up About a minute   0.0.0.0:3306->3306/tcp, 33060/tcp   organizer-db
 	\end{minted}
 
 	Następnie należy wykonać polecenie
@@ -772,7 +784,7 @@ Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bas
 	\mintinline{bash}{docker compose up -d}.
     \end{enumerate}
 
-W celu uruchomienia front-endu:
+\subsubsection{Front-end}
 
 \begin{enumerate}
 	 \item Należy zmienić bieżący katalog:
@@ -798,21 +810,6 @@ W celu uruchomienia front-endu:
 	Należy otworzyć go w wybranej przeglądarce wklejając go w polu adresu, bądź naciskając go lewym przyciskiem myszy, wciskając jednocześnie klawisz Ctrl.
 
 	 \end{enumerate}
-
-
-
-Po rozpakowaniu plików źródłowych \ksremark{Skąd można pobrać źródła?}, w wybranym terminalu należy ustawić bieżący katalog na \mintinline{powershell}{organizer}. Znajdować się w nim powinny pliki \mintinline{powershell}{mvnw} oraz \mintinline{powershell}{mvnw.cmd}. Najpierw należy uruchomić kontener zawierający bazę danych poleceniem \mintinline{powershell}{docker compose up db}. Aby zbudować projekt należy użyć polecenia \mintinline{powershell}{.\mvnw.cmd install} w systemie Windows, bądź \mintinline{powershell}{./mvnw install} w systemie Linux. Polecenie automatycznie zainstaluje również narzędzie Maven w odpowiedniej wersji, jeśli nie znajdzie go na komputerze. Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{powershell}{target}, zawierający plik z rozszerzeniem \mintinline{bash}{.jar}.
-
-
-\subsubsection{Windows}
-
-Po rozpakowaniu plików źródłowych \ksremark{Skąd można pobrać źródła?}, w wybranym terminalu należy ustawić bieżący katalog na \mintinline{powershell}{organizer}. Znajdować się w nim powinny pliki \mintinline{powershell}{mvnw} oraz \mintinline{powershell}{mvnw.cmd}. Najpierw należy uruchomić kontener zawierający bazę danych poleceniem \mintinline{powershell}{docker compose up db}. Aby zbudować projekt należy użyć polecenia \mintinline{powershell}{./mvnw.cmd install} w systemie Windows, bądź \mintinline{powershell}{./mvnw install} w systemie Linux. Polecenie automatycznie zainstaluje również narzędzie Maven w odpowiedniej wersji, jeśli nie znajdzie go na komputerze. Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{powershell}{target}, zawierający plik z rozszerzeniem \mintinline{bash}{.jar}.
- 
-Następnym krokiem jest uruchomienie back-endu w kontenerze Dockera. W tym celu można najpierw zatrzymać kontener z bazą danych, a wykonać polecenia \mintinline{powershell}{docker compose build} i \mintinline{powershell}{docker compose up -d}. Zalecane jest użycie przełącznika \mintinline{powershell}{-d}, aby uruchomić kontener w tle.
-
-Niektóre środowiska zintegrowane, takie jak IntelliJ IDEA, pozwalają na wykonanie powyższych poleceń (z wyjątkiem \mintinline{powershell}{docker compose build}) w z poziomu interfejsu graficznego.
-
-W celu uruchomienia front-endu należy ustawić bieżący katalog na \mintinline{powershell}{organizer-front} i wywołać polecenie \mintinline{powershell}{npm install -g @angular/cli} i \mintinline{powershell}{npm install} aby zainstalować potrzebne pakiety. Następnie należy wykonać polecenie \mintinline{powershell}{ng serve --proxy-config profxy.config.json}. W terminalu wypisany zostanie adres \mintinline{bash}{http://localhost:4200/}, na który można nacisnąć lewym przyciskiem myszy, wciskając jednocześnie klawisz Ctrl, aby otworzyć go w domyślnej przeglądarce, lub też wpisać w jej polu adresu.
 
 %%%%%%%%%%%%%%%%%%%%%
 %% RYSUNEK Z PLIKU
@@ -955,8 +952,8 @@ Tabele w bazie danych mają następujące atrybuty:
 	\item \mintinline{sql}{AccessFile(file_id (PK, FK), user_id (PK, FK), access_privilege)} 
 	\item \mintinline{sql}{Directory(id (PK), name, owner_id (FK), parent_id (FK))} 
 	\item \mintinline{sql}{EventDate(id (PK), start, end, total_score, event_id (FK))} 
-	\item \mintinline{sql}{File(id (PK), file_type, creation_date, name, text_content, start_date, end_date, location, deadline, is_finished, owner_id (FK), parent_id (FK))}
-	\item \mintinline{sql}{Notification(id (PK), message, send_time_setting, is_sent, is_read, file_id (FK), user_id (FK))}
+	\item \mintinline[breaklines]{sql}{File(id (PK), file_type, creation_date, name, text_content, start_date, end_date, location, deadline, is_finished, owner_id (FK), parent_id (FK))}
+	\item \mintinline[breaklines]{sql}{Notification(id (PK), message, send_time_setting, is_sent, is_read, file_id (FK), user_id (FK))}
 	\item \mintinline{sql}{RefreshToken(id (PK), token, expiry_date, user_id (FK))}
 	\item \mintinline{sql}{User(id (PK), username, password, name, email, role)}
 	\item \mintinline{sql}{Vote(id (PK), score, user_id (FK), event_date_id (FK))}
@@ -970,9 +967,9 @@ Rozwiązanie MappedSuperclass zostało odrzucone, ponieważ nie tworzy ono tabel
 
 W tym podrozdziale przedstawiono listę wszystkich endpointów wystawianych przez backend. Dla każdego opisano URL, ogólną zasadę działania, dane wejściowe oraz możliwe odpowiedzi.
 
-\subsection{Authorization}\label{authorization}
+\subsection{Authorization}
 
-\paragraph{Log In}\label{log-in}
+\paragraph{Log In}
 
 \mintinline{bash}{POST /api/auth/login}
 
@@ -1011,7 +1008,7 @@ Brak wymaganego ciała zapytania.
 
 Odpowiedź: ,,Success'', puste ciasteczka w nagłówku, kod 200 (OK)
 
-\paragraph{Register}\label{register}
+\paragraph{Register}
 
 \mintinline{bash}{POST /api/auth/register}
 
@@ -1035,7 +1032,7 @@ Odpowiedzi:
 	\item Brak nazwy użytkownika lub hasła: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Change Password}\label{change-password}
+\paragraph{Change Password}
 
 \mintinline{bash}{PUT /api/auth/password}
 
@@ -1059,7 +1056,7 @@ Odpowiedzi:
 \end{itemize}
 
 
-\paragraph{Grant/Revoke Admin Privilege}\label{grantrevoke-admin-privilege}
+\paragraph{Grant/Revoke Admin Privilege}
 
 \mintinline{bash}{PUT /api/auth/grant} \mintinline{bash}{PUT /api/auth/revoke}
 
@@ -1082,7 +1079,7 @@ Odpowiedzi:
 \end{itemize}
 
 
-\paragraph{Refresh Token}\label{refresh-token}
+\paragraph{Refresh Token}
 
 \mintinline{bash}{POST /api/refreshtoken}
 
@@ -1099,9 +1096,9 @@ Odpowiedzi:
 \end{itemize}
 
 
-\subsection{Users}\label{users}
+\subsection{Users}
 
-\paragraph{Get All Users}\label{get-all-users}
+\paragraph{Get All Users}
 
 \mintinline{bash}{GET /api/users}
 
@@ -1113,7 +1110,7 @@ Odpowiedzi:
 	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Get All Users Safe}\label{get-all-users-safe}
+\paragraph{Get All Users Safe}
 
 \mintinline{bash}{GET /api/users/safe}
 
@@ -1121,7 +1118,7 @@ Zwraca ID, nazwy użytkownika i nazwy wszystkich użytkowników.
 
 Odpowiedź: lista obiektów użytkowników, kod 200 (OK)
 
-\paragraph{Get User By ID}\label{get-user-by-id}
+\paragraph{Get User By ID}
 
 \mintinline{bash}{GET /api/users/{id}}
 
@@ -1135,7 +1132,7 @@ Odpowiedzi:
 	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Get User By ID Safe}\label{get-user-by-id}
+\paragraph{Get User By ID Safe}
 
 \mintinline{bash}{GET /api/users/safe/{id}}
 
@@ -1148,7 +1145,7 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request) 
 \end{itemize}
 
-\paragraph{Update User}\label{update-user}
+\paragraph{Update User}
 
 \mintinline{bash}{PUT /api/users}
 
@@ -1176,7 +1173,7 @@ Odpowiedzi:
 	\item Próba zmiany nazwy użytkownika na już istniejącą lub pustą/zmiany użytkownika innego niż aktualnie zalogowany: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Delete User}\label{delete-user}
+\paragraph{Delete User}
 
 \mintinline{bash}{DELETE /api/users/{id}}
 
@@ -1189,7 +1186,7 @@ Odpowiedzi:
 	\item Próba usunięcia własnego użytkownika/użytkownik nie jest administratorem: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Delete My User}\label{delete-my-user}
+\paragraph{Delete My User}
 
 \mintinline{bash}{DELETE /api/users/delete}
 
@@ -1201,9 +1198,9 @@ Odpowiedzi:
 	\item  Nie znaleziono użytkownika: kod 404 (Not Found)
 \end{itemize}
 
-\subsection{Directories}\label{directories}
+\subsection{Directories}
 
-\paragraph{Get My Base Directory}\label{get-my-base-directory}
+\paragraph{Get My Base Directory}
 
 \mintinline{bash}{GET /api/directories/basedirs}
 
@@ -1211,7 +1208,7 @@ Zwraca katalog bazowy aktualnie zalogowanego użytkownika.
 
 Odpowiedź: obiekt katalogu bazowego, kod 200 (OK)
 
-\paragraph{Get Directories By Parent ID}\label{get-directories-by-parent-id}
+\paragraph{Get Directories By Parent ID}
 
 \mintinline{bash}{GET /api/directories/subdirs/{id}}
 
@@ -1225,7 +1222,7 @@ Odpowiedzi:
 	\item Brak dostępu: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Get Directory By ID}\label{get-directory-by-id}
+\paragraph{Get Directory By ID}
 
 \mintinline{bash}{GET /api/directories/{id}}
 
@@ -1239,7 +1236,7 @@ Odpowiedzi:
 	\item Brak dostępu: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Check Directory Edit Access}\label{check-directory-edit-access}
+\paragraph{Check Directory Edit Access}
 
 \mintinline{bash}{GET /api/directories/check/{id}}
 
@@ -1252,7 +1249,7 @@ Odpowiedzi:
 	\item ID nie istnieje: kod 404 (Not Found)
 \end{itemize}
 
-\paragraph{Create Directory}\label{create-directory}
+\paragraph{Create Directory}
 
 \mintinline{bash}{POST /api/directories}
 
@@ -1275,7 +1272,7 @@ Odpowiedzi:
 	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Update Directory}\label{update-directory}
+\paragraph{Update Directory}
 
 \mintinline{bash}{PUT /api/directories}
 
@@ -1303,7 +1300,7 @@ Odpowiedzi:
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Delete Directory}\label{delete-directory}
+\paragraph{Delete Directory}
 
 \mintinline{bash}{DELETE /api/directories/\{id\}}
 
@@ -1315,9 +1312,9 @@ Odpowiedzi:
 	\item ID nie istnieje: kod 404 (Not Found)
 \end{itemize}
 
-\subsection{Files}\label{files}
+\subsection{Files}
 
-\paragraph{Get Files In Directory}\label{get-files-in-directory}
+\paragraph{Get Files In Directory}
 
 \mintinline{bash}{GET /api/files/dir/{id}}
 
@@ -1330,7 +1327,7 @@ Odpowiedzi:
 	\item Brak dostępu: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Get File By ID}\label{get-file-by-id}
+\paragraph{Get File By ID}
 
 \mintinline{bash}{GET /api/files/{id}}
 
@@ -1344,7 +1341,7 @@ Odpowiedzi:
 	\item Brak dostępu: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Check File Edit Access}\label{check-file-edit-access}
+\paragraph{Check File Edit Access}
 
 \mintinline{bash}{GET /api/files/check/{id}}
 
@@ -1357,7 +1354,7 @@ Odpowiedzi:
 	\item ID nie istnieje: kod 404 (Not Found)
 \end{itemize}
 
-\paragraph{Create Event}\label{create-event}
+\paragraph{Create Event}
 
 \mintinline{bash}{POST /api/files/event}
 
@@ -1382,7 +1379,7 @@ Odpowiedzi:
 	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Update Event}\label{update-event}
+\paragraph{Update Event}
 
 \mintinline{bash}{PUT /api/files/event}
 
@@ -1410,7 +1407,7 @@ Odpowiedzi:
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Create Note}\label{create-note}
+\paragraph{Create Note}
 
 \mintinline{bash}{POST /api/files/note}
 
@@ -1434,7 +1431,7 @@ Odpowiedzi:
 	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Update Note}\label{update-note}
+\paragraph{Update Note}
 
 \mintinline{bash}{PUT /api/files/note}
 
@@ -1462,7 +1459,7 @@ Odpowiedzi:
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Create Task}\label{create-task}
+\paragraph{Create Task}
 
 \mintinline{bash}{POST /api/files/task}
 
@@ -1487,7 +1484,7 @@ Odpowiedzi:
 	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Update Task}\label{update-task}
+\paragraph{Update Task}
 
 \mintinline{bash}{PUT /api/files/task}
 
@@ -1515,7 +1512,7 @@ Odpowiedzi:
 	\item Brak dostępu do edycji: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Delete File}\label{delete-file}
+\paragraph{Delete File}
 
 \mintinline{bash}{DELETE /api/files/{id}}
 
@@ -1527,9 +1524,9 @@ Odpowiedzi:
 	\item ID nie istnieje: kod 404 (Not Found)
 \end{itemize}
 
-\subsection{Access Directory}\label{access-directory}
+\subsection{Access Directory}
 
-\paragraph{Get AccessDirectory By User}\label{get-accessdirectory-by-user}
+\paragraph{Get AccessDirectory By User}
 
 \mintinline{bash}{GET /api/ad/user/{user}}
 
@@ -1543,7 +1540,7 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Get AccessDirectory By Directory}\label{get-accessdirectory-by-directory}
+\paragraph{Get AccessDirectory By Directory}
 
 \mintinline{bash}{GET /api/ad/dir/{dir}}
 
@@ -1557,7 +1554,7 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Modify AccessDirectory}\label{modify-accessdirectory}
+\paragraph{Modify AccessDirectory}
 
 \mintinline{bash}{POST /api/ad}
 
@@ -1582,7 +1579,7 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Delete AccessDirectory}\label{delete-accessdirectory}
+\paragraph{Delete AccessDirectory}
 
 \mintinline{bash}{DELETE /api/ad/{user}/{dir}}
 
@@ -1594,9 +1591,9 @@ Odpowiedzi:
 	\item ID nie istnieją: kod 404 (Not Found)
 \end{itemize}
 
-\subsection{Access File}\label{access-file}
+\subsection{Access File}
 
-\paragraph{Get AccessFile By User}\label{get-accessfile-by-user}
+\paragraph{Get AccessFile By User}
 
 \mintinline{bash}{GET /api/af/user/{user}}
 
@@ -1610,7 +1607,7 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Get AccessFile By File}\label{get-accessfile-by-file}
+\paragraph{Get AccessFile By File}
 
 \mintinline{bash}{GET /api/af/file/{file}}
 
@@ -1624,7 +1621,7 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Modify AccessFile}\label{modify-accessfile}
+\paragraph{Modify AccessFile}
 
 \mintinline{bash}{POST /api/af}
 
@@ -1649,7 +1646,7 @@ Odpowiedzi:
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Delete AccessFile}\label{delete-accessfile}
+\paragraph{Delete AccessFile}
 
 \mintinline{bash}{DELETE /api/af/{user}/{file}}
 
@@ -1661,9 +1658,9 @@ Odpowiedzi:
 	\item ID nie istnieją: kod 404 (Not Found)
 \end{itemize}
 
-\subsection{Event Dates}\label{event-dates}
+\subsection{Event Dates}
 
-\paragraph{Get All EventDates}\label{get-all-eventdates}
+\paragraph{Get All EventDates}
 
 \mintinline{bash}{GET /api/ed}
 
@@ -1671,7 +1668,7 @@ Zwraca wszystkie obiekty EventDate.
 
 Odpowiedź: lista obiektów EventDate, kod 200 (OK)
 
-\paragraph{Get EventDates By Event ID}\label{get-eventdates-by-event-id}
+\paragraph{Get EventDates By Event ID}
 
 \mintinline{bash}{GET /api/ed?id={eventId}}
 
@@ -1684,7 +1681,7 @@ Odpowiedzi:
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Get EventDate By ID}\label{get-eventdate-by-id}
+\paragraph{Get EventDate By ID}
 
 \mintinline{bash}{GET /api/ed/{id}}
 
@@ -1697,7 +1694,7 @@ Odpowiedzi:
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Create EventDate}\label{create-eventdate}
+\paragraph{Create EventDate}
 
 \mintinline{bash}{POST /api/ed}
 
@@ -1721,7 +1718,7 @@ Odpowiedzi:
 	\item Wydarzenie należy do innego użytkownika: kod 403 (Forbidden) 
 \end{itemize}
 
-\paragraph{Delete EventDate}\label{delete-eventdate}
+\paragraph{Delete EventDate}
 
 \mintinline{bash}{DELETE /api/ed/{id}}
 
@@ -1734,9 +1731,9 @@ Odpowiedzi:
 	\item Wydarzenie należy do innego użytkownika: kod 403 (Forbidden) 
 \end{itemize}
 
-\subsection{Votes}\label{votes}
+\subsection{Votes}
 
-\paragraph{Get Votes By EventDate ID}\label{get-votes-by-eventdate-id}
+\paragraph{Get Votes By EventDate ID}
 
 \mintinline{bash}{GET /api/votes/ed/{id}}
 
@@ -1749,7 +1746,7 @@ Odpowiedzi:
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Get Current User's Vote By EventDate ID}\label{get-current-users-vote-by-eventdate-id}
+\paragraph{Get Current User's Vote By EventDate ID}
 
 \mintinline{bash}{GET /api/votes/myvote/{id}}
 
@@ -1762,11 +1759,11 @@ Odpowiedzi:
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Cast Vote}\label{cast-vote}
+\paragraph{Cast Vote}
 
 \mintinline{bash}{POST /api/votes}
 
-Sprawdza, czy zalogowany użytkownik oddał głos na dany termin, jeżeli nie, to tworzy nowy głos, jeżeli tak, to aktualizuje istniejący. Modyfikuje wynik całkowity dla terminu EventDate.
+Sprawdza, czy zalogowany użytkownik oddał głos na dany termin, jeżeli nie, to tworzy nowy głos, jeżeli tak, to aktualizuje istniejący. Modyfikuje wynik całkowity dla terminu EventDate. Użytkownik musi posiadać dostęp do wydarzenia, na które głosuje.
 
 Wymagane podanie ID EventDate.
 
@@ -1782,23 +1779,25 @@ Odpowiedzi:
 	\item Pomyślne oddanie/modyfikacja głosu: obiekt głosu, kod 200 (OK) 
 	\item Nie podano ID EventDate: kod 400 (Bad Request) 
 	\item Nie istnieje ID EventDate: kod 404 (Not Found)
+	\item Brak dostępu do wydarzenia: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Delete Vote}\label{delete-vote}
+\paragraph{Delete Vote}
 
 \mintinline{bash}{DELETE /api/vote/{id}}
 
-Usuwa głos o podanym ID.
+Usuwa głos o podanym ID. Głos musiał być oddany przez aktualnie zalogowanego użytkownika.
 
 Odpowiedzi: 
 \begin{itemize}
 	\item ID istnieje: kod 200 (OK) 
 	\item ID nie istnieje: kod 404 (Not Found)
+	\item Głos należy do innego użytkownika: kod 403 (Forbidden)
 \end{itemize}
 
-\subsection{Notifications}\label{notifications}
+\subsection{Notifications}
 
-\paragraph{Get All My Notifications}\label{get-all-my-notifications}
+\paragraph{Get All My Notifications}
 
 \mintinline{bash}{GET /api/notifs/mynotifs}
 
@@ -1806,7 +1805,7 @@ Zwraca wszystkie wysłane powiadomienia aktualnie zalogowanego użytkownika.
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
-\paragraph{Get All My Read/Unread Notifications}\label{get-all-my-readunread-notifications}
+\paragraph{Get All My Read/Unread Notifications}
 
 \mintinline{bash}{GET /api/notifs/mynotifs?read={read}}
 
@@ -1814,7 +1813,7 @@ Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogow
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
-\paragraph{Get Current User's Notification By File ID}\label{get-current-users-notification-by-file-id}
+\paragraph{Get Current User's Notification By File ID}
 
 \mintinline{bash}{GET /api/notifs/file/{id}}
 
@@ -1827,17 +1826,16 @@ Odpowiedzi:
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
 
-\paragraph{Create Notification}\label{create-notification}
+\paragraph{Create Notification}
 
 \mintinline{bash}{POST /api/notifs}
 
-Tworzy powiadomienie.
+Tworzy powiadomienie dla aktualnie zalogowanego użytkownika. Użytkownik musi mieć dostęp do pliku.
 
-Wymagane jest podanie ID użytkownika odbiorcy oraz pliku. Czas wysłania domyślnie ustawiany jest na czas utworzenia, powiadomienie jest domyślnie nieodczytane. Wysłanie odbywa się na podstawie porównania aktualnego czasu z czasem wysłania.
+Wymagane jest podanie ID pliku. Czas wysłania domyślnie ustawiany jest na czas utworzenia, powiadomienie jest domyślnie nieodczytane. Wysłanie odbywa się na podstawie porównania aktualnego czasu z czasem wysłania.
 
 \begin{minted}{json}
 {
-  "user": 3,
   "file": 3,
   "message": "Test notif",
   "sendTimeSetting": "2024-10-28T15:30:00"
@@ -1847,11 +1845,34 @@ Wymagane jest podanie ID użytkownika odbiorcy oraz pliku. Czas wysłania domyś
 Odpowiedzi: 
 \begin{itemize}
 	\item Pomyślne utworzenie: nowy obiekt powiadomienia, kod 200 (OK) 
-	\item Brak ID użytkownika/pliku: kod 400 (Bad Request) 
-	\item Nie istnieje ID użytkownika/pliku: kod 404 (Not Found)
+	\item Brak ID pliku: kod 400 (Bad Request) 
+	\item Nie istnieje ID pliku: kod 404 (Not Found)
+	\item Brak dostępu do pliku: kod 403 (Forbidden)
 \end{itemize}
 
-\paragraph{Send Current User's Notifications}\label{send-current-users-notifications}
+\paragraph{Update Notification}
+
+\mintinline{bash}{PUT /api/notifs}
+
+Akutalizuje powiadomienie o podanym ID. Musi ono należeć do aktualnie zalogowanego użytkownika
+
+Wymagane jest podanie ID powiadomienia. Jedynym branym pod uwagę parametrem jest \mintinline{sql}{read}.
+\begin{minted}{json}
+{
+  "id": 1,
+  "read": true
+}
+\end{minted}
+
+Odpowiedzi: 
+\begin{itemize}
+	\item Pomyślne utworzenie: nowy obiekt powiadomienia, kod 200 (OK) 
+	\item Brak ID powiadomienia: kod 400 (Bad Request) 
+	\item Nie istnieje ID powiadomienia: kod 404 (Not Found)
+	\item Powiadomienie należy do innego użytkownika: kod 403 (Forbidden)
+\end{itemize}
+
+\paragraph{Send Current User's Notifications}
 
 \mintinline{bash}{PUT /api/notifs/send}
 
@@ -1863,16 +1884,17 @@ Odpowiedzi:
 	\item Nie znaleziono użytkownika: kod 404 (Not Found)
 \end{itemize}
 
-\paragraph{Delete Notification}\label{delete-notification}
+\paragraph{Delete Notification}
 
 \mintinline{bash}{DELETE /api/notifs/{id}}
 
-Usuwa powiadomienie o podanym ID.
+Usuwa powiadomienie o podanym ID. Musi ono należeć do aktualnie zalogowanego użytkownika.
 
 Odpowiedzi: 
 \begin{itemize}
 	\item ID istnieje: kod 200 (OK) 
 	\item ID nie istnieje: kod 404 (Not Found)
+	\item Powiadomienie należy do innego użytkownika: kod 403 (Forbidden)
 \end{itemize}
 
 %\begin{figure}
@@ -1972,7 +1994,7 @@ Otrzymano odpowiedź:
 Obiekt użytkownika został pobrany z bazy danych. Automatycznie utworzony został katalog bazowy, który jest jedynym katalogiem użytkownika nieposiadającym katalogu nadrzędnego.
 
 Ponadto wygenerowane zostały dwa ciasteczka:
-\begin{minted}{json}
+\begin{minted}[breaklines]{json}
 organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNzMzMDc1MTYxLCJleHAiOjE3MzMxNjE1NjF9.UOpUtCw0G1TgcEf9ufIk2T00JqQ8ARo61cZJnYslPdU; Path=/; HttpOnly; Expires=Mon, 02 Dec 2024 17:46:00 GMT;
 organizerRefreshJwt=1ee7c994-e296-4a12-a636-8cf39380a1e8; Path=/api/auth/refreshtoken; HttpOnly; Expires=Mon, 02 Dec 2024 23:46:00 GMT;
 \end{minted}
@@ -1982,12 +2004,12 @@ Następnie przetestowano przypadki użycia dla użytkownika zwykłego.
 Wylogowanie przebiega zawsze pomyślnie, można je powtarzać nawet będąc już wylogowanym bez negatywnych skutków. W wyniku wylogowania obydwa ciasteczka stają się puste.
 
 Przetestowano działanie odświeżania ciasteczka organizerJwt. Przed odświeżeniem ciasteczka miały następujące wartości:
-\begin{minted}{json}
+\begin{minted}[breaklines]{json}
 organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzMzMTY2NDA4LCJleHAiOjE3MzMyNTI4MDh9._JyoQNrhYdpdl3EPM8NFg29c0HwLm5nMidQ8Fh4Wsik; Path=/; HttpOnly; Expires=Tue, 03 Dec 2024 19:06:48 GMT;
 organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refreshtoken; HttpOnly; Expires=Wed, 04 Dec 2024 01:06:48 GMT;
 \end{minted}
 Po wykonaniu odświeżenia:
-\begin{minted}{json}
+\begin{minted}[breaklines]{json}
 organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzMzMTY2NDg0LCJleHAiOjE3MzMyNTI4ODR9.ekR8DYMFlny3pKLKaunjOtXXTE3qH8dTfEFGYdaSpNs; Path=/; HttpOnly; Expires=Tue, 03 Dec 2024 19:08:04 GMT;
 organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refreshtoken; HttpOnly; Expires=Wed, 04 Dec 2024 01:08:04 GMT;
 \end{minted}
@@ -2012,7 +2034,7 @@ Przetestowano tworzenie nowych elementów. Kody błędów 400, 403 i 404 są zwr
 
 Z takim samym wynikiem przeprowadzono testy edycji nazw i zawartości elementów. Notatki, wydarzenia oraz zadania posiadają osobne endpointy do ich edycji. Próba edycji elementu przy użyciu niewłaściwego endpointu, na przykład wydarzenia używając \mintinline{bash}{PUT /api/files/note}, skutkuje kodem 404.
 
-Element można przenieść tylko do istniejącego katalogu, należącego do tego samego użytkownika. Back-end nie blokuje sytuacji, w której użytkownik przemieszcza elementy innego użytkownika. Ignorowane są przypadki, gdy podejmowana jest próba przeniesienia katalogu bazowego, bądź ustawienia katalogu nadrzędnego na ten sam katalog:
+Element można przenieść tylko do istniejącego katalogu, należącego do tego samego użytkownika. Back-end nie blokuje sytuacji, w której użytkownik przemieszcza elementy innego użytkownika. Ignorowane są przypadki, gdy podejmowana jest próba przeniesienia katalogu bazowego, bądź ustawienia katalogu nadrzędnego na ten sam katalog lub katalog podrzędny. Taka sytuacja mogłaby skutkować nieskończoną pętlą podczas sprawdzania dostępu, a także błędem bazy danych przy usuwaniu.
 \begin{minted}{json}
 {
 	"id": 29,
@@ -2032,8 +2054,6 @@ Odpowiedź:
 	"files": []
 }
 \end{minted}
-
-Możliwe jest jednak przeniesienie katalogu do jego katalogu podrzędnego. Skutkować to może nieskończoną pętlą weryfikacji dostępu dla użytkowników niebędących właścicielami tego katalogu i błędem bazy danych podczas usuwania, a sam katalog nie będzie widoczny dla użytkownika w interfejsie graficznym. Zdecydowano się nie weryfikować tej sytuacji na poziomie back-endu ze względu na potencjalną dużą złożoność algorytmu sprawdzającego -- konieczne byłoby sprawdzenie całej hierarchii katalogów poniżej edytowanego. Sytuację uniemożliwiono na poziomie front-endu. Zmianę można też łatwo cofnąć kolejną edycją, zmieniając ponownie katalog nadrzędny.
 
 Przetestowano odczytywanie elementów, odpowiedzi były zgodne z wymienionymi na liście endpointów.
 
@@ -2098,7 +2118,9 @@ Utworzono powiadomienie z wcześniejszym terminem wysłania.
 \end{minted}
 Powiadomienie od początku jest wysłane.
 
-Możliwe jest również dodanie powiadomienia do pliku, do którego dany użytkownik nie ma dostępu. Nie zablokowano takiej możliwości na poziomie back-endu -- dodanie do pliku powiadomienia nie wpływa na dostęp do samego pliku. Podobnie możliwe jest też dodanie powiadomienia dla użytkownika innego niż zalogowany.
+Powiadomienie można dodać tylko do pliku, do którego posiada się dostęp. Zostaje ono przypisane zalogowanemu użytkownikowi.
+
+Powiadomienie zaktualizowano, zmieniając wartość pola \mintinline{sql}{read} na ,,true'' -- jest to jedyne pole, które można zmienić. Usunięto własne powiadomienie, następnie spróbowano zaktualizować i usunąć powiadomienie innego użytkownika -- otrzymano kod 403.
 
 Próba utworzenia obiektu EventDate dla wydarzenia należącego do innego użytkownika skutkuje kodem 403, dla nieistniejącego wydarzenia -- kodem 404. Podanie ID pliku innego niż wydarzenie również zwraca kod 404. Próba utworzenia wydarzenia z pustym terminem początkowym zwraca kod 400, można jednak nie podać terminu końcowego:
 \begin{minted}{json}
@@ -2112,7 +2134,7 @@ Próba utworzenia obiektu EventDate dla wydarzenia należącego do innego użytk
 }
 \end{minted}
 
-Oddawanie wielu głosów na ten sam termin EventDate modyfikuje wartość \mintinline{sql}{score}, nie dodaje kolejnych głosów. Zalogowano się jako inny użytkownik i oddano głos: wartość \mintinline{sql}{totalScore} dla terminu jest każdorazowo przeliczana, jest równa sumie punktów z każdego głosu. Nie jest sprawdzane, czy głosujący ma dostęp do wydarzenia.
+Oddawanie wielu głosów na ten sam termin EventDate modyfikuje wartość \mintinline{sql}{score}, nie dodaje kolejnych głosów. Zalogowano się jako inny użytkownik i oddano głos: wartość \mintinline{sql}{totalScore} dla terminu jest każdorazowo przeliczana, jest równa sumie punktów z każdego głosu. Głos można oddać tylko na wydarzenie, do którego posiada się dostęp -- w przeciwnym razie zwracany jest kod 403.
 
 Zwykły użytkownik nie może listować pełnych danych innych użytkowników (kod 403), może jednak skorzystać z bezpiecznego endpointu -- dla wszystkich użytkowników oraz użytkownika o konkretnym ID. Fragment odpowiedzi dla bezpiecznego listowania wszystkich użytkowników:
 \begin{minted}{json}

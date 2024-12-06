@@ -68,9 +68,11 @@ public class DirectoryService {
         Directory directory = mapper.directoryDTOToDirectory(newDirectory);
         User owner = userRepository.findByUsername(username);
         directory.setOwner(owner);
-        Directory parent = repository.findById(newDirectory.getParent()).orElseThrow(EntityNotFoundException::new);
-        if (parent.getOwner() != owner) {
-            throw new IllegalArgumentException();
+        if (!isNewUser) {
+            Directory parent = repository.findById(newDirectory.getParent()).orElseThrow(EntityNotFoundException::new);
+            if (parent.getOwner() != owner) {
+                throw new IllegalArgumentException();
+            }
         }
         if (newDirectory.getName() == null) directory.setName("Unnamed Directory");
         return mapper.directoryToDirectoryDTO(repository.save(directory));

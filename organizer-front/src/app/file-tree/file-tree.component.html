@@ -2,7 +2,6 @@
     <mat-tab label="My Files">
         @if(currentDir) {
             <button mat-icon-button (click)="clickUpDir()" [disabled]="!hasParent" matTooltip="View Parent Folder" [matTooltipShowDelay]="1000"><mat-icon>drive_folder_upload</mat-icon></button>
-            <button mat-button (click)="clickEditDir()" class="dirName">{{currentDir.name}}</button>
             <button mat-flat-button matTooltip="Add Element" [matMenuTriggerFor]="menu" color="primary" class="addNew" [matTooltipShowDelay]="1000"><mat-icon>add</mat-icon>Add</button>
             <mat-menu #menu="matMenu">
                 <button mat-menu-item (click)="clickNewElement(0)"><mat-icon>create_new_folder</mat-icon>New Folder</button>
@@ -10,6 +9,7 @@
                 <button mat-menu-item (click)="clickNewElement(2)"><mat-icon>sticky_note_2</mat-icon>New Note</button>
                 <button mat-menu-item (click)="clickNewElement(3)"><mat-icon>task</mat-icon>New Task</button>
             </mat-menu>
+            <button mat-button (click)="clickEditDir()" class="dirName">{{currentDir.name}}</button>
         }
 
         <mat-action-list>

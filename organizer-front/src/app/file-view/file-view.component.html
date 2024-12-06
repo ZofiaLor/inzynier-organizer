@@ -19,14 +19,47 @@
   </div>
   <div>
     @if (createMode || isOwner || canEdit) {
-      <button
+      @if (note) {
+        <button
         mat-raised-button
         color="primary"
         class="btn btn-primary btn-block"
         (click)="saveItem()"
+        [disabled]="!noteForm.controls.filename.valid"
       >
         <mat-icon>check</mat-icon>Save changes
       </button>
+      } @else if (event) {
+        <button
+        mat-raised-button
+        color="primary"
+        class="btn btn-primary btn-block"
+        (click)="saveItem()"
+        [disabled]="!eventForm.controls.filename.valid"
+      >
+        <mat-icon>check</mat-icon>Save changes
+      </button>
+      } @else if (task) {
+        <button
+        mat-raised-button
+        color="primary"
+        class="btn btn-primary btn-block"
+        (click)="saveItem()"
+        [disabled]="!taskForm.controls.filename.valid"
+      >
+        <mat-icon>check</mat-icon>Save changes
+      </button>
+      } @else if (dir) {
+        <button
+        mat-raised-button
+        color="primary"
+        class="btn btn-primary btn-block"
+        (click)="saveItem()"
+        [disabled]="!dirForm.controls.dirname.valid"
+      >
+        <mat-icon>check</mat-icon>Save changes
+      </button>
+      }
       <button
         mat-raised-button
         color="warn"
@@ -37,43 +70,50 @@
       </button>
     }
     
-    @if(!createMode && isOwner) {
-      <button
-        mat-raised-button
-        color="accent"
-        class="btn btn-primary btn-block"
-        (click)="moveDirs()"
-      >
-        <mat-icon>drive_file_move</mat-icon>Move to a different folder
-      </button>
-      <button
-        mat-raised-button
-        color="primary"
-        class="btn btn-primary btn-block"
-        (click)="manageNotifs()"
-      >
-        <mat-icon>notifications</mat-icon>Manage notifications
-      </button>
-      <button
-        mat-raised-button
-        color="primary"
-        class="btn btn-primary btn-block"
-        (click)="shareItem()"
-      >
-        <mat-icon>groups</mat-icon>Share
-      </button>
-      @if (!dir || dir.parent) {
-        <mat-expansion-panel hideToggle>
-          <mat-expansion-panel-header>
-            <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete</mat-panel-title>
-          </mat-expansion-panel-header>
-          Are you sure? This action cannot be undone.
-          <button mat-raised-button color="warn" (click)="deleteFile()" aria-label="Delete File">
-              <mat-icon>check</mat-icon> CONFIRM
-          </button>
-        </mat-expansion-panel>
+    @if(!createMode) {
+      @if (_file) {
+        <button
+          mat-raised-button
+          color="primary"
+          class="btn btn-primary btn-block"
+          (click)="manageNotifs()"
+        >
+          <mat-icon>notifications</mat-icon>Manage notifications
+        </button>
       }
       
+      @if (isOwner) {
+        @if (_file || (dir && dir.parent)) {
+          <button
+            mat-raised-button
+            color="accent"
+            class="btn btn-primary btn-block"
+            (click)="moveDirs()"
+          >
+            <mat-icon>drive_file_move</mat-icon>Move to a different folder
+          </button>
+        }
+        
+        <button
+          mat-raised-button
+          color="primary"
+          class="btn btn-primary btn-block"
+          (click)="shareItem()"
+        >
+          <mat-icon>groups</mat-icon>Share
+        </button>
+          @if (!dir || dir.parent) {
+            <mat-expansion-panel hideToggle>
+              <mat-expansion-panel-header>
+                <mat-panel-title><mat-icon>delete</mat-icon>&nbsp; Delete</mat-panel-title>
+              </mat-expansion-panel-header>
+              Are you sure? This action cannot be undone.
+              <button mat-raised-button color="warn" (click)="deleteFile()" aria-label="Delete File">
+                  <mat-icon>check</mat-icon> CONFIRM
+              </button>
+            </mat-expansion-panel>
+        }
+      }
     }
   </div>
   @if(note) {
@@ -84,8 +124,11 @@
             <input matInput type="text"
             class="form-control"
             name="filename"
+            #filename
+            [maxlength]="50"
             [readonly]="!isOwner && !createMode"
             formControlName="filename" placeholder="Unnamed File"/>
+            <mat-hint align="end">{{filename.value.length}} / 50</mat-hint>
             <mat-error>
               @if (!noteForm.controls.filename.valid) { @if
               (noteForm.controls.filename.hasError('required')) { The name cannot be empty! } }
@@ -115,8 +158,11 @@
                   <input matInput type="text"
                   class="form-control"
                   name="filename"
+                  #filename
+                  [maxlength]="50"
                   [readonly]="!isOwner && !createMode"
                   formControlName="filename" placeholder="Unnamed File"/>
+                  <mat-hint align="end">{{filename.value.length}} / 50</mat-hint>
                   <mat-error>
                     @if (!eventForm.controls.filename.valid) { @if
                     (eventForm.controls.filename.hasError('required')) { The name cannot be empty! } }
@@ -159,9 +205,12 @@
                   <input matInput type="text"
                   class="form-control"
                   name="location"
+                  #location
+                  [maxlength]="50"
                   [readonly] = "!isOwner && !createMode && !canEdit"
                   formControlName="location" placeholder="Some Place"/>
               </mat-form-field>
+              <mat-hint align="end">{{location.value.length}} / 50</mat-hint>
               <br/><br/>
               <mat-form-field appearance="outline" style="width: 100%;">
                   <mat-label>Content</mat-label>
@@ -184,8 +233,11 @@
                   <input matInput type="text"
                   class="form-control"
                   name="filename"
+                  #filename
+                  [maxlength]="50"
                   [readonly]="!isOwner && !createMode"
                   formControlName="filename" placeholder="Unnamed File"/>
+                  <mat-hint align="end">{{filename.value.length}} / 50</mat-hint>
                   <mat-error>
                     @if (!taskForm.controls.filename.valid) { @if
                     (taskForm.controls.filename.hasError('required')) { The name cannot be empty! } }
@@ -230,7 +282,10 @@
           <input matInput type="text"
           class="form-control"
           name="dirname"
+          #filename
+          [maxlength]="50"
           formControlName="dirname" placeholder="Unnamed Directory"/>
+          <mat-hint align="end">{{filename.value.length}} / 50</mat-hint>
           <mat-error>
             @if (!dirForm.controls.dirname.valid) { @if
             (dirForm.controls.dirname.hasError('required')) { The name cannot be empty! } }

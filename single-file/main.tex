@@ -1933,7 +1933,7 @@ Testowanie aplikacji wymaga sprawdzenia, czy jest ona odporna na nieprawidłowe 
 
 W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne z wymienionymi w podrozdziale ,,Lista Endpointów'' \ksremark{odwołanie poprzez etykietę \LaTeX a}. Z kolei front-end powinien już na poziomie interfejsu w jak największym stopniu ograniczyć możliwość wprowadzenia błędnych danych.
 
-\subsection{Testowanie back-endu}
+\section{Testowanie back-endu}
 
 Testowanie rozpoczęto od sprawdzenia przypadków użycia dla użytkownika niezalogowanego. Większość endpointów wymaga autentykacji, sprawdzono więc, że zwracają one bez niej kod 403 (Forbidden). Przykład takiego zapytania pokazano na rys. \ref{fig:send-notifs-403}.
 
@@ -2231,9 +2231,48 @@ Nadano i odebrano innym użytkownikom rolę administratora. Próba zmiany własn
 
 Próba usunięcia własnego użytkownika poprzez endpoint administratora zwraca kod 403. Usunięcie innego użytkownika przebiegło pomyślnie.
 
-\subsection{Wykryte i usunięte błędy}
+\section{Testowanie front-endu}
+
+Podczas testowania front-endu, tam, gdzie nie zaznaczono inaczej, korzystano z przeglądarki Mozilla Firefox w wersji 133.0. Wysyłane do back-endu zapytania weryfikowano przy pomocy inspektora przeglądarki.
+
+Po przejściu na adres \mintinline{bash}{http://localhost:4200/} w przeglądarce, pokazana zostaje strona powitalna. Użytkownik jest niezalogowany -- w górnym pasku nawigacyjnym dostępny jest przycisk ,,Log In''. 
+
+Sprawdzono zabezpieczenia przed próbą dostępu do nieudostępnionych użytkownikowi niezalogowanemu zasobów. Przejście na stronę \mintinline{bash}{http://localhost:4200/file/1} przeładowuje stronę, nie zostaje jednak wysłane żadne zapytanie, a widok strony nie zmienia się. Próba wejścia na stronę profilu \mintinline{bash}{http://localhost:4200/profile} skutkuje wyświetleniem komunikatu ,,Please log in to view your profile''. Próba wejścia na dostępną administratorowi stronę \mintinline{bash}{http://localhost:4200/admin/users} pokazuje komunikat ,,This page is accessible for administrators only''. Przejście na niezdefiniowany adres, na przykład \mintinline{bash}{http://localhost:4200/wrong} przekierowuje na prostą stronę ,,Page Not Found'', zawierającą odnośnik do strony głównej. 
+
+Na stronie rejestracji (\mintinline{bash}{http://localhost:4200/auth/register}) sprawdzono, że nie można się zarejestrować bez podania nazwy użytkownika oraz przynajmniej 6-znakowego hasła -- przycisk zatwierdzający jest nieaktywny. Wpisano nazwę użytkownika występującą już w bazie danych: po zatwierdzeniu na dole ekranu pojawiło się powiadomienie ,,This username is already taken''. Wpisano unikalną nazwę użytkownika, po zatwierdzeniu na dole ekranu pojawiło się powiadomienie ,,You have successfully registered!'', wyświetlił się również link do strony logowania.
+
+Na stronie logowania (\mintinline{bash}{http://localhost:4200/auth/login}) również nie można się zalogować bez podania nazwy użytkownika i hasła. Podanie nieprawidłowej kombinacji nazwy i hasła, w tym niewystępującej w bazie danych nazwy użytkownika, skutkuje pojawieniem się powiadomienia ,,Incorrect username or password''. Po wpisaniu poprawnych danych użytkownik zostaje zalogowany i przekierowany na stronę główną, która zawiera przeglądarkę plików. Dla nowo zarejestrowanego użytkownika na liście plików znajduje się jeden katalog -- ,,Base Directory'' -- utworzony automatycznie podczas rejestracji.
+
+Utworzono dwa nowe katalogi oraz notatkę, wydarzenie i zadanie. Formularz nie pozwala na wpisanie nazwy elementu lub lokalizacji dłuższej niż 50 znaków, ani zawartości pliku dłuższej niż 65000 znaków. Sprawdzono, że poprawnie zapisuje się notatka z 65000-znakową treścią. Nie można zapisać wydarzenia, którego termin początkowy jest późniejszy od końcowego. Jeżeli w polu daty wpisze się niepełną datę (na przykład bez minut), lub będzie ona nieprawidłowa (na przykład 30.02.2024) pojawi się informacja, że data ta nie zostanie zapisana w bazie danych.
+
+Struktura utworzonych w tym kroku plików:
+\begin{minted}{bash}
+Base Directory
+	Child Directory
+		Grandchild Directory
+			New Event
+			New Task
+		New Note
+\end{minted}
+
+W panelu udostępniania elementów wybrano z listy użytkowników \mintinline{bash}{newUser} i udzielono mu dostępu do edycji katalogu ,,Child Directory'' oraz dostępu do przeglądania pliku ,,New Task''. Zalogowano się jako \mintinline{bash}{newUser}. Zweryfikowano, że użytkownik ten może edytować pliki New Note oraz New Event, a tylko przeglądać New Task.
+
+Następnie, jako właściciel, usunięto udzielenie dostępu do przeglądania pliku ,,New Task''. Ponownie zalogowano się jako newUser -- tym razem może on edytować ten plik. Zmodyfikowano dostęp do katalogu ,,Child Directory'' na dostęp do przeglądania. Zgodnie z założeniami, użytkownik newUser może tylko przeglądać wszystkie pliki w tym katalogu.
+
+Przycisk służący do przenoszenia elementu do innego katalogu jest ukryty dla katalogu bazowego. Przetestowano przenoszenie plików -- na liście katalogów do wyboru są jedynie katalogi należące do użytkownika. W przypadku katalogu ,,Child Directory'' niemożliwe jest umieszczenie go wewnątrz katalogu ,,Grandchild Directory'' -- przejście wgłąb przenoszonego katalogu jest nieaktywne, jak pokazano na rys. \ref{fig:move-dir-inactive}.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{./MoveDirInactive.png}
+\caption{Zrzut ekranu z panelu przenoszenia katalogu ,,Child Directory''. Opcja przeniesienia katalogu do środka niego samego jest zablokowana.}
+\label{fig:move-dir-inactive}
+\end{figure}
+
+\section{Wykryte i usunięte błędy}.
 
 Autentykacja: podczas logowania generowane są dwa ciasteczka: organizerJwt oraz organizerRefreshJwt. Drugie z ciasteczek służy do odświeżania pierwszego, powinno więc mieć dłuższy czas ważności. Przez przypadek do obydwu ciasteczek przypisywano tę samą wartość maxAge.
+
+Tworzenie katalogu bazowego przy rejestracji: podczas tworzenia katalogu sprawdzane jest, czy jego katalog nadrzędny istnieje. Nie uwzględniono sytuacji wyjątkowej, w której tworzony jest katalog bazowy nieposiadający katalogu nadrzędnego.
 
 Odświeżanie ciasteczek: odświeżane było jedynie ciasteczko organizerJwt zamiast obydwu. 
 

@@ -13,6 +13,12 @@ import { AccessFile } from '../model/access-file';
 import { AccessDir } from '../model/access-dir';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+interface UserAccess {
+  user: User,
+  af?: AccessFile,
+  ad?: AccessDir
+}
+
 @Component({
   selector: 'app-manage-access',
   standalone: true,
@@ -27,10 +33,10 @@ export class ManageAccessComponent implements OnChanges, OnInit{
   @ViewChild('userAdded', {static: true}) userAddedList!: MatSelectionList;
   private readonly _destroy$ = new Subject<void>();
   userBrowseData: User[] = [];
-  userAddedData: User[] = [];
   user?: User;
   afs: AccessFile[] = [];
   ads: AccessDir[] = [];
+  userAccess: UserAccess[] = [];
   columns: string[] = ["id", "username", "name"];
 
   constructor (private readonly userService: UserService, private readonly storageService: StorageService, private readonly accessService: AccessService, private snackBar: MatSnackBar) {}
@@ -55,15 +61,15 @@ export class ManageAccessComponent implements OnChanges, OnInit{
   onGrantAccess(access: number) {
     if (this.isSharedFile) {
       for (var selected of this.userAddedList.selectedOptions.selected) {
-        let af: AccessFile = {id: {userId: this.userAddedData[parseInt(selected.value)].id, fileId: this.sharedItemId!}, accessPrivilege: access};
+        let af: AccessFile = {id: {userId: this.userAccess[parseInt(selected.value)].user.id, fileId: this.sharedItemId!}, accessPrivilege: access};
         this.modifyAF(af);
-        this.afs[parseInt(selected.value)].accessPrivilege = access;
+        this.userAccess[parseInt(selected.value)].af!.accessPrivilege = access;
       }
     } else {
       for (var selected of this.userAddedList.selectedOptions.selected) {
-        let ad: AccessDir = {id: {userId: this.userAddedData[parseInt(selected.value)].id, directoryId: this.sharedItemId!}, accessPrivilege: access};
+        let ad: AccessDir = {id: {userId: this.userAccess[parseInt(selected.value)].user.id, directoryId: this.sharedItemId!}, accessPrivilege: access};
         this.modifyAD(ad);
-        this.ads[parseInt(selected.value)].accessPrivilege = access;
+        this.userAccess[parseInt(selected.value)].ad!.accessPrivilege = access;
       }
     }
   }
@@ -73,25 +79,21 @@ export class ManageAccessComponent implements OnChanges, OnInit{
     if (this.isSharedFile) {
       let af: AccessFile = {id: {userId: this.user.id, fileId: this.sharedItemId!}, accessPrivilege: access};
       this.modifyAF(af);
-      this.afs.push(af);
     } else {
       let ad: AccessDir = {id: {userId: this.user.id, directoryId: this.sharedItemId!}, accessPrivilege: access};
       this.modifyAD(ad);
-      this.ads.push(ad);
     }
-    this.userAddedData.push(this.user);
-    this.user = undefined;
   }
 
   onForbidAccess() {
     if (this.isSharedFile) {
       for (var selected of this.userAddedList.selectedOptions.selected) {
-        this.deleteAF(this.userAddedData[parseInt(selected.value)].id, this.sharedItemId!);
+        this.deleteAF(this.userAccess[parseInt(selected.value)].user.id, this.sharedItemId!);
       }
       this.fetchAFs();
     } else {
       for (var selected of this.userAddedList.selectedOptions.selected) {
-        this.deleteAD(this.userAddedData[parseInt(selected.value)].id, this.sharedItemId!);
+        this.deleteAD(this.userAccess[parseInt(selected.value)].user.id, this.sharedItemId!);
       }
       this.fetchADs();
     }
@@ -130,25 +132,29 @@ export class ManageAccessComponent implements OnChanges, OnInit{
   }
 
   fetchUsersFromAF(): void {
-    this.userAddedData = [];
+    this.userAccess = [];
     for (var af of this.afs) {
+      let localAf = af;
       this.userService.getUserByIdSafe(af.id.userId).pipe(takeUntil(this._destroy$)).subscribe({
         next: resp => {
-          this.userAddedData.push(resp.body!);
+          var ua: UserAccess = {user: resp.body!, af: localAf};
+          this.userAccess.push(ua);
         },
         error: err => {
           this.accessErrors(err, "User");
         }
       })
     }
+    console.log(this.userAccess);
   }
 
   fetchUsersFromAD(): void {
-    this.userAddedData = [];
     for (var ad of this.ads) {
+      let localAd = ad;
       this.userService.getUserByIdSafe(ad.id.userId).pipe(takeUntil(this._destroy$)).subscribe({
         next: resp => {
-          this.userAddedData.push(resp.body!);
+          var ua: UserAccess = {user: resp.body!, ad: localAd};
+          this.userAccess.push(ua);
         },
         error: err => {
           this.accessErrors(err, "User");
@@ -170,6 +176,16 @@ export class ManageAccessComponent implements OnChanges, OnInit{
 
   modifyAF(af: AccessFile): void {
     this.accessService.modifyAF(af).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        if (!this.userAccess.some(ua => ua.user.id === resp.body!.id.userId) && this.user) {
+          this.afs.push(resp.body!);
+          
+          this.userAccess.push({user: this.user, af: resp.body!});
+          this.user = undefined;
+        } else {
+          this.userAccess[this.userAccess.findIndex(ua => ua.user.id === resp.body!.id.userId)].af!.accessPrivilege = resp.body!.accessPrivilege;
+        }
+      },
       error: err => {
         this.accessErrors(err, "Access entry");
       }
@@ -178,6 +194,16 @@ export class ManageAccessComponent implements OnChanges, OnInit{
 
   modifyAD(ad: AccessDir): void {
     this.accessService.modifyAD(ad).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        if (!this.userAccess.some(ua => ua.user.id === resp.body!.id.userId) && this.user) {
+          this.ads.push(resp.body!);
+          
+          this.userAccess.push({user: this.user, ad: resp.body!});
+          this.user = undefined;
+        } else {
+          this.userAccess[this.userAccess.findIndex(ua => ua.user.id === resp.body!.id.userId)].ad!.accessPrivilege = resp.body!.accessPrivilege;
+        }
+      },
       error: err => {
         this.accessErrors(err, "Access entry");
       }
@@ -186,6 +212,9 @@ export class ManageAccessComponent implements OnChanges, OnInit{
 
   deleteAF(userId: number, fileId: number) {
     this.accessService.deleteAF(userId, fileId).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.userAccess = this.userAccess.filter(ua => ua.user.id != userId);
+      },
       error: err => {
         this.accessErrors(err, "Access entry");
       }
@@ -194,6 +223,9 @@ export class ManageAccessComponent implements OnChanges, OnInit{
 
   deleteAD(userId: number, dirId: number) {
     this.accessService.deleteAD(userId, dirId).pipe(takeUntil(this._destroy$)).subscribe({
+      next: resp => {
+        this.userAccess = this.userAccess.filter(ua => ua.user.id != userId);
+      },
       error: err => {
         this.accessErrors(err, "Access entry");
       }

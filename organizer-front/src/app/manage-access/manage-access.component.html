@@ -5,18 +5,18 @@
       </mat-card-header>
       <mat-card-content>
         <mat-selection-list #userAdded>
-            @for (user of userAddedData; track user; let idx = $index) {
+            @for (ua of userAccess; track ua; let idx = $index) {
                 <mat-list-option checkboxPosition="before" [value]="idx">
-                    @if(isSharedFile && afs[idx].accessPrivilege == 2) {
+                    @if(isSharedFile && ua.af!.accessPrivilege == 2) {
                         <mat-icon>edit</mat-icon>
-                    } @else if (isSharedFile && afs[idx].accessPrivilege == 1) {
+                    } @else if (isSharedFile && ua.af!.accessPrivilege == 1) {
                         <mat-icon>visibility</mat-icon>
-                    } @else if(!isSharedFile && ads[idx].accessPrivilege == 2) {
+                    } @else if(!isSharedFile && ua.ad!.accessPrivilege == 2) {
                         <mat-icon>edit</mat-icon>
-                    } @else if (!isSharedFile && ads[idx].accessPrivilege == 1) {
+                    } @else if (!isSharedFile && ua.ad!.accessPrivilege == 1) {
                         <mat-icon>visibility</mat-icon>
                     }
-                    &nbsp;{{user.username}}
+                    &nbsp;{{ua.user.username}}
                 </mat-list-option>
             }
         </mat-selection-list>

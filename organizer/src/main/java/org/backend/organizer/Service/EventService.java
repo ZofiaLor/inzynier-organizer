@@ -47,6 +47,8 @@ public class EventService {
     public EventDTO updateEvent(EventDTO EventUpdates, String username) {
         if (EventUpdates == null) throw new NullPointerException();
         Event event = repository.findById(EventUpdates.getId()).orElseThrow(EntityNotFoundException::new);
+        if (EventUpdates.getStartDate() == null) event.setStartDate(null);
+        if (EventUpdates.getEndDate() == null) event.setEndDate(null);
         FileService.checkAccess(2, event.getId(), event.getOwner(), username, event.getParent(), userRepository, directoryRepository, afService, adService);
         if (EventUpdates.getParent() != null && !Objects.equals(EventUpdates.getParent(), event.getParent().getId())) {
             Directory parent = directoryRepository.findById(EventUpdates.getParent()).orElseThrow(EntityNotFoundException::new);

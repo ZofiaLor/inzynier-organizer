@@ -3,6 +3,7 @@ package org.backend.organizer.Model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -21,6 +22,9 @@ public class File {
     private Directory parent;
     @ManyToOne
     private User owner;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "file")
+    private List<Notification> notifications;
 
     public Long getId() {
         return id;
@@ -68,5 +72,13 @@ public class File {
 
     public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
     }
 }

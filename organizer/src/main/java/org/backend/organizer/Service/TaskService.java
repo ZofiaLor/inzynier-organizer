@@ -49,6 +49,7 @@ public class TaskService {
     public TaskDTO updateTask(TaskDTO TaskUpdates, String username) {
         if (TaskUpdates == null) throw new NullPointerException();
         Task task = repository.findById(TaskUpdates.getId()).orElseThrow(EntityNotFoundException::new);
+        if (TaskUpdates.getDeadline() == null) task.setDeadline(null);
         FileService.checkAccess(2, task.getId(), task.getOwner(), username, task.getParent(), userRepository, directoryRepository, afService, adService);
         if (TaskUpdates.getParent() != null && !Objects.equals(TaskUpdates.getParent(), task.getParent().getId())) {
             Directory parent = directoryRepository.findById(TaskUpdates.getParent()).orElseThrow(EntityNotFoundException::new);

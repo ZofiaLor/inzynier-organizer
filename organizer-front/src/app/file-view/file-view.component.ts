@@ -182,10 +182,16 @@ export class FileViewComponent implements OnInit{
 
   deleteFile(): void {
     if (this.dir) {
+      let parentId = this.dir.parent;
       this.dirService.deleteDir(this.dir.id).pipe(takeUntil(this._destroy$)).subscribe({
         next: resp => {
-          this.dir = undefined;
-          this.router.navigate(['/']);
+          this.dirService.getDirById(parentId!).pipe(takeUntil(this._destroy$)).subscribe({
+            next: rsp => {
+              this.dir = rsp.body!;
+              this.storageService.saveCurrentDir(this.dir!);
+              this.router.navigate(['/']);
+            }
+          })
         },
         error: err => {
           if (err.status == 404) {

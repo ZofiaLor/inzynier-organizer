@@ -30,7 +30,7 @@ export class RegisterComponent {
     username: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
     name: new FormControl(''),
-    email: new FormControl(''),
+    email: new FormControl('', Validators.email),
   });
 
   afterRegister = false;

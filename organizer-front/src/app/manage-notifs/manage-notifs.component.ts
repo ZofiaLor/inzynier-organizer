@@ -89,7 +89,7 @@ export class ManageNotifsComponent implements OnInit{
       message = "Reminder that " + this.file!.name + " is in " + diff + " " + unit;
     }
     var notif: Notification = {id: 0, user: this.storageService.getUser()!.id, file: this.file!.id, 
-      sendTimeSetting: date!, message: message!, read: false};
+      sendTimeSetting: date!.substring(0, 16), message: message!, read: false};
     this.createNotif(notif);
   }
 

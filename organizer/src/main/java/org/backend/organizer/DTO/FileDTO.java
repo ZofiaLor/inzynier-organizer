@@ -1,6 +1,7 @@
 package org.backend.organizer.DTO;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class FileDTO {
     private Long id;
@@ -9,6 +10,8 @@ public class FileDTO {
     private LocalDateTime creationDate;
     private Long parent;
     private Long owner;
+
+    private List<Long> notifications;
 
     public Long getId() {
         return id;
@@ -56,5 +59,13 @@ public class FileDTO {
 
     public void setOwner(Long owner) {
         this.owner = owner;
+    }
+
+    public List<Long> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Long> notifications) {
+        this.notifications = notifications;
     }
 }

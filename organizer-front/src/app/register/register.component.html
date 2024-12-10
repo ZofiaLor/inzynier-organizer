@@ -5,7 +5,7 @@
   
     <mat-card-content>
       @if (afterRegister) {
-        Thank you for registering! Click the button to the top right or <a href="/auth/login">this link</a> to log in!<br/>
+        Thank you for registering! Click the button to the top right or <a href="/auth/login">this link</a> to log in!<br/><br/><br/>
       }
         <form [formGroup]="form">
             <mat-form-field appearance="outline">
@@ -69,7 +69,14 @@
                   class="form-control"
                   name="email"
                   formControlName="email"
+                  #email
+                  [ngClass]="{
+                    'is-invalid': form.controls.email.hasError('email')
+                  }"
                 />
+                @if (form.controls.email.hasError('email')) {
+                    <mat-error>Not a valid email</mat-error>
+                    }
               </mat-form-field>
             <br />
             <!--uh-->

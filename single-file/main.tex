@@ -552,6 +552,8 @@ Jedną z zalet aplikacji przeglądarkowych jest możliwość zapisywania odnośn
 
 Drugim problemem związanym z wykorzystaniem odnośników jest fakt, że użycie ich wiąże się z przeładowywaniem aplikacji, a co za tym idzie -- z utratą przechowywanych w niej danych. Aby zachować ciągłość działania, każdorazowo konieczne są odwołania do bazy danych, a także pamięci przeglądarki: ciasteczek, pamięci lokalnej i pamięci sesji.
 
+Każda zmiana danych wyświetlanych w interfejsie graficznym front-endu, która zachodzi w bazie danych, musi jednocześnie być niezależnie przeprowadzana na obiektach front-endu. Każdorazowe pobieranie danych z bazy skutkowałoby miganiem obrazu, a asynchroniczność wykonywania operacji w back-endzie oznacza, że pobrane dane wciąż mogłyby nie odzwierciedlać stanu bazy.
+
 \section{Istniejące rozwiązania}
 \subsection{Google Calendar}
 Popularną aplikacją służącą do zarządzania wydarzeniami i zadaniami jest Google Calendar. Zadania można dodać do kalendarza, ustawić ich termin oraz opis. Wydarzenia pozwalają ponadto między innymi na dodanie osób uczestniczących, miejsca wydarzenia i powiadomień.
@@ -622,7 +624,7 @@ Dostępne użytkownikowi funkcje aplikacji można ogólnie podzielić na operacj
 	\item [F.1.] Autentykacja użytkowników
 	\begin{itemize}
 		\item [F.1.1.] Logowanie użytkownika U.3. \ref{user3} na istniejące konto przy pomocy nazwy użytkownika oraz hasła.
-		\item [F.1.2.] Wylogowanie zalogowanego użytkownika (U.1., U.2. \ref{user1}\ref{user2}).
+		\item [F.1.2.] Wylogowanie zalogowanego użytkownika (U.1., U.2. \ref{user1}\ref{user2}). \ksremark{nie działa}
 		\item [F.1.3.] Rejestracja nowego użytkownika w systemie, umożliwiająca następnie zalogowanie (por. F.1.1.).
 	\end{itemize}
 	\item [F.2.] Zarządzanie elementami.
@@ -731,7 +733,7 @@ Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania 
 
 		\item Dla systemu Windows
 
-		\mintinline{bash}{tar -xf .\inzynier-organizer-main.zip}
+		\mintinline{powershell}{tar -xf .\inzynier-organizer-main.zip}
    \end{itemize}
 
    \item W wybranym terminalu należy zmienić katalog: 
@@ -751,7 +753,7 @@ Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bas
 
 	\item Dla systemu Windows
 
-	\mintinline{bash}{.\mvnw.cmd install}
+	\mintinline{powershell}{.\mvnw.cmd install}
 \end{itemize}
 
  Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{bash}{target}, zawierający plik z rozszerzeniem \mintinline{bash}{.jar}.
@@ -961,7 +963,18 @@ Tabele w bazie danych mają następujące atrybuty:
 
 Do zaimplementowania dziedziczenia klas \mintinline{java}{Event}, \mintinline{java}{Note} i \mintinline{java}{Task} po klasie bazowej wybrano strategię \english{Singe Table Inheritance}. W bazie danych wszystkie klasy reprezentowane są przez tę samą tabelę \mintinline{sql}{File}, która zawiera kolumny atrybutów wszystkich dziedziczących klas, a także ukrytą kolumnę \mintinline{sql}{file_type}, pozwalającą frameworkowi na rozróżnienie typów podczas mapowania obiektowo-relacyjnego. Rozwiązanie takie pozwala również na odczytanie jednocześnie wszystkich typów plików, co jest przydatne podczas wyświetlania ich w eksploratorze.
 
-Rozwiązanie MappedSuperclass zostało odrzucone, ponieważ nie tworzy ono tabeli klasy bazowej, przez co nie może ona być w relacji z żadną inną klasą. Rozwiązania Joined Table oraz Table Per Class mogłyby wykorzystane, jednak są mniej optymalne z perspektywy założonego działania.
+Rozwiązanie MappedSuperclass zostało odrzucone, ponieważ nie tworzy ono tabeli klasy bazowej, przez co nie może ona być w relacji z żadną inną klasą. Rozwiązania Joined Table oraz Table Per Class mogłyby być wykorzystane, jednak są mniej optymalne z perspektywy założonego działania.
+
+\section{Budowa aplikacji}
+
+Na diagramie rys. \ref{fig:package} przedstawiono ogólną budowę wewnętrzną aplikacji. Zarówno back-end jak i front-end zostały podzielone zgodnie z konwencją wykorzystanych w nich frameworków. Framework Spring zakłada podział na klasy typu \mintinline{java}{Model}, \mintinline{java}{DTO}, \mintinline{java}{Repository}, \mintinline{java}{Service} i \mintinline{java}{Controller}, a także, opcjonalnie, \mintinline{java}{Mapper}. Angular wykorzystuje wiele komponentów, z których każdy odpowiada części wyświetlanego interfejsu. Do komunikacji z back-endem stosuje się serwisy. W języku TypeScript istotne jest typowanie, dla klas zwracanych przez back-end zaimplementowano więc modele po stronie front-endu.
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{./UML-Package.png}
+\caption{Schemat UML pakietów back-endu oraz front-endu.}
+\label{fig:package}
+\end{figure}
 
 \section{Lista endpointów}
 
@@ -2347,6 +2360,33 @@ Panel dostępu do elementów: obiekty AccessFile lub AccessDirectory oraz obiekt
 \item problemy napotkane w trakcie pracy
 \end{itemize}
 
+\section{Podsumowanie wykonanej aplikacji}
+
+W ramach projektu zaprojektowano relacyjną bazę danych. Niektóre tabele odpowiadają występującym w temacie pojęciom -- użytkownik, plik, katalog. Inne, takie jak tabele przypisujące dostępy do elementów użytkownikom, bądź tabela zawierająca dane niezbędne do odświeżenia ciasteczek, są niezbędne do prawidłowego działania aplikacji, lecz niewidoczne dla jej użytkownika.
+
+Implementację back-endu aplikacji utrzymano w konwencji frameworku Spring. Korzystając z mapowania obiektowo-relacyjnego tabele bazy danych zostały odwzorowane jako klasy języka Java. Dla każdej z nich zaimplementowano również klasy Repository, Service oraz Controller, a dla większości także klasy DTO oraz Mapper. Utworzono również klasy kluczy złożonych, konieczne do implementacji klas w relacji N:M, oraz pomocnicze klasy wyjątków, zwiększające czytelność kodu odpowiedzialnego za sprawdzanie dostępu do plików i katalogów.
+
+Do implementacji dziedziczenia klas Event, Note oraz Task po klasie File w bazie danych wykorzystano metodę Single Table Inheritance, przez co w bazie odpowiada im wszystkim jedna tabela. Dzięki zastosowaniu dziedziczenia, operacje odczytu oraz usunięcia wierszy wystarczyło zaimplementować raz, dla klasy bazowej. Operacje tworzenia oraz aktualizacji wierszy musiały jednak być napisane osobno dla każdej klasy.
+
+Konieczne było również zaimplemenowanie funkcjonalności autentykacji i autoryzacji użytkowników. Wykorzystano do tego framework Spring Security, który pozwolił na logowanie i wylogowywanie, zakodowywanie haseł oraz autoryzację ról użytkowników na poziomie poszczególnych metod.
+
+We front-endzie odwzorowano klasy back-endu jako interfejsy języka TypeScript. Serwisy frameworku Angular zostały wykorzystane do komunikacji z back-endem. Konieczne było zadbanie, aby wraz z każdym zapytaniem przekazywały one ciasteczka autentykacyjne.
+
+Zgodnie z konwencją frameworku, funkcjonalności aplikacji rozdzielono pomiędzy komponenty. Angular pozwala na tworzenie aplikacji typu Single-Page, wykorzystano jednak różne adresy, aby pozwolić użytkownikowi na zapisywanie poszczególnych adresów w zakładkach przeglądarki. Wiązało się to z dodatkowym problemem zapewnienia ciągłości stanu aplikacji, który rozwiązano używając pamięci sesji oraz pamięci lokalnej przeglądarki.
+
+Większość komponentów w trakcie inicjalizacji pobiera dane z back-endu i pozwala użytkownikowi na edytowanie ich. Back-end wysyła zaktualizowane obiekty w odpowiedzi na zapytania, jednak konieczna była równoległa edycja danych już pobranych we front-endzie, aby zapewnić płynne działanie. Weryfikacja poprawności danych musiała więc zajść w obydwu częściach aplikacji.
+
+Wszystkie wymagania funkcjonalne zostały spełnione. 
+
+Zapewniono bezpieczeństwo danych użytkownika: hasło przesyłane jest w zapytaniu z front-endu tylko podczas rejestracji i logowania, nigdy nie jest przesyłane w odpowiedzi. W bazie danych jest przechowywane w postaci zakodowanej, wykorzystując enkoder zapewniony przez Spring Security.
+
+W zapewnieniu intuicyjności aplikacji pomogło skorzystanie z biblioteki komponentów Angular Material. Dzięki temu wygląd interfejsu i poszczególnych kontrolek jest podobny do innych, znanych aplikacji. Oprócz tekstu wykorzystano wiele ikon, dodatkowo wskazujących na działanie każdego przycisku. Na przyciski, które, ze względów estetycznych, mają postać ikony bez tekstu, można najechać myszą, aby wyświetlić wskazówkę dotyczącą ich działania.
+
+\section{Dalsze kierunki rozwoju aplikacji}
+
+Kolejnym krokiem rozwoju aplikacji byłoby wdrożenie jej na serwerze internetowym. Obecnie dostępna jest tylko lokalnie, a proces jej budowy i uruchamiania jest zbyt złożony dla przeciętnego użytkownika. Szczególnie funkcjonalności udostępniania elementów mają sens wtedy, kiedy użytkownicy różnych urządzeń mają dostęp do tej samej bazy danych. \ksremark{Nie wiem, jak dobrze opisać deployment}
+
+Drugim kierunkiem rozwoju może być dodanie funkcjonalności związanych z e-mailem. W obecnej aplikacji jest to opcjonalne pole, które nie wpływa na działanie. Na adres e-mail mogłyby być wysyłane powiadomienia, przypominające użytkownikowi o ważnych terminach nawet wtedy, gdy sama aplikacja jest zamknięta. Można by było również dodać opcję odzyskiwania zapomnianego hasła poprzez wysłanie e-maila z jednorazowym kodem weryfikacyjnym.
 
 
 \backmatter
@@ -2359,16 +2399,16 @@ Panel dostępu do elementów: obiekty AccessFile lub AccessDirectory oraz obiekt
 \begin{appendices}
 
 % TODO
-\chapter{Spis skrótów i symboli}
+% \chapter{Spis skrótów i symboli}
 
-\begin{itemize}
-\item[DNA] kwas deoksyrybonukleinowy (ang. \english{deoxyribonucleic acid})
-\item[MVC] model -- widok -- kontroler (ang. \english{model--view--controller}) 
-\item[$N$] liczebność zbioru danych
-\item[$\mu$] stopnień przyleżności do zbioru
-\item[$\mathbb{E}$] zbiór krawędzi grafu
-\item[$\mathcal{L}$] transformata Laplace'a 
-\end{itemize}
+% \begin{itemize}
+% \item[DNA] kwas deoksyrybonukleinowy (ang. \english{deoxyribonucleic acid})
+% \item[MVC] model -- widok -- kontroler (ang. \english{model--view--controller}) 
+% \item[$N$] liczebność zbioru danych
+% \item[$\mu$] stopnień przyleżności do zbioru
+% \item[$\mathbb{E}$] zbiór krawędzi grafu
+% \item[$\mathcal{L}$] transformata Laplace'a 
+% \end{itemize}
 
 
 % TODO

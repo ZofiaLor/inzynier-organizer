@@ -754,6 +754,8 @@ Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bas
 	\item Dla systemu Windows
 
 	\mintinline{powershell}{.\mvnw.cmd install}
+
+	W razie niepowodzenia, należy jako administrator otworzyć plik \mintinline{powershell}{C:\Windows\System32\drivers\etc\hosts}. Należy wpisać do niego linię \mintinline{powershell}{127.0.0.1 db} i zapisać plik. Następnie należy powtórzyć polecenie \mintinline{powershell}{.\mvnw.cmd install}.
 \end{itemize}
 
  Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{bash}{target}, zawierający plik z rozszerzeniem \mintinline{bash}{.jar}.
@@ -2268,7 +2270,7 @@ Na stronie logowania (\mintinline{bash}{http://localhost:4200/auth/login}) równ
 
 Aby zweryfikować automatyczne odświeżanie ciasteczek, tymczasowo zmieniono ich czas ważności w back-endzie na 1 minutę dla organizerJwt i 3 minuty dla organizerRefreshJwt. W inspektorze przeglądarki sprawdzono, że co jedną minutę cyklicznie wywoływane zapytanie wysyłające powiadomienia zwraca kod 403 i wysyłana jest prośba o odświeżenie ciasteczka. Następnie zamknięto kartę aplikacji i ponownie otwarto ją po ponad 3 minutach. Użytkownik został automatycznie wylogowany.
 
-Utworzono dwa nowe katalogi oraz notatkę, wydarzenie i zadanie. Formularz nie pozwala na wpisanie nazwy elementu lub lokalizacji dłuższej niż 50 znaków, ani zawartości pliku dłuższej niż 65000 znaków, nie pozwala też zapisać elementu z pustą nazwą -- przycisk do zapisu jest nieaktywny. Sprawdzono, że poprawnie zapisuje się notatka z 65000-znakową treścią. Nie można zapisać wydarzenia, którego termin początkowy jest późniejszy od końcowego. Jeżeli w polu daty wpisze się niepełną datę (na przykład bez minut), lub będzie ona nieprawidłowa (na przykład 30.02.2024) pojawi się informacja, że data ta nie zostanie zapisana w bazie danych. Przycisk ,,Discard changes'' przywraca stan formularza do stanu ostatniego zapisu.
+Utworzono dwa nowe katalogi oraz notatkę, wydarzenie i zadanie. Formularz nie pozwala na wpisanie nazwy elementu lub lokalizacji dłuższej niż 50 znaków, ani zawartości pliku dłuższej niż 65000 znaków, nie pozwala też zapisać elementu z pustą nazwą -- przycisk do zapisu jest nieaktywny. Sprawdzono, że poprawnie zapisuje się notatka z 65000-znakową treścią. Nie można zapisać wydarzenia, którego termin początkowy jest późniejszy od końcowego. Jeżeli w polu daty wpisze się niepełną datę (na przykład bez minut), lub będzie ona nieprawidłowa (na przykład 30.02.2024) pojawi się informacja, że data ta nie zostanie zapisana w bazie danych. Próba podania daty spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC skutkuje informacją, że data nie mieści się w tym przedziale. Przycisk ,,Discard changes'' przywraca stan formularza do stanu ostatniego zapisu.
 
 Struktura utworzonych w tym kroku plików:
 \begin{minted}{bash}
@@ -2328,6 +2330,8 @@ Tworzenie katalogu bazowego przy rejestracji: podczas tworzenia katalogu sprawdz
 Odświeżanie ciasteczek: odświeżane było jedynie ciasteczko organizerJwt zamiast obydwu. 
 
 Tworzenie elementu: dodano obsługę sytuacji, gdzie katalog nadrzędny o podanym ID nie istnieje lub należy do innego użytkownika.
+
+Pola w tabeli typu TIMESTAMP: typ danych TIMESTAMP w MySQL obsługuje jedynie przedział 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC. Należało dodać zabezpieczenia, przed podaniem daty spoza tego przedziału.
 
 Usuwanie elementu: element powinien móc usunąć jedynie jego właściciel. Przypadkowo zrealizowano sytuację odwrotną: wszyscy użytkownicy niebędący właścicielem mogli usuwać elementy.
 

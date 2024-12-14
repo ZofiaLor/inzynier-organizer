@@ -976,6 +976,16 @@ Na diagramie rys. \ref{fig:package} przedstawiono ogólną budowę wewnętrzną 
 \label{fig:package}
 \end{figure}
 
+\section{Autentykacja i autoryzacja}
+
+\ksremark{Odniesienia do tutoriali -- czy mają wyglądać w ten sposób?}
+
+Do implementacji autentykacji i autoryzacji po stronie back-endu wykorzystano rozwiązanie inspirowane przykładem \ref{bib:bkspringauth}. W ciasteczku przechowywany jest JWT zawierający zakodowaną nazwę użytkownika. Dla każdego zapytania wykonywany jest filtr dekodujący tę nazwę i ustawiający odpowiednie role dla kontekstu. Aby zablokować pewne metody dla użytkowników niezalogowanych, bądź niebędących administratorami, wystarczy wtedy wykorzystać adnotacje odpowiednio \mintinline{java}{@PreAuthorize("isAuthenticated()")} i \mintinline{java}{@PreAuthorize("hasRole('ADMIN')")}. 
+
+Ciasteczko ma ograniczony czas ważności, dlatego, wzorując się na przykładzie \ref{bib:bkspringrefresh}, zaimplementowano funkcjonalność odświeżania. Wykorzystano w tym celu drugie ciasteczko, o dłuższym czasie ważności. Wywołanie metody odświeżającej token przydziela nowe ciasteczka, pod warunkiem, że nie minął jeszcze czas ważności tokenu odświeżającego.
+
+Autentykację i autoryzację po stronie front-endu wzorowano na przykładach \ref{bib:bkangularauth} oraz \ref{bib:bkangularrefresh}. Do zapisania informacji o użytkowniku wykorzystano jednak pamięć lokalną przeglądarki, nie pamięć sesji. Dzięki temu dane użytkownika są dostępne również wtedy, gdy aplikacja otwarta zostanie w nowej karcie. Pamięć sesji została za to użyta do przechowywania danych o ostatnio przeglądanych katalogach w drzewie, co sprawia, że drzewo nie wraca do stanu początkowego z każdym przeładowaniem strony. Ponadto prośba o odświeżenie ciasteczek wysyłana jest tylko wtedy, gdy endpoint ,,Send Notifications'' zwróci kod błędu, jako że jest on wywoływany cyklicznie co kilka sekund i nie może zwrócić błędu, jeżeli ciasteczko zawiera poprawne dane użytkownika.
+
 \section{Lista endpointów}
 
 W tym podrozdziale przedstawiono listę wszystkich endpointów wystawianych przez backend. Dla każdego opisano URL, ogólną zasadę działania, dane wejściowe oraz możliwe odpowiedzi.
@@ -2381,6 +2391,8 @@ Wszystkie wymagania funkcjonalne zostały spełnione.
 Zapewniono bezpieczeństwo danych użytkownika: hasło przesyłane jest w zapytaniu z front-endu tylko podczas rejestracji i logowania, nigdy nie jest przesyłane w odpowiedzi. W bazie danych jest przechowywane w postaci zakodowanej, wykorzystując enkoder zapewniony przez Spring Security.
 
 W zapewnieniu intuicyjności aplikacji pomogło skorzystanie z biblioteki komponentów Angular Material. Dzięki temu wygląd interfejsu i poszczególnych kontrolek jest podobny do innych, znanych aplikacji. Oprócz tekstu wykorzystano wiele ikon, dodatkowo wskazujących na działanie każdego przycisku. Na przyciski, które, ze względów estetycznych, mają postać ikony bez tekstu, można najechać myszą, aby wyświetlić wskazówkę dotyczącą ich działania.
+
+Przetestowano endpointy back-endu przy pomocy programu Postman. Sprawdzono zarówno przypadki poprawnych danych wejściowych, jak i dane, dla których zwracany jest kod błędu. Podczas testowania front-endu sprawdzono, czy dane są poprawnie przekazywane między front-endem a back-endem i poprawnie reprezentowane w interfejsie. Przetestowano sposoby reakcji interfejsu na błędy i niedozwolone operacje. 
 
 \section{Dalsze kierunki rozwoju aplikacji}
 

@@ -6,6 +6,7 @@
         <input matInput type="datetime-local"
         name="customDate" required
         formControlName="customDate"/>
+        <mat-hint>Date range from {{minDate.toLocaleString()}} to {{maxDate.toLocaleString()}}</mat-hint>
         <mat-error>
           @if(customDateForm.controls.customDate.value == '') {
             Enter the date fully
@@ -13,6 +14,7 @@
         </mat-error>
     </mat-form-field>
   </form>
+  <br/>
   <button mat-flat-button color="primary" [disabled]="!customDateForm.valid" (click)="addCustomDate()"><mat-icon>notification_add</mat-icon>Add</button>
 
   @if (isEvent(file) || isTask(file)) {

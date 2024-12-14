@@ -8,6 +8,7 @@
             class="form-control"
             name="start" required
             formControlName="start"/>
+            <mat-hint>Date range from {{minDate.toLocaleString()}} to {{maxDate.toLocaleString()}}</mat-hint>
             <mat-error>
                 @if(form.controls.start.value == '') {
                   Enter the date fully for it to be saved
@@ -20,6 +21,7 @@
             class="form-control"
             name="end" required
             formControlName="end"/>
+            <mat-hint>Date range from {{minDate.toLocaleString()}} to {{maxDate.toLocaleString()}}</mat-hint>
             <mat-error>
                 @if(form.controls.end.value == '') {
                   This date is not required. If you wish to set it, the date and time have to be entered fully and be valid.
@@ -27,6 +29,7 @@
               </mat-error>
         </mat-form-field>
     </form>
+    <br/>
     <button mat-raised-button color="primary" [disabled]="!form.controls.start.valid" (click)="onAddEventDate()">Add</button>
 }
 

@@ -34,6 +34,8 @@ export class ManageNotifsComponent implements OnInit{
   units = ['months', 'weeks', 'days', 'hours', 'minutes'];
   notifs: Notification[] = [];
   private readonly _destroy$ = new Subject<void>();
+  readonly maxDate = new Date("2038-01-19T03:14:07.000Z");
+  readonly minDate = new Date("1970-01-01T00:00:01.000Z");
 
   customDateForm = this.fb.group({
     customDate: new FormControl('')
@@ -57,6 +59,11 @@ export class ManageNotifsComponent implements OnInit{
   addCustomDate(): void {
     var date = this.customDateForm.controls.customDate.value;
     if (date == null || date == '') return;
+    var dateObj = new Date(date);
+    if (dateObj === null || dateObj < this.minDate || dateObj > this.maxDate) {
+      this.snackBar.open("Date out of range!", "OK", {duration: 10000});
+      return;
+    }
     var message = this.messageForm.controls.messageText.value;
     if (message == null || message == '') {
       message = "Reminder for " + this.file!.name;

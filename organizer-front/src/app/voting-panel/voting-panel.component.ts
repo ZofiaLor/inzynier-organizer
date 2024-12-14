@@ -38,6 +38,8 @@ export class VotingPanelComponent implements OnInit {
   votes = new Map<number, Vote[]>; // number - EventDate ID
   user?: User;
   isOwner = false;
+  readonly maxDate = new Date("2038-01-19T03:14:07.000Z");
+  readonly minDate = new Date("1970-01-01T00:00:01.000Z");
 
   form = this.fb.group({
     start: new FormControl('', Validators.required),
@@ -56,9 +58,17 @@ export class VotingPanelComponent implements OnInit {
 
   onAddEventDate(): void {
     if (!this.form.controls.start.value || this.form.controls.start.value == '' || this.form.controls.start.value == null) return;
+    var start = new Date(this.form.controls.start.value!);
+    if (!this.checkDateRange(start)) {
+      this.snackBar.open("Start date out of range!", "OK", {duration: 10000});
+      return;
+    }
     if (this.form.controls.end.value != null && this.form.controls.end.value != '') {
-      var start = new Date(this.form.controls.start.value!);
       var end = new Date(this.form.controls.end.value!);
+      if (!this.checkDateRange(end)) {
+        this.snackBar.open("End date out of range!", "OK", {duration: 10000});
+        return;
+      }
       if (start > end) {
         this.snackBar.open("The start of the event cannot be after the end!", "OK", {duration: 10000});
         return;
@@ -174,6 +184,12 @@ export class VotingPanelComponent implements OnInit {
     } else {
       this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
     }
+  }
+
+  checkDateRange(date: Date): boolean {
+    if (date === null) return false;
+    if (date < this.minDate || date > this.maxDate) return false;
+    return true;
   }
 
 }

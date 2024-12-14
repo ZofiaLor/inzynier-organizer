@@ -178,6 +178,7 @@
                   name="startDate" required 
                   [readonly] = "!isOwner && !createMode && !canEdit"
                   formControlName="startDate"/>
+                  <mat-hint>Date range from {{minDate.toLocaleString()}} to {{maxDate.toLocaleString()}}</mat-hint>
                   <mat-error>
                     @if(eventForm.controls.startDate.value == null) {
                       This date is not required. If you wish to set it, the date and time have to be entered fully and be valid.
@@ -191,15 +192,19 @@
                   name="endDate" required 
                   [readonly] = "!isOwner && !createMode && !canEdit"
                   formControlName="endDate"/>
+                  <mat-hint>Date range from {{minDate.toLocaleString()}} to {{maxDate.toLocaleString()}}</mat-hint>
                   <mat-error>
                     @if(eventForm.controls.endDate.value == null) {
                       This date is not required. If you wish to set it, the date and time have to be entered fully and be valid.
                     }
                   </mat-error>
               </mat-form-field>
-              <button mat-raised-button
-              color="accent" (click)="goToVotingPanel()"><mat-icon>how_to_vote</mat-icon>Date voting panel</button>
-              <br/><br/>
+              @if (!createMode) {
+                <button mat-raised-button
+                color="accent" (click)="goToVotingPanel()"><mat-icon>how_to_vote</mat-icon>Date voting panel</button>
+              }
+              
+              <br/><br/><br/>
               <mat-form-field appearance="outline">
                   <mat-label>Location</mat-label>
                   <input matInput type="text"
@@ -255,13 +260,14 @@
                   name="deadline" required
                   [readonly] = "!isOwner && !createMode && !canEdit"
                   formControlName="deadline"/>
+                  <mat-hint>Date range from {{minDate.toLocaleString()}} to {{maxDate.toLocaleString()}}</mat-hint>
                   <mat-error>
                     @if(taskForm.controls.deadline.value == null) {
                       This date is not required. If you wish to set it, the date and time have to be entered fully and be valid.
                     }
                   </mat-error>
               </mat-form-field>
-              <br/><br/>
+              <br/><br/><br/>
               <mat-form-field appearance="outline" style="width: 100%;">
                   <mat-label>Content</mat-label>
                   <textarea matInput type="text"

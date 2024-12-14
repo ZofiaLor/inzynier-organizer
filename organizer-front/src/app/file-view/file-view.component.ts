@@ -55,6 +55,8 @@ export class FileViewComponent implements OnInit{
   parentId?: number;
   movedDirId?: number;
   private readonly _destroy$ = new Subject<void>();
+  readonly maxDate = new Date("2038-01-19T03:14:07.000Z");
+  readonly minDate = new Date("1970-01-01T00:00:01.000Z");
 
   dirForm = this.fb.group({
     dirname: new FormControl('', Validators.required)
@@ -373,13 +375,24 @@ export class FileViewComponent implements OnInit{
     this.event!.startDate = this.eventForm.controls.startDate.value!;
     this.event!.endDate = this.eventForm.controls.endDate.value!;
     this.event!.location = this.eventForm.controls.location.value!;
-    if (this.event!.startDate != null && this.event!.endDate != null) {
+    if (this.event!.startDate != null) {
       var start = new Date(this.event!.startDate!);
-      var end = new Date(this.event!.endDate!);
-      if (start > end) {
-        this.snackBar.open("The start of the event cannot be after the end!", "OK", {duration: 10000});
+      if (!this.checkDateRange(start)) {
+        this.snackBar.open("Start date out of range!", "OK", {duration: 10000});
         return;
       }
+      if (this.event!.endDate != null) {
+        var end = new Date(this.event!.endDate!);
+        if (!this.checkDateRange(end)) {
+          this.snackBar.open("End date out of range!", "OK", {duration: 10000});
+          return;
+        }
+        if (start > end) {
+          this.snackBar.open("The start of the event cannot be after the end!", "OK", {duration: 10000});
+          return;
+        }
+      }
+      
     }
     this.fileService.updateEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
@@ -398,13 +411,24 @@ export class FileViewComponent implements OnInit{
     this.event!.startDate = this.eventForm.controls.startDate.value!
     this.event!.endDate = this.eventForm.controls.endDate.value!
     this.event!.location = this.eventForm.controls.location.value!;
-    if (this.event!.startDate != null && this.event!.endDate != null) {
+    if (this.event!.startDate != null) {
       var start = new Date(this.event!.startDate!);
-      var end = new Date(this.event!.endDate!);
-      if (start > end) {
-        this.snackBar.open("The start of the event cannot be after the end!", "OK", {duration: 10000});
+      if (!this.checkDateRange(start)) {
+        this.snackBar.open("Start date out of range!", "OK", {duration: 10000});
         return;
       }
+      if (this.event!.endDate != null) {
+        var end = new Date(this.event!.endDate!);
+        if (!this.checkDateRange(end)) {
+          this.snackBar.open("End date out of range!", "OK", {duration: 10000});
+          return;
+        }
+        if (start > end) {
+          this.snackBar.open("The start of the event cannot be after the end!", "OK", {duration: 10000});
+          return;
+        }
+      }
+      
     }
     this.fileService.createEvent(this.event!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
@@ -423,6 +447,13 @@ export class FileViewComponent implements OnInit{
     this.task!.textContent = this.taskForm.controls.content.value!;
     this.task!.deadline = this.taskForm.controls.deadline.value!;
     this.task!.finished = this.taskForm.controls.isFinished.value!;
+    if (this.task!.deadline != null) {
+      var deadline = new Date(this.task!.deadline!);
+      if (!this.checkDateRange(deadline)) {
+        this.snackBar.open("Deadline date out of range!", "OK", {duration: 10000});
+        return;
+      }
+    }
     this.fileService.updateTask(this.task!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this.task = resp.body!;
@@ -439,6 +470,13 @@ export class FileViewComponent implements OnInit{
     this.task!.textContent = this.taskForm.controls.content.value!;
     this.task!.deadline = this.taskForm.controls.deadline.value!;
     this.task!.finished = this.taskForm.controls.isFinished.value!;
+    if (this.task!.deadline != null) {
+      var deadline = new Date(this.task!.deadline!);
+      if (!this.checkDateRange(deadline)) {
+        this.snackBar.open("Deadline date out of range!", "OK", {duration: 10000});
+        return;
+      }
+    }
     this.fileService.createTask(this.task!).pipe(takeUntil(this._destroy$)).subscribe({
       next: resp => {
         this._file = resp.body!;
@@ -561,6 +599,12 @@ export class FileViewComponent implements OnInit{
     } else {
       this.snackBar.open("Something went wrong...", undefined, {duration: 3000});
     }
+  }
+
+  checkDateRange(date: Date): boolean {
+    if (date === null) return false;
+    if (date < this.minDate || date > this.maxDate) return false;
+    return true;
   }
 
 }

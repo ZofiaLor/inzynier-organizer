@@ -525,25 +525,39 @@ escapeinside={@*}{*@},%
 \label{ch:wstep}
 \ksremark{Wstęp napiszemy na końcu.}
 
-\begin{itemize}
-\item wprowadzenie w problem/zagadnienie
-\item osadzenie problemu w dziedzinie
-\item cel pracy
-\item zakres pracy
-\item zwięzła charakterystyka rozdziałów
-\item jednoznaczne określenie wkładu autora, w przypadku prac wieloosobowych – tabela z autorstwem poszczególnych elementów pracy
-\end{itemize}
+% \begin{itemize}
+% \item wprowadzenie w problem/zagadnienie
+% \item osadzenie problemu w dziedzinie
+% \item cel pracy
+% \item zakres pracy
+% \item zwięzła charakterystyka rozdziałów
+% \item jednoznaczne określenie wkładu autora, w przypadku prac wieloosobowych – tabela z autorstwem poszczególnych elementów pracy
+% \end{itemize}
 
+Obecnie wiele programów tworzonych jest w formie aplikacji przeglądarkowych. Aplikacje takie są niezależne od systemu operacyjnego użytkownika, ani nie wymagają instalacji, dzięki czemu są łatwiejsze i wygodniejsze w obsłudze.
 
+Organizer ma za zadanie pomóc użytkownikowi w planowaniu. Będzie więc możliwe tworzenie wydarzeń, mających miejsce w podanych terminach i miejscach, a także zadań, posiadających pewien termin wykonania, które można oznaczyć jako wykonane lub niewykonane. Ponadto dostępny będzie trzeci rodzaj pliku: notatka, będąca prostszą wersją pozostałych plików -- zawiera tylko opis. Pliki umieszczać będzie można w katalogach, a same katalogi tworzyć będą strukturę hierarchiczną (w katalogu znajdować się mogą inne katalogi). Wszystkie elementy (pliki i katalogi) będzie można przenosić między katalogami.
+
+Aby móc przypisać użytkownikom pliki, będą się oni musieli zarejestrować i zalogować w aplikacji. Dla użytkowników zalogowanych będzie możliwość edycji swojego profilu, jak i trwałego usunięcia konta.
+
+Aplikacja będzie więc przechowywać dane użytkowników, takie jak hasła oraz pliki o prywatnej zawartości. Zapewnione będą więc zabezpieczenia przed odczytem tych danych przez innych użytkowników.
+
+Każdy plik i katalog właściciel (użytkownik, który je utworzył) będzie mógł udostępnić wybranym innym użytkownikom. Dostęp będzie mógł być tylko do wyświetlenia, lub do wyświetlenia i edycji. Dostęp do katalogu będzie dziedziczony przez znajdujące się w nim elementy.
+
+Użytkownik będzie mógł dodać powiadomienia przypominające o dowolnym pliku. Każde powiadomienie będzie mieć określony czas wysłania, po którym pokażą się w odpowiednim miejscu interfejsu.
+
+Aby ułatwić organizację wspólnych wydarzeń, każde z nich posiadać będzie panel głosowania na terminy. Właściciel wydarzenia może zdefiniować dowolną liczbę terminów, na które następnie każdy użytkownik, któremu udostępniono to wydarzenie (w tym właściciel) będzie mógł oddać głos: negatywny, neutralny lub pozytywny. Dzięki temu prościej będzie znaleźć termin, który odpowiada jak największej liczbie osób.
+
+Użytkownikami zarządzać będzie administrator. Będzie on mógł przeglądać listę wszystkich użytkowników i usuwać ich konta, bądź przydzielać i odbierać im rolę administratora.
 
 % TODO
-\chapter{[Analiza tematu]}
+\chapter{Analiza tematu}
 
-\begin{itemize}
-\item sformułowanie problemu
-\item osadzenie tematu w kontekście aktualnego stanu wiedzy (\english{state of the art}) o poruszanym problemie
-\item  studia literaturowe \cite{bib:artykul,bib:ksiazka,bib:konferencja,bib:internet} -  opis znanych rozwiązań (także opisanych naukowo, jeżeli problem jest poruszany w publikacjach naukowych), algorytmów, 
-\end{itemize}
+% \begin{itemize}
+% \item sformułowanie problemu
+% \item osadzenie tematu w kontekście aktualnego stanu wiedzy (\english{state of the art}) o poruszanym problemie
+% \item  studia literaturowe \cite{bib:artykul,bib:ksiazka,bib:konferencja,bib:internet} -  opis znanych rozwiązań (także opisanych naukowo, jeżeli problem jest poruszany w publikacjach naukowych), algorytmów, 
+% \end{itemize}
 
 \section{Opis problemu}
 Aplikacja w dużym stopniu oparta jest na interakcji z użytkownikiem, który w każdym momencie użytkowania ma wiele dostępnych mu działań. Wyzwaniem jest więc nie zaprojektowanie złożonej logiki programu, a zapewnienie poprawnego działania dla wszelkich danych wejściowych pobranych od użytkownika. Zabezpieczenia takie muszą pojawić się od strony interfejsu, który powinien maksymalnie ograniczać możliwość wprowadzenia niepoprawnych danych, ale i od strony backendu, gdzie weryfikować należy przychodzące zapytania HTTP. Zawartość odpowiedzi HTTP jest łatwo dostępna w inspektorze przeglądarki, dlatego już na jej poziomie nie mogą być dostępne dane wrażliwe (hasła), a nie dopiero na poziomie interfejsu.
@@ -591,12 +605,12 @@ Analogiczne funkcjonalności zapewniają aplikacje pakietu Microsoft Office. Pro
 \chapter{Wymagania i narzędzia}
 \label{ch:wymagania-i-narzedzia}
 
-\begin{itemize}
-\item wymagania funkcjonalne i niefunkcjonalne
-\item przypadki użycia (diagramy UML) -- dla prac, w których mają zastosowanie
-\item opis narzędzi, metod eksperymentalnych, metod modelowania itp.
-\item metodyka pracy nad projektowaniem i implementacją -- dla prac, w których ma to zastosowanie
-\end{itemize}
+% \begin{itemize}
+% \item wymagania funkcjonalne i niefunkcjonalne
+% \item przypadki użycia (diagramy UML) -- dla prac, w których mają zastosowanie
+% \item opis narzędzi, metod eksperymentalnych, metod modelowania itp.
+% \item metodyka pracy nad projektowaniem i implementacją -- dla prac, w których ma to zastosowanie
+% \end{itemize}
 
 \section{Wymagania funkcjonalne}
 
@@ -701,18 +715,18 @@ Wykorzystano również komponenty Angular Material \cite{bib:angularmaterial}, d
 \chapter{Specyfikacja zewnętrzna}
 \label{ch:04}
 
-Jeśli „Specyfikacja zewnętrzna”:
-\begin{itemize}
-\item  wymagania sprzętowe i programowe
-\item  sposób instalacji
-\item  sposób aktywacji
-\item  kategorie użytkowników
-\item  sposób obsługi
-\item  administracja systemem
-\item  kwestie bezpieczeństwa
-\item  przykład działania
-\item  scenariusze korzystania z systemu (ilustrowane zrzutami z ekranu lub generowanymi dokumentami)
-\end{itemize}
+% Jeśli „Specyfikacja zewnętrzna”:
+% \begin{itemize}
+% \item  wymagania sprzętowe i programowe
+% \item  sposób instalacji
+% \item  sposób aktywacji
+% \item  kategorie użytkowników
+% \item  sposób obsługi
+% \item  administracja systemem
+% \item  kwestie bezpieczeństwa
+% \item  przykład działania
+% \item  scenariusze korzystania z systemu (ilustrowane zrzutami z ekranu lub generowanymi dokumentami)
+% \end{itemize}
 
 \section{Uruchamianie}
 
@@ -755,7 +769,11 @@ Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bas
 
 	\mintinline{powershell}{.\mvnw.cmd install}
 
-	W razie niepowodzenia, należy jako administrator otworzyć plik \mintinline{powershell}{C:\Windows\System32\drivers\etc\hosts}. Należy wpisać do niego linię \mintinline{powershell}{127.0.0.1 db} i zapisać plik. Następnie należy powtórzyć polecenie \mintinline{powershell}{.\mvnw.cmd install}.
+	W razie niepowodzenia, należy jako administrator otworzyć plik 
+  
+  \mintinline{powershell}{C:\Windows\System32\drivers\etc\hosts} 
+  
+  Należy wpisać do niego linię \mintinline{powershell}{127.0.0.1 db} i zapisać plik. Następnie należy powtórzyć polecenie \mintinline{powershell}{.\mvnw.cmd install}.
 \end{itemize}
 
  Po poprawnym wykonaniu polecenia, wygenerowany zostanie katalog \mintinline{bash}{target}, zawierający plik z rozszerzeniem \mintinline{bash}{.jar}.
@@ -897,16 +915,16 @@ c22ebdb94057   mysql:5.7   "docker-entrypoint.s…"   7 weeks ago   Up About a m
 \label{ch:05}
 
 
-Jeśli „Specyfikacja wewnętrzna”:
-\begin{itemize}
-\item przedstawienie idei
-\item architektura systemu
-\item opis struktur danych (i organizacji baz danych)
-\item komponenty, moduły, biblioteki, przegląd ważniejszych klas (jeśli występują)
-\item przegląd ważniejszych algorytmów (jeśli występują)
-\item szczegóły implementacji wybranych fragmentów, zastosowane wzorce projektowe
-\item diagramy UML
-\end{itemize}
+% Jeśli „Specyfikacja wewnętrzna”:
+% \begin{itemize}
+% \item przedstawienie idei
+% \item architektura systemu
+% \item opis struktur danych (i organizacji baz danych)
+% \item komponenty, moduły, biblioteki, przegląd ważniejszych klas (jeśli występują)
+% \item przegląd ważniejszych algorytmów (jeśli występują)
+% \item szczegóły implementacji wybranych fragmentów, zastosowane wzorce projektowe
+% \item diagramy UML
+% \end{itemize}
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 % Pakiet minted wymaga importu: \usepackage{minted}                 %
@@ -915,10 +933,10 @@ Jeśli „Specyfikacja wewnętrzna”:
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
 
-Krótka wstawka kodu w linii tekstu jest możliwa, np.  \lstinline|int a;| (biblioteka \texttt{listings})% lub  \mintinline{C++}|int a;| (biblioteka \texttt{minted})
-. 
-Dłuższe fragmenty lepiej jest umieszczać jako rysunek, np. kod na rys \ref{fig:pseudokod:listings}% i rys. \ref{fig:pseudokod:minted}
-, a naprawdę długie fragmenty – w załączniku.
+% Krótka wstawka kodu w linii tekstu jest możliwa, np.  \lstinline|int a;| (biblioteka \texttt{listings})% lub  \mintinline{C++}|int a;| (biblioteka \texttt{minted})
+% . 
+% Dłuższe fragmenty lepiej jest umieszczać jako rysunek, np. kod na rys \ref{fig:pseudokod:listings}% i rys. \ref{fig:pseudokod:minted}
+% , a naprawdę długie fragmenty – w załączniku.
 
 
 % \begin{figure}
@@ -982,11 +1000,11 @@ Na diagramie rys. \ref{fig:package} przedstawiono ogólną budowę wewnętrzną 
 
 \ksremark{Odniesienia do tutoriali -- czy mają wyglądać w ten sposób?}
 
-Do implementacji autentykacji i autoryzacji po stronie back-endu wykorzystano rozwiązanie inspirowane przykładem \ref{bib:bkspringauth}. W ciasteczku przechowywany jest JWT zawierający zakodowaną nazwę użytkownika. Dla każdego zapytania wykonywany jest filtr dekodujący tę nazwę i ustawiający odpowiednie role dla kontekstu. Aby zablokować pewne metody dla użytkowników niezalogowanych, bądź niebędących administratorami, wystarczy wtedy wykorzystać adnotacje odpowiednio \mintinline{java}{@PreAuthorize("isAuthenticated()")} i \mintinline{java}{@PreAuthorize("hasRole('ADMIN')")}. 
+Do implementacji autentykacji i autoryzacji po stronie back-endu wykorzystano rozwiązanie inspirowane przykładem \cite{bib:bkspringauth}. W ciasteczku przechowywany jest JWT zawierający zakodowaną nazwę użytkownika. Dla każdego zapytania wykonywany jest filtr dekodujący tę nazwę i ustawiający odpowiednie role dla kontekstu. Aby zablokować pewne metody dla użytkowników niezalogowanych, bądź niebędących administratorami, wystarczy wtedy wykorzystać adnotacje odpowiednio \mintinline{java}{@PreAuthorize("isAuthenticated()")} i \mintinline{java}{@PreAuthorize("hasRole('ADMIN')")}. 
 
-Ciasteczko ma ograniczony czas ważności, dlatego, wzorując się na przykładzie \ref{bib:bkspringrefresh}, zaimplementowano funkcjonalność odświeżania. Wykorzystano w tym celu drugie ciasteczko, o dłuższym czasie ważności. Wywołanie metody odświeżającej token przydziela nowe ciasteczka, pod warunkiem, że nie minął jeszcze czas ważności tokenu odświeżającego.
+Ciasteczko ma ograniczony czas ważności, dlatego, wzorując się na przykładzie \cite{bib:bkspringrefresh}, zaimplementowano funkcjonalność odświeżania. Wykorzystano w tym celu drugie ciasteczko, o dłuższym czasie ważności. Wywołanie metody odświeżającej token przydziela nowe ciasteczka, pod warunkiem, że nie minął jeszcze czas ważności tokenu odświeżającego.
 
-Autentykację i autoryzację po stronie front-endu wzorowano na przykładach \ref{bib:bkangularauth} oraz \ref{bib:bkangularrefresh}. Do zapisania informacji o użytkowniku wykorzystano jednak pamięć lokalną przeglądarki, nie pamięć sesji. Dzięki temu dane użytkownika są dostępne również wtedy, gdy aplikacja otwarta zostanie w nowej karcie. Pamięć sesji została za to użyta do przechowywania danych o ostatnio przeglądanych katalogach w drzewie, co sprawia, że drzewo nie wraca do stanu początkowego z każdym przeładowaniem strony. Ponadto prośba o odświeżenie ciasteczek wysyłana jest tylko wtedy, gdy endpoint ,,Send Notifications'' zwróci kod błędu, jako że jest on wywoływany cyklicznie co kilka sekund i nie może zwrócić błędu, jeżeli ciasteczko zawiera poprawne dane użytkownika.
+Autentykację i autoryzację po stronie front-endu wzorowano na przykładach \cite{bib:bkangularauth} oraz \cite{bib:bkangularrefresh}. Do zapisania informacji o użytkowniku wykorzystano jednak pamięć lokalną przeglądarki, nie pamięć sesji. Dzięki temu dane użytkownika są dostępne również wtedy, gdy aplikacja otwarta zostanie w nowej karcie. Pamięć sesji została za to użyta do przechowywania danych o ostatnio przeglądanych katalogach w drzewie, co sprawia, że drzewo nie wraca do stanu początkowego z każdym przeładowaniem strony. Ponadto prośba o odświeżenie ciasteczek wysyłana jest tylko wtedy, gdy endpoint ,,Send Notifications'' zwróci kod błędu, jako że jest on wywoływany cyklicznie co kilka sekund i nie może zwrócić błędu, jeżeli ciasteczko zawiera poprawne dane użytkownika.
 
 \section{Lista endpointów}
 
@@ -1052,7 +1070,7 @@ Wymagana nazwa użytkownika i hasło, opcjonalny adres email oraz imię (name). 
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Poprawne zarejestrowanie: obiekt utworzonego użytkownika z pustym hasłem i rolą ROLE\_USER, kod 200 (OK) 
+	\item Poprawne zarejestrowanie: obiekt utworzonego użytkownika z pustym hasłem i rolą ROLE\_USER (jeżeli jest to pierwszy użytkownik w bazie danych, rola to ROLE\_ADMIN), kod 200 (OK) 
 	\item Próba zarejestrowania użytkownika o istniejącej już nazwie: kod 403 (Forbidden) 
 	\item Brak nazwy użytkownika lub hasła: kod 400 (Bad Request)
 \end{itemize}
@@ -1946,13 +1964,13 @@ Odpowiedzi:
 % TODO
 \chapter{Weryfikacja i walidacja}
 \label{ch:06}
-\begin{itemize}
-\item sposób testowania w ramach pracy (np. odniesienie do modelu V)
-\item organizacja eksperymentów
-\item przypadki testowe zakres testowania (pełny/niepełny)
-\item wykryte i usunięte błędy
-\item opcjonalnie wyniki badań eksperymentalnych
-\end{itemize}
+% \begin{itemize}
+% \item sposób testowania w ramach pracy (np. odniesienie do modelu V)
+% \item organizacja eksperymentów
+% \item przypadki testowe zakres testowania (pełny/niepełny)
+% \item wykryte i usunięte błędy
+% \item opcjonalnie wyniki badań eksperymentalnych
+% \end{itemize}
 
 Testowanie aplikacji wymaga sprawdzenia, czy jest ona odporna na nieprawidłowe dane wejściowe oraz czy dla danych poprawnych zachowuje się zgodnie z oczekiwaniami. Przetestować pod tym kątem należy zarówno back-end, jak i front-end.
 
@@ -1992,6 +2010,8 @@ Otrzymano odpowiedź:
 }
 \end{minted}
 Odpowiedź nie zawiera już hasła -- zostało ono zakodowane i zapisane w bazie.
+
+Rejestrację przeprowadzono również przy pustej bazie danych. Pierwszy utworzony użytkownik otrzymał rolę ,,ROLE\_ADMIN'', każdy kolejny -- ,,ROLE\_USER''.
 
 Podobnie przetestowano logowanie: dla brakujących danych otrzymano kod 400 i informację ,,Empty username or password'', dla nieistniejącego loginu i nieprawidłowego hasła -- kod 403 i informację ,,Incorrect credentials''. Dla poprawnych danych logowania:
 \begin{minted}{json}
@@ -2321,6 +2341,8 @@ Przetestowano usuwanie konta użytkownika przez niego samego -- operacja przebie
 
 Zalogowano się jako użytkownik posiadający prawa administratorskie. Na pasku nawigacyjnym wyświetlił się dodatkowy przycisk ,,Admin Panel''. W panelu administratora sprawdzono działanie filtrowania, sortowania oraz stronicowania tabeli użytkowników. Kliknięcie na własnego użytkownika wyświetla jego dane. Kliknięcie na dowolnego innego użytkownika pokazuje ponadto przycisk nadawania lub odbierania praw administratora, w zależności od aktualnej roli danego użytkownika, oraz przycisk pozwalający na usunięcie użytkownika. Przetestowano operację zmiany uprawnień, każdorazowo logując się jako zmodyfikowany użytkownik i weryfikując, że stał się lub przestał być administratorem. Następnie usunięto jednego z użytkowników i sprawdzono, że został on usunięty z bazy danych.
 
+Aplikację uruchomiono również w przeglądarkach Microsoft Edge wersji w 131.0 oraz Google Chrome w wersji 131.0. Sprawdzono działanie operacji takich jak logowanie i rejestracja, dodawanie i udostępnianie plików, dodawanie powiadomień, głosowanie na terminy. Nie zauważono różnic w działaniu aplikacji.
+
 \section{Wykryte i usunięte błędy}.
 
 Autentykacja: podczas logowania generowane są dwa ciasteczka: organizerJwt oraz organizerRefreshJwt. Drugie z ciasteczek służy do odświeżania pierwszego, powinno więc mieć dłuższy czas ważności. Przez przypadek do obydwu ciasteczek przypisywano tę samą wartość maxAge.
@@ -2368,11 +2390,11 @@ Panel dostępu do elementów: obiekty AccessFile lub AccessDirectory oraz obiekt
 
 % TODO
 \chapter{Podsumowanie i wnioski}
-\begin{itemize}
-\item uzyskane wyniki w świetle postawionych celów i zdefiniowanych wyżej wymagań
-\item kierunki ewentualnych danych prac (rozbudowa funkcjonalna …)
-\item problemy napotkane w trakcie pracy
-\end{itemize}
+% \begin{itemize}
+% \item uzyskane wyniki w świetle postawionych celów i zdefiniowanych wyżej wymagań
+% \item kierunki ewentualnych danych prac (rozbudowa funkcjonalna …)
+% \item problemy napotkane w trakcie pracy
+% \end{itemize}
 
 \section{Podsumowanie wykonanej aplikacji}
 
@@ -2428,18 +2450,18 @@ Drugim kierunkiem rozwoju może być dodanie funkcjonalności związanych z e-ma
 
 
 % TODO
-\chapter{Źródła}
+% \chapter{Źródła}
 
-Jeżeli w pracy konieczne jest umieszczenie długich fragmentów kodu źródłowego, należy je przenieść w to miejsce.
+% Jeżeli w pracy konieczne jest umieszczenie długich fragmentów kodu źródłowego, należy je przenieść w to miejsce.
 
-\begin{lstlisting}
-if (_nClusters < 1)
-	throw std::string ("unknown number of clusters");
-if (_nIterations < 1 and _epsilon < 0)
-	throw std::string ("You should set a maximal number of iteration or minimal difference -- epsilon.");
-if (_nIterations > 0 and _epsilon > 0)
-	throw std::string ("Both number of iterations and minimal epsilon set -- you should set either number of iterations or minimal epsilon.");
-\end{lstlisting}
+% \begin{lstlisting}
+% if (_nClusters < 1)
+% 	throw std::string ("unknown number of clusters");
+% if (_nIterations < 1 and _epsilon < 0)
+% 	throw std::string ("You should set a maximal number of iteration or minimal difference -- epsilon.");
+% if (_nIterations > 0 and _epsilon > 0)
+% 	throw std::string ("Both number of iterations and minimal epsilon set -- you should set either number of iterations or minimal epsilon.");
+% \end{lstlisting}
 
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 

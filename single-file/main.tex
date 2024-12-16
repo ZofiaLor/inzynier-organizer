@@ -482,10 +482,10 @@ escapeinside={@*}{*@},%
 \Title
 
 \subsubsection*{Streszczenie}  
-(Streszczenie pracy – odpowiednie pole w systemie APD powinno zawierać kopię tego streszczenia.)
+(Streszczenie pracy – odpowiednie pole w systemie APD powinno zawierać kopię tego streszczenia.) \ksremark{to do}
 
 \subsubsection*{Słowa kluczowe} 
-(2-5 slow (fraz) kluczowych, oddzielonych przecinkami)
+(2-5 slow (fraz) kluczowych, oddzielonych przecinkami)\ksremark{to do}
 
 \subsubsection*{Thesis title} 
 \begin{otherlanguage}{british}
@@ -494,11 +494,11 @@ escapeinside={@*}{*@},%
 
 \subsubsection*{Abstract} 
 \begin{otherlanguage}{british}
-(Thesis abstract – to be copied into an appropriate field during an electronic submission – in English.)
+(Thesis abstract – to be copied into an appropriate field during an electronic submission – in English.)\ksremark{to do}
 \end{otherlanguage}
 \subsubsection*{Key words}  
 \begin{otherlanguage}{british}
-(2-5 keywords, separated by commas)
+(2-5 keywords, separated by commas)\ksremark{to do}
 \end{otherlanguage}
 
 
@@ -534,7 +534,7 @@ escapeinside={@*}{*@},%
 % \item jednoznaczne określenie wkładu autora, w przypadku prac wieloosobowych – tabela z autorstwem poszczególnych elementów pracy
 % \end{itemize}
 
-Obecnie wiele programów tworzonych jest w formie aplikacji przeglądarkowych. Aplikacje takie są niezależne od systemu operacyjnego użytkownika, ani nie wymagają instalacji, dzięki czemu są łatwiejsze i wygodniejsze w obsłudze.
+Obecnie wiele programów tworzonych jest w formie aplikacji przeglądarkowych. Aplikacje takie są niezależne od systemu operacyjnego użytkownika, \nocomma\  ani nie wymagają instalacji, dzięki czemu są łatwiejsze i wygodniejsze w obsłudze.
 
 Organizer ma za zadanie pomóc użytkownikowi w planowaniu. Będzie więc możliwe tworzenie wydarzeń, mających miejsce w podanych terminach i miejscach, a także zadań, posiadających pewien termin wykonania, które można oznaczyć jako wykonane lub niewykonane. Ponadto dostępny będzie trzeci rodzaj pliku: notatka, będąca prostszą wersją pozostałych plików -- zawiera tylko opis. Pliki umieszczać będzie można w katalogach, a same katalogi tworzyć będą strukturę hierarchiczną (w katalogu znajdować się mogą inne katalogi). Wszystkie elementy (pliki i katalogi) będzie można przenosić między katalogami.
 
@@ -739,7 +739,7 @@ Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania 
 
 \subsubsection{Back-end i baza danych}
 \begin{enumerate}
-   \item Należy rozpakować pliki źródłowe. Można zrobić to w interfejsie graficznym, lub wywołując w wybranym terminalu komendę:
+   \item Należy rozpakować pliki źródłowe. Można zrobić to w interfejsie graficznym, \nocomma\ lub wywołując w wybranym terminalu komendę:
    \begin{itemize}
 		\item Dla systemu Linux
 
@@ -957,7 +957,7 @@ c22ebdb94057   mysql:5.7   "docker-entrypoint.s…"   7 weeks ago   Up About a m
 % \label{fig:pseudokod:listings}
 % \end{figure}
 
-\section{Lista klas}
+\section{Implementacja klas}
 
 Zależności między klasami przedstawiono na rys. \ref{fig:erd}.
 
@@ -998,7 +998,7 @@ Na diagramie rys. \ref{fig:package} przedstawiono ogólną budowę wewnętrzną 
 
 \section{Autentykacja i autoryzacja}
 
-\ksremark{Odniesienia do tutoriali -- czy mają wyglądać w ten sposób?}
+\ksremark{Odniesienia do tutoriali -- czy mają wyglądać w ten sposób? KS: Tak.}
 
 Do implementacji autentykacji i autoryzacji po stronie back-endu wykorzystano rozwiązanie inspirowane przykładem \cite{bib:bkspringauth}. W ciasteczku przechowywany jest JWT zawierający zakodowaną nazwę użytkownika. Dla każdego zapytania wykonywany jest filtr dekodujący tę nazwę i ustawiający odpowiednie role dla kontekstu. Aby zablokować pewne metody dla użytkowników niezalogowanych, bądź niebędących administratorami, wystarczy wtedy wykorzystać adnotacje odpowiednio \mintinline{java}{@PreAuthorize("isAuthenticated()")} i \mintinline{java}{@PreAuthorize("hasRole('ADMIN')")}. 
 
@@ -1007,7 +1007,7 @@ Ciasteczko ma ograniczony czas ważności, dlatego, wzorując się na przykładz
 Autentykację i autoryzację po stronie front-endu wzorowano na przykładach \cite{bib:bkangularauth} oraz \cite{bib:bkangularrefresh}. Do zapisania informacji o użytkowniku wykorzystano jednak pamięć lokalną przeglądarki, nie pamięć sesji. Dzięki temu dane użytkownika są dostępne również wtedy, gdy aplikacja otwarta zostanie w nowej karcie. Pamięć sesji została za to użyta do przechowywania danych o ostatnio przeglądanych katalogach w drzewie, co sprawia, że drzewo nie wraca do stanu początkowego z każdym przeładowaniem strony. Ponadto prośba o odświeżenie ciasteczek wysyłana jest tylko wtedy, gdy endpoint ,,Send Notifications'' zwróci kod błędu, jako że jest on wywoływany cyklicznie co kilka sekund i nie może zwrócić błędu, jeżeli ciasteczko zawiera poprawne dane użytkownika.
 
 \section{Lista endpointów}
-
+\label{sec:lista-endpointow}
 W tym podrozdziale przedstawiono listę wszystkich endpointów wystawianych przez backend. Dla każdego opisano URL, ogólną zasadę działania, dane wejściowe oraz możliwe odpowiedzi.
 
 \subsection{Authorization}
@@ -1974,7 +1974,7 @@ Odpowiedzi:
 
 Testowanie aplikacji wymaga sprawdzenia, czy jest ona odporna na nieprawidłowe dane wejściowe oraz czy dla danych poprawnych zachowuje się zgodnie z oczekiwaniami. Przetestować pod tym kątem należy zarówno back-end, jak i front-end.
 
-W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne z wymienionymi w podrozdziale ,,Lista Endpointów'' \ksremark{odwołanie poprzez etykietę \LaTeX a}. Z kolei front-end powinien już na poziomie interfejsu w jak największym stopniu ograniczyć możliwość wprowadzenia błędnych danych.
+W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne z wymienionymi w podrozdziale ,,Lista Endpointów'' \ksremark{odwołanie poprzez etykietę \LaTeX a: \nameref{sec:lista-endpointow}}. Z kolei front-end powinien już na poziomie interfejsu w jak największym stopniu ograniczyć możliwość wprowadzenia błędnych danych.
 
 \section{Testowanie back-endu}
 
@@ -2308,7 +2308,7 @@ Następnie, jako właściciel, usunięto udzielenie dostępu do przeglądania pl
 
 Panel udostępniania pobiera listę użytkowników z bazy danych, nie jest możliwe wybranie nieistniejącego użytkownika. 
 
-Pliki i katalogi nieudostępnione użytkownikowi nie pojawiają się w drzewie plików. Jeżeli użytkownik spróbuje dostać się do elementu wpisując jego identyfikator w adresie URL, w przeglądarce nie pojawi się żaden element, a na dole ekranu pokazuje się powiadomienie ,,You don't have access to view this file'' (lub ,,[...] folder'', w przypadku próby dostępu do katalogu). Jeżeli w analogiczny sposób użytkownik spróbuje dostać się do nieistniejącego elementu, powiadomienie będzie miało treść ,,This file could not be found'' (lub ,,This folder [...]).
+Pliki i katalogi nieudostępnione użytkownikowi nie pojawiają się w drzewie plików. Jeżeli użytkownik spróbuje dostać się do elementu wpisując jego identyfikator w adresie URL, w przeglądarce nie pojawi się żaden element, a na dole ekranu pokazuje się powiadomienie ,,You don't have access to view this file'' (lub ,,[...] folder'', w przypadku próby dostępu do katalogu). Jeżeli w analogiczny sposób użytkownik spróbuje dostać się do nieistniejącego elementu, powiadomienie będzie miało treść ,,This file could not be found'' (lub ,,This folder [...]\ksremark{[\ldots]}).
 
 Przycisk służący do przenoszenia elementu do innego katalogu jest ukryty dla katalogu bazowego. Przetestowano przenoszenie plików -- na liście katalogów do wyboru są jedynie katalogi należące do użytkownika. W przypadku katalogu ,,Child Directory'' niemożliwe jest umieszczenie go wewnątrz katalogu ,,Grandchild Directory'' -- przejście wgłąb przenoszonego katalogu jest nieaktywne, jak pokazano na rys. \ref{fig:move-dir-inactive}.
 
@@ -2331,7 +2331,7 @@ Na stronie profilu użytkownika wyświetlają się wszystkie wysłane powiadomie
 
 Do pliku dodano powiadomienie, a następnie usunięto plik. Powiadomienie zostało kaskadowo usunięte.
 
-W panelu głosowania na termin wydarzenia dodano kilka propozycji -- formularz tworzenia obiektu EventDate jest widoczny tylko dla właściciela. Pole daty początkowej jest wymagane, obiekt nie zostanie też dodany, jeżeli data końcowa jest wcześniejsza od początkowej. Na propozycje zagłosowano, zmieniano wartości głosów, usuwano głosy: wynik całkowity zmienia się z każdą modyfikacją. Wydarzenie udostępniono dwóm innym użytkownikom -- jednemu do edycji, drugiemu do wyświetlania. Obydwaj użytkownicy mogli zagłosować i dodać powiadomienia.
+W panelu głosowania na termin wydarzenia dodano kilka propozycji -- formularz tworzenia obiektu \mintinline{Java}|EventDate| jest widoczny tylko dla właściciela. Pole daty początkowej jest wymagane, obiekt nie zostanie też dodany, jeżeli data końcowa jest wcześniejsza od początkowej. Na propozycje zagłosowano, zmieniano wartości głosów, usuwano głosy: wynik całkowity zmienia się z każdą modyfikacją. Wydarzenie udostępniono dwóm innym użytkownikom -- jednemu do edycji, drugiemu do wyświetlania. Obydwaj użytkownicy mogli zagłosować i dodać powiadomienia.
 
 Jako właściciel wydarzenia usunięto jedną z propozycji, a inną zatwierdzono -- termin wydarzenia odpowiednio się zmienił.
 
@@ -2349,7 +2349,7 @@ Autentykacja: podczas logowania generowane są dwa ciasteczka: organizerJwt oraz
 
 Tworzenie katalogu bazowego przy rejestracji: podczas tworzenia katalogu sprawdzane jest, czy jego katalog nadrzędny istnieje. Nie uwzględniono sytuacji wyjątkowej, w której tworzony jest katalog bazowy nieposiadający katalogu nadrzędnego.
 
-Odświeżanie ciasteczek: odświeżane było jedynie ciasteczko organizerJwt zamiast obydwu. 
+Odświeżanie ciasteczek: odświeżane było jedynie ciasteczko organizerJwt \ksremark{Tu i dalej: napisałbym w minted.} zamiast obydwu. 
 
 Tworzenie elementu: dodano obsługę sytuacji, gdzie katalog nadrzędny o podanym ID nie istnieje lub należy do innego użytkownika.
 
@@ -2398,9 +2398,11 @@ Panel dostępu do elementów: obiekty AccessFile lub AccessDirectory oraz obiekt
 
 \section{Podsumowanie wykonanej aplikacji}
 
-W ramach projektu zaprojektowano relacyjną bazę danych. Niektóre tabele odpowiadają występującym w temacie pojęciom -- użytkownik, plik, katalog. Inne, takie jak tabele przypisujące dostępy do elementów użytkownikom, bądź tabela zawierająca dane niezbędne do odświeżenia ciasteczek, są niezbędne do prawidłowego działania aplikacji, lecz niewidoczne dla jej użytkownika.
+\ksremark{To jest trochę długie. Napisałbym w pierwszym akapicie bardzo syntetycznie, co zostało zrobione. Takie streszczeni pracy na jeden akapit (może być trochę dłuższy).}
 
-Implementację back-endu aplikacji utrzymano w konwencji frameworku Spring. Korzystając z mapowania obiektowo-relacyjnego tabele bazy danych zostały odwzorowane jako klasy języka Java. Dla każdej z nich zaimplementowano również klasy Repository, Service oraz Controller, a dla większości także klasy DTO oraz Mapper. Utworzono również klasy kluczy złożonych, konieczne do implementacji klas w relacji N:M, oraz pomocnicze klasy wyjątków, zwiększające czytelność kodu odpowiedzialnego za sprawdzanie dostępu do plików i katalogów.
+W ramach projektu zaprojektowano \ksremark{Najpierw napiszemy, że powstała aplikacja. Czym się cechuje. Takie krótkie powtórzenie ze wstępu. Tutaj też można napisać, co nowego wnosi ta aplikacja w stosunku do istniejących rozwiązań. Potem przejdziemy do szczegółów.} relacyjną bazę danych. Niektóre tabele odpowiadają występującym w temacie pojęciom -- użytkownik, plik, katalog. Inne, takie jak tabele przypisujące dostępy do elementów użytkownikom, bądź tabela zawierająca dane niezbędne do odświeżenia ciasteczek, są niezbędne do prawidłowego działania aplikacji, lecz niewidoczne dla jej użytkownika.
+
+Implementację back-endu aplikacji utrzymano w konwencji frameworku Spring. Korzystając z mapowania obiektowo-relacyjnego tabele bazy danych zostały odwzorowane jako klasy języka Java. Dla każdej z nich zaimplementowano również klasy Repository \ksremark{tu i dalej: w minted}, Service oraz Controller, a dla większości także klasy DTO oraz Mapper. Utworzono również klasy kluczy złożonych, konieczne do implementacji klas w relacji N:M \ksremark{$N:M$}, oraz pomocnicze klasy wyjątków, zwiększające czytelność kodu odpowiedzialnego za sprawdzanie dostępu do plików i katalogów.
 
 Do implementacji dziedziczenia klas Event, Note oraz Task po klasie File w bazie danych wykorzystano metodę Single Table Inheritance, przez co w bazie odpowiada im wszystkim jedna tabela. Dzięki zastosowaniu dziedziczenia, operacje odczytu oraz usunięcia wierszy wystarczyło zaimplementować raz, dla klasy bazowej. Operacje tworzenia oraz aktualizacji wierszy musiały jednak być napisane osobno dla każdej klasy.
 

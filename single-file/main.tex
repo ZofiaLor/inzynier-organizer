@@ -482,10 +482,10 @@ escapeinside={@*}{*@},%
 \Title
 
 \subsubsection*{Streszczenie}  
-(Streszczenie pracy – odpowiednie pole w systemie APD powinno zawierać kopię tego streszczenia.) \ksremark{to do}
+Organizer to wykorzystująca bazę danych aplikacja webowa pozwalająca na tworzenie i udostępnianie zalogowanym użytkownikom plików: notatek, wydarzeń i zadań oraz dodawanie do nich powiadomień. Ponadto ułatwia ona umawianie terminów wydarzeń dzięki funkcjonalności głosowania.
 
 \subsubsection*{Słowa kluczowe} 
-(2-5 slow (fraz) kluczowych, oddzielonych przecinkami)\ksremark{to do}
+Angular, MySQL, Spring, Organizer
 
 \subsubsection*{Thesis title} 
 \begin{otherlanguage}{british}
@@ -494,11 +494,11 @@ escapeinside={@*}{*@},%
 
 \subsubsection*{Abstract} 
 \begin{otherlanguage}{british}
-(Thesis abstract – to be copied into an appropriate field during an electronic submission – in English.)\ksremark{to do}
+Organizer is a web application that uses database and allows logged users to create and share files: events, notes and tasks, and add reminders for them. Moreover, it helps deciding on event dates thanks to its voting functionality.
 \end{otherlanguage}
 \subsubsection*{Key words}  
 \begin{otherlanguage}{british}
-(2-5 keywords, separated by commas)\ksremark{to do}
+Angular, MySQL, Spring, Organizer
 \end{otherlanguage}
 
 
@@ -523,7 +523,6 @@ escapeinside={@*}{*@},%
 % TODO
 \chapter{Wstęp}
 \label{ch:wstep}
-\ksremark{Wstęp napiszemy na końcu.}
 
 % \begin{itemize}
 % \item wprowadzenie w problem/zagadnienie
@@ -534,21 +533,31 @@ escapeinside={@*}{*@},%
 % \item jednoznaczne określenie wkładu autora, w przypadku prac wieloosobowych – tabela z autorstwem poszczególnych elementów pracy
 % \end{itemize}
 
-Obecnie wiele programów tworzonych jest w formie aplikacji przeglądarkowych. Aplikacje takie są niezależne od systemu operacyjnego użytkownika, \nocomma\  ani nie wymagają instalacji, dzięki czemu są łatwiejsze i wygodniejsze w obsłudze.
+Obecnie wiele programów tworzonych jest w formie aplikacji przeglądarkowych. Aplikacje takie są niezależne od systemu operacyjnego użytkownika i nie wymagają instalacji, dzięki czemu są łatwiejsze i wygodniejsze w obsłudze.
 
-Organizer ma za zadanie pomóc użytkownikowi w planowaniu. Będzie więc możliwe tworzenie wydarzeń, mających miejsce w podanych terminach i miejscach, a także zadań, posiadających pewien termin wykonania, które można oznaczyć jako wykonane lub niewykonane. Ponadto dostępny będzie trzeci rodzaj pliku: notatka, będąca prostszą wersją pozostałych plików -- zawiera tylko opis. Pliki umieszczać będzie można w katalogach, a same katalogi tworzyć będą strukturę hierarchiczną (w katalogu znajdować się mogą inne katalogi). Wszystkie elementy (pliki i katalogi) będzie można przenosić między katalogami.
+Przykładami takich aplikacji są produkty Google: Google Calendar oraz Google Docs, jak i ich odpowiedniki należące do firmy Microsoft, takie jak aplikacje pakietu Microsoft Office. Pozwalają one na tworzenie różnych rodzajów plików i udostępnianie ich innym użytkownikom.
 
-Aby móc przypisać użytkownikom pliki, będą się oni musieli zarejestrować i zalogować w aplikacji. Dla użytkowników zalogowanych będzie możliwość edycji swojego profilu, jak i trwałego usunięcia konta.
+Organizer, podobnie jak wymienione aplikacje, pozwalać będzie na tworzenie różnych plików -- w tym przypadku są to typy powiązane z organizacją i planowaniem: notatki, wydarzenia i zadania. Będą one mogły być grupowane w katalogach, udostępniane, dodawać będzie można powiadomienia. 
 
-Aplikacja będzie więc przechowywać dane użytkowników, takie jak hasła oraz pliki o prywatnej zawartości. Zapewnione będą więc zabezpieczenia przed odczytem tych danych przez innych użytkowników.
+Na tle innych aplikacji wyróżniać ją będzie funkcjonalność głosowania na terminy wydarzeń. Obecnie umawianie się na spotkania odbywa się na przykład na czatach internetowych, gdzie każdy musi wyrazić swoją opinię na temat preferowanej daty i godziny, przez co też często gubione są szczegóły. W aplikacji organizera, właściciel wydarzenia (użytkownik, który je utworzył) będzie mógł zdefiniować dowolną liczbę terminów, a każdy użytkownik mający do tego wydarzenia dostęp będzie mógł oddać na nie głosy. Jako że wszystko odbywa się w tym samym programie, zastosowanie tak wybranego terminu jest bardzo proste, a dodatkowe informacje dotyczące tego wydarzenia pozostają łatwo dostępne.
 
-Każdy plik i katalog właściciel (użytkownik, który je utworzył) będzie mógł udostępnić wybranym innym użytkownikom. Dostęp będzie mógł być tylko do wyświetlenia, lub do wyświetlenia i edycji. Dostęp do katalogu będzie dziedziczony przez znajdujące się w nim elementy.
+Podstawowymi założeniami aplikacji są intuicyjność i bezpieczeństwo. Aplikacja musi być prosta w obsłudze, aby każdy był w stanie z niej skorzystać. Użytkownicy muszą też mieć pewność, że ich hasła nie zostaną przechwycone.
 
-Użytkownik będzie mógł dodać powiadomienia przypominające o dowolnym pliku. Każde powiadomienie będzie mieć określony czas wysłania, po którym pokażą się w odpowiednim miejscu interfejsu.
+Projekt będzie mieć postać aplikacji webowej. Do przechowywania danych użytkowników, ich plików i innych potrzebnych informacji, jak i ich odczytu i modyfikacji, konieczne będzie wykorzystanie bazy danych -- w tym przypadku MySQL. Do implementacji back-endu wykorzystany zostanie framework Spring dla języka Java, który pozwala między innymi na korzystanie z Java Persistance API oraz ułatwia implementację autentykacji i autoryzacji użytkowników. Do wykonania front-endu posłuży framework Angular, w którym korzysta się z języka TypeScript.
 
-Aby ułatwić organizację wspólnych wydarzeń, każde z nich posiadać będzie panel głosowania na terminy. Właściciel wydarzenia może zdefiniować dowolną liczbę terminów, na które następnie każdy użytkownik, któremu udostępniono to wydarzenie (w tym właściciel) będzie mógł oddać głos: negatywny, neutralny lub pozytywny. Dzięki temu prościej będzie znaleźć termin, który odpowiada jak największej liczbie osób.
+% Organizer ma za zadanie pomóc użytkownikowi w planowaniu. Będzie więc możliwe tworzenie wydarzeń, mających miejsce w podanych terminach i miejscach, a także zadań, posiadających pewien termin wykonania, które można oznaczyć jako wykonane lub niewykonane. Ponadto dostępny będzie trzeci rodzaj pliku: notatka, będąca prostszą wersją pozostałych plików -- zawiera tylko opis. Pliki umieszczać będzie można w katalogach, a same katalogi tworzyć będą strukturę hierarchiczną (w katalogu znajdować się mogą inne katalogi). Wszystkie elementy (pliki i katalogi) będzie można przenosić między katalogami.
 
-Użytkownikami zarządzać będzie administrator. Będzie on mógł przeglądać listę wszystkich użytkowników i usuwać ich konta, bądź przydzielać i odbierać im rolę administratora.
+% Aby móc przypisać użytkownikom pliki, będą się oni musieli zarejestrować i zalogować w aplikacji. Dla użytkowników zalogowanych będzie możliwość edycji swojego profilu, jak i trwałego usunięcia konta.
+
+% Aplikacja będzie więc przechowywać dane użytkowników, takie jak hasła oraz pliki o prywatnej zawartości. Zapewnione będą więc zabezpieczenia przed odczytem tych danych przez innych użytkowników.
+
+% Każdy plik i katalog właściciel (użytkownik, który je utworzył) będzie mógł udostępnić wybranym innym użytkownikom. Dostęp będzie mógł być tylko do wyświetlenia, lub do wyświetlenia i edycji. Dostęp do katalogu będzie dziedziczony przez znajdujące się w nim elementy.
+
+% Użytkownik będzie mógł dodać powiadomienia przypominające o dowolnym pliku. Każde powiadomienie będzie mieć określony czas wysłania, po którym pokażą się w odpowiednim miejscu interfejsu.
+
+% Aby ułatwić organizację wspólnych wydarzeń, każde z nich posiadać będzie panel głosowania na terminy. Właściciel wydarzenia może zdefiniować dowolną liczbę terminów, na które następnie każdy użytkownik, któremu udostępniono to wydarzenie (w tym właściciel) będzie mógł oddać głos: negatywny, neutralny lub pozytywny. Dzięki temu prościej będzie znaleźć termin, który odpowiada jak największej liczbie osób.
+
+% Użytkownikami zarządzać będzie administrator. Będzie on mógł przeglądać listę wszystkich użytkowników i usuwać ich konta, bądź przydzielać i odbierać im rolę administratora.
 
 % TODO
 \chapter{Analiza tematu}
@@ -560,7 +569,7 @@ Użytkownikami zarządzać będzie administrator. Będzie on mógł przeglądać
 % \end{itemize}
 
 \section{Opis problemu}
-Aplikacja w dużym stopniu oparta jest na interakcji z użytkownikiem, który w każdym momencie użytkowania ma wiele dostępnych mu działań. Wyzwaniem jest więc nie zaprojektowanie złożonej logiki programu, a zapewnienie poprawnego działania dla wszelkich danych wejściowych pobranych od użytkownika. Zabezpieczenia takie muszą pojawić się od strony interfejsu, który powinien maksymalnie ograniczać możliwość wprowadzenia niepoprawnych danych, ale i od strony backendu, gdzie weryfikować należy przychodzące zapytania HTTP. Zawartość odpowiedzi HTTP jest łatwo dostępna w inspektorze przeglądarki, dlatego już na jej poziomie nie mogą być dostępne dane wrażliwe (hasła), a nie dopiero na poziomie interfejsu.
+Aplikacja w dużym stopniu oparta jest na interakcji z użytkownikiem, który w każdym momencie użytkowania ma wiele dostępnych mu działań. Wyzwaniem jest więc nie zaprojektowanie złożonej logiki programu, a zapewnienie poprawnego działania dla wszelkich danych wejściowych pobranych od użytkownika. Zabezpieczenia takie muszą pojawić się od strony interfejsu, który powinien maksymalnie ograniczać możliwość wprowadzenia niepoprawnych danych, ale i od strony back-endu, gdzie weryfikować należy przychodzące zapytania HTTP. Zawartość odpowiedzi HTTP jest łatwo dostępna w inspektorze przeglądarki, dlatego już na jej poziomie nie mogą być dostępne dane wrażliwe (hasła), a nie dopiero na poziomie interfejsu.
 
 Jedną z zalet aplikacji przeglądarkowych jest możliwość zapisywania odnośników do stron, na przykład do konkretnego pliku. Oznacza to jednak, że nawet dokładnie zaprojektowany interfejs nie pozwoli na pełną kontrolę ścieżki, którą użytkownik poruszać się będzie po programie. Zmieniając adres w przeglądarce, może on w dowolnym momencie usiłować dostać się do nieistniejących bądź nieudostępnionych mu zasobów.
 
@@ -617,9 +626,9 @@ Analogiczne funkcjonalności zapewniają aplikacje pakietu Microsoft Office. Pro
 \subsection{Użytkownicy}
 Znaczna większość funkcjonalności aplikacji wymaga, aby znany był aktualnie zalogowany użytkownik -- od edycji profilu po przeglądanie plików. Ponadto istnieć powinien użytkownik specjalny (administrator), który zarządzać może pozostałymi użytkownikami. Wyróżnić można więc 3 rodzaje użytkowników:
 \begin{description}
-	\item \label{user1} [U.1] User -- użytkownik zwykły: edytuje profil, tworzy, przegląda, modyfikuje, usuwa, udostępnia elementy.
-	\item \label{user2} [U.2] Admin -- administrator: posiada dostęp do wszystkich funkcjonalności użytkownika zwykłego, zarządza użytkownikami -- nadaje i odbiera uprawnienia administratorskie, usuwa użytkowników.
-	\item \label{user3} [U.3] Anonymous -- użytkownik niezalogowany: loguje lub rejestruje się.
+	\item [U.1] User -- użytkownik zwykły: edytuje profil, tworzy, przegląda, modyfikuje, usuwa, udostępnia elementy.
+	\item [U.2] Admin -- administrator: posiada dostęp do wszystkich funkcjonalności użytkownika zwykłego, zarządza użytkownikami -- nadaje i odbiera uprawnienia administratorskie, usuwa użytkowników.
+	\item [U.3] Anonymous -- użytkownik niezalogowany: loguje lub rejestruje się.
 \end{description}	
 
 Zależności między użytkownikami przedstawiono na rys. \ref{fig:uml-users}.
@@ -637,31 +646,31 @@ Dostępne użytkownikowi funkcje aplikacji można ogólnie podzielić na operacj
 \begin{itemize}
 	\item [F.1.] Autentykacja użytkowników
 	\begin{itemize}
-		\item [F.1.1.] Logowanie użytkownika U.3. \ref{user3} na istniejące konto przy pomocy nazwy użytkownika oraz hasła.
-		\item [F.1.2.] Wylogowanie zalogowanego użytkownika (U.1., U.2. \ref{user1}\ref{user2}). \ksremark{nie działa}
+		\item [F.1.1.] Logowanie użytkownika U.3. na istniejące konto przy pomocy nazwy użytkownika oraz hasła.
+		\item [F.1.2.] Wylogowanie zalogowanego użytkownika (U.1., U.2.).
 		\item [F.1.3.] Rejestracja nowego użytkownika w systemie, umożliwiająca następnie zalogowanie (por. F.1.1.).
 	\end{itemize}
 	\item [F.2.] Zarządzanie elementami.
 	\begin{itemize}
 		\item [F.2.1.] Tworzenie nowego elementu.
-		\item [F.2.2.] Wyświetlenie elementu. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5. \ref{func25}).
+		\item [F.2.2.] Wyświetlenie elementu. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5.).
 		\item [F.2.3.] Edycja elementu.
 		\begin{itemize}
 			\item [F.2.3.1.] Przeniesienie do innego katalogu.
 			\item [F.2.3.2.] Zmiana nazwy.
-			\item [F.2.3.3.] Mofyfikacja zawartości. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5. \ref{func25}).
+			\item [F.2.3.3.] Mofyfikacja zawartości. Dla należącego do innego użytkownika - zależne od przydzielonego dostępu (por. F.2.5.).
 			\item [F.2.3.4.] Modyfikacja opcji powiadomień.
 			\item [F.2.3.5.] Oddawanie głosu na termin wydarzenia.
 		\end{itemize}
 		\item [F.2.4.] Usunięcie elementu.
-		\item \label{func25} [F.2.5.] Przydział dostępu innym użytkownikom do elementów.
+		\item [F.2.5.] Przydział dostępu innym użytkownikom do elementów.
 	\end{itemize}
 	\item [F.3.] Zarządzanie kontem użytkownika.
 	\begin{itemize}
 		\item [F.3.1.] Edycja danych.
 		\item [F.3.2.] Usunięcie konta.
 	\end{itemize}
-	\item [F.4.] Zarządzanie użytkownikami przez administratora (U.2. \ref{user2}).
+	\item [F.4.] Zarządzanie użytkownikami przez administratora (U.2.).
 	\begin{itemize}
 		\item [F.4.1.] Wyświetlenie wszystkich użytkowników systemu.
 		\item [F.4.2.] Wyświetlenie jednego użytkownika.
@@ -698,7 +707,7 @@ Wymagania funkcjonalne dla poszczególnych użytkowników przedstawiono na rys. 
 
 Dla aplikacji wymagającej zalogowania przez użytkownika, służącej do przechowywania prywatnych informacji niezbędne jest zapewnienie bezpieczeństwa danych przed potencjalnym przechwyceniem. Hasła użytkowników muszą być przechowywane w formie zakodowanej, do minimum należy też ograniczyć przesyłanie ich do front-endu -- potrzebne są tylko do logowania, rejestracji oraz zmiany hasła.
 
-Istotna również jest intuicyjność interfejsu użytkownika. Elementy interfejsu i ich zachowania powinny być podobne do takich, jakie można znaleźć w innych podobnych aplikacjach. Ponadto przyciski i formularze powinny zawierać informację, czego dotyczą, jakie operacje wykonują. Pomocne może być też zastosowanie ikon wraz z opisem tekstowym.
+Istotna również jest intuicyjność interfejsu użytkownika. Elementy interfejsu i ich zachowania powinny być podobne do takich, jakie można znaleźć w innych tego typu aplikacjach. Ponadto przyciski i formularze powinny zawierać informację, czego dotyczą, jakie operacje wykonują. Pomocne może być też zastosowanie ikon wraz z opisem tekstowym.
 
 \section{Narzędzia}
 
@@ -735,24 +744,11 @@ Do uruchomienia programu potrzebne są: JDK wersja 17, Docker (w systemie Linux 
 
 \subsection{Instalacja}
 
-Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania i uruchomienia projektu. Pliki źródłowe projektu są dostępne w repozytorium pod adresem \url{https://github.com/ZofiaLor/inzynier-organizer}.
+Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania i uruchomienia projektu. Pliki źródłowe projektu są dostępne w repozytorium pod adresem \url{https://github.com/ZofiaLor/inzynier-organizer}. Należy je w wybrany sposób pobrać i, w razie potrzeby, rozpakować.
 
 \subsubsection{Back-end i baza danych}
 \begin{enumerate}
-   \item Należy rozpakować pliki źródłowe. Można zrobić to w interfejsie graficznym, \nocomma\ lub wywołując w wybranym terminalu komendę:
-   \begin{itemize}
-		\item Dla systemu Linux
-
-		\mintinline{bash}{unzip inzynier-organizer-main.zip}
-
-		\item Dla systemu Windows
-
-		\mintinline{powershell}{tar -xf .\inzynier-organizer-main.zip}
-   \end{itemize}
-
-   \item W wybranym terminalu należy zmienić katalog: 
-
-\mintinline{bash}{cd organizer}
+   \item W wybranym terminalu należy ustawić bieżący katalog na \mintinline{bash}{organizer}. 
 
 Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bash}{mvnw.cmd}.
    \item Następnie należy uruchomić kontener zawierający bazę danych poleceniem 
@@ -764,6 +760,16 @@ Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bas
 	\item Dla systemu Linux
 
 	\mintinline{bash}{./mvnw install}
+  
+  W razie niepowodzenia, należy jako root otworzyć plik 
+  
+  \mintinline{bash}{/etc/hosts} 
+  
+  Dla edytora tekstowego \mintinline{bash}{nano} można to zrobić następującym poleceniem:
+  
+  \mintinline{bash}{sudo nano /etc/hosts} 
+  
+  Należy wpisać do niego linię \mintinline{bash}{127.0.0.1 db} i zapisać plik (w przypadku \mintinline{bash}{nano} nacisnąć kolejno: Ctrl+O, Enter, Ctrl+X). Następnie należy powtórzyć polecenie \mintinline{bash}{./mvnw install}.
 
 	\item Dla systemu Windows
 
@@ -809,9 +815,7 @@ c22ebdb94057   mysql:5.7   "docker-entrypoint.s…"   7 weeks ago   Up About a m
 \subsubsection{Front-end}
 
 \begin{enumerate}
-	 \item Należy zmienić bieżący katalog:
-
-	 \mintinline{bash}{cd organizer-front}
+	 \item W wybranym terminalu należy ustawić bieżący katalog na \mintinline{bash}{organizer-front}.
 
 	 \item Należy zainstalować wymagane pakiety poleceniami
 
@@ -970,24 +974,24 @@ Zależności między klasami przedstawiono na rys. \ref{fig:erd}.
 
 Tabele w bazie danych mają następujące atrybuty:
 \begin{itemize}
-	\item \mintinline{sql}{AccessDirectory(directory_id (PK, FK), user_id (PK, FK), access_privilege)} 
-	\item \mintinline{sql}{AccessFile(file_id (PK, FK), user_id (PK, FK), access_privilege)} 
-	\item \mintinline{sql}{Directory(id (PK), name, owner_id (FK), parent_id (FK))} 
-	\item \mintinline{sql}{EventDate(id (PK), start, end, total_score, event_id (FK))} 
-	\item \mintinline[breaklines]{sql}{File(id (PK), file_type, creation_date, name, text_content, start_date, end_date, location, deadline, is_finished, owner_id (FK), parent_id (FK))}
-	\item \mintinline[breaklines]{sql}{Notification(id (PK), message, send_time_setting, is_sent, is_read, file_id (FK), user_id (FK))}
-	\item \mintinline{sql}{RefreshToken(id (PK), token, expiry_date, user_id (FK))}
-	\item \mintinline{sql}{User(id (PK), username, password, name, email, role)}
-	\item \mintinline{sql}{Vote(id (PK), score, user_id (FK), event_date_id (FK))}
+	\item \mintinline{sql}{access_directory(directory_id (PK, FK), user_id (PK, FK), access_privilege)} 
+	\item \mintinline{sql}{access_file(file_id (PK, FK), user_id (PK, FK), access_privilege)} 
+	\item \mintinline{sql}{directory(id (PK), name, owner_id (FK), parent_id (FK))} 
+	\item \mintinline{sql}{event_date(id (PK), start, end, total_score, event_id (FK))} 
+	\item \mintinline[breaklines]{sql}{file(id (PK), file_type, creation_date, name, text_content, start_date, end_date, location, deadline, is_finished, owner_id (FK), parent_id (FK))}
+	\item \mintinline[breaklines]{sql}{notification(id (PK), message, send_time_setting, is_sent, is_read, file_id (FK), user_id (FK))}
+	\item \mintinline{sql}{refresh_token(id (PK), token, expiry_date, user_id (FK))}
+	\item \mintinline{sql}{user(id (PK), username, password, name, email, role)}
+	\item \mintinline{sql}{vote(id (PK), score, user_id (FK), event_date_id (FK))}
 \end{itemize}
 
 Do zaimplementowania dziedziczenia klas \mintinline{java}{Event}, \mintinline{java}{Note} i \mintinline{java}{Task} po klasie bazowej wybrano strategię \english{Singe Table Inheritance}. W bazie danych wszystkie klasy reprezentowane są przez tę samą tabelę \mintinline{sql}{File}, która zawiera kolumny atrybutów wszystkich dziedziczących klas, a także ukrytą kolumnę \mintinline{sql}{file_type}, pozwalającą frameworkowi na rozróżnienie typów podczas mapowania obiektowo-relacyjnego. Rozwiązanie takie pozwala również na odczytanie jednocześnie wszystkich typów plików, co jest przydatne podczas wyświetlania ich w eksploratorze.
 
-Rozwiązanie MappedSuperclass zostało odrzucone, ponieważ nie tworzy ono tabeli klasy bazowej, przez co nie może ona być w relacji z żadną inną klasą. Rozwiązania Joined Table oraz Table Per Class mogłyby być wykorzystane, jednak są mniej optymalne z perspektywy założonego działania.
+Rozwiązanie \english{MappedSuperclass} zostało odrzucone, ponieważ nie tworzy ono tabeli klasy bazowej, przez co nie może ona być w relacji z żadną inną klasą. Rozwiązania \english{Joined Table} oraz \english{Table Per Class} mogłyby być wykorzystane, jednak są mniej optymalne z perspektywy założonego działania.
 
 \section{Budowa aplikacji}
 
-Na diagramie rys. \ref{fig:package} przedstawiono ogólną budowę wewnętrzną aplikacji. Zarówno back-end jak i front-end zostały podzielone zgodnie z konwencją wykorzystanych w nich frameworków. Framework Spring zakłada podział na klasy typu \mintinline{java}{Model}, \mintinline{java}{DTO}, \mintinline{java}{Repository}, \mintinline{java}{Service} i \mintinline{java}{Controller}, a także, opcjonalnie, \mintinline{java}{Mapper}. Angular wykorzystuje wiele komponentów, z których każdy odpowiada części wyświetlanego interfejsu. Do komunikacji z back-endem stosuje się serwisy. W języku TypeScript istotne jest typowanie, dla klas zwracanych przez back-end zaimplementowano więc modele po stronie front-endu.
+Na diagramie rys. \ref{fig:package} przedstawiono ogólną budowę wewnętrzną aplikacji. Zarówno back-end jak i front-end zostały podzielone zgodnie z konwencją wykorzystanych w nich frameworków. Framework Spring zakłada podział na klasy typu \mintinline{java}{Model}, \mintinline{java}{DTO}, \mintinline{java}{Repository}, \mintinline{java}{Service} i \mintinline{java}{Controller}, a także, opcjonalnie, \mintinline{java}{Mapper}. Angular wykorzystuje wiele komponentów, z których każdy odpowiada za część wyświetlanego interfejsu. Do komunikacji z back-endem stosuje się serwisy. W języku TypeScript istotne jest typowanie, dla klas zwracanych przez back-end zaimplementowano więc modele po stronie front-endu.
 
 \begin{figure}
 \centering
@@ -998,9 +1002,7 @@ Na diagramie rys. \ref{fig:package} przedstawiono ogólną budowę wewnętrzną 
 
 \section{Autentykacja i autoryzacja}
 
-\ksremark{Odniesienia do tutoriali -- czy mają wyglądać w ten sposób? KS: Tak.}
-
-Do implementacji autentykacji i autoryzacji po stronie back-endu wykorzystano rozwiązanie inspirowane przykładem \cite{bib:bkspringauth}. W ciasteczku przechowywany jest JWT zawierający zakodowaną nazwę użytkownika. Dla każdego zapytania wykonywany jest filtr dekodujący tę nazwę i ustawiający odpowiednie role dla kontekstu. Aby zablokować pewne metody dla użytkowników niezalogowanych, bądź niebędących administratorami, wystarczy wtedy wykorzystać adnotacje odpowiednio \mintinline{java}{@PreAuthorize("isAuthenticated()")} i \mintinline{java}{@PreAuthorize("hasRole('ADMIN')")}. 
+Do implementacji autentykacji i autoryzacji po stronie back-endu wykorzystano rozwiązanie inspirowane przykładem \cite{bib:bkspringauth}. W ciasteczku przechowywany jest JWT \english{Json Web Token} zawierający zakodowaną nazwę użytkownika. Dla każdego zapytania wykonywany jest filtr dekodujący tę nazwę i ustawiający odpowiednie role dla kontekstu. Aby zablokować pewne metody dla użytkowników niezalogowanych, bądź niebędących administratorami, wystarczy wtedy wykorzystać adnotacje odpowiednio \mintinline{java}{@PreAuthorize("isAuthenticated()")} i \mintinline{java}{@PreAuthorize("hasRole('ADMIN')")}. 
 
 Ciasteczko ma ograniczony czas ważności, dlatego, wzorując się na przykładzie \cite{bib:bkspringrefresh}, zaimplementowano funkcjonalność odświeżania. Wykorzystano w tym celu drugie ciasteczko, o dłuższym czasie ważności. Wywołanie metody odświeżającej token przydziela nowe ciasteczka, pod warunkiem, że nie minął jeszcze czas ważności tokenu odświeżającego.
 
@@ -1008,7 +1010,7 @@ Autentykację i autoryzację po stronie front-endu wzorowano na przykładach \ci
 
 \section{Lista endpointów}
 \label{sec:lista-endpointow}
-W tym podrozdziale przedstawiono listę wszystkich endpointów wystawianych przez backend. Dla każdego opisano URL, ogólną zasadę działania, dane wejściowe oraz możliwe odpowiedzi.
+W tym podrozdziale przedstawiono listę wszystkich endpointów wystawianych przez back-end. Dla każdego opisano URL, ogólną zasadę działania, dane wejściowe oraz możliwe odpowiedzi.
 
 \subsection{Authorization}
 
@@ -1055,9 +1057,9 @@ Odpowiedź: ,,Success'', puste ciasteczka w nagłówku, kod 200 (OK)
 
 \mintinline{bash}{POST /api/auth/register}
 
-Rejestracja nowego użytkownika i założenie jego katalogu bazowego Base Directory.
+Rejestracja nowego użytkownika i założenie jego katalogu bazowego ,,Base Directory''.
 
-Wymagana nazwa użytkownika i hasło, opcjonalny adres email oraz imię (name). Pozostałe parametry są ignorowane.
+Wymagana nazwa użytkownika i hasło, opcjonalne są adres email oraz imię (name). Pozostałe parametry są ignorowane.
 
 \begin{minted}{json}
 {
@@ -1070,7 +1072,7 @@ Wymagana nazwa użytkownika i hasło, opcjonalny adres email oraz imię (name). 
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Poprawne zarejestrowanie: obiekt utworzonego użytkownika z pustym hasłem i rolą ROLE\_USER (jeżeli jest to pierwszy użytkownik w bazie danych, rola to ROLE\_ADMIN), kod 200 (OK) 
+	\item Poprawne zarejestrowanie: obiekt utworzonego użytkownika z pustym hasłem i rolą \mintinline{java}{ROLE_USER} (jeżeli jest to pierwszy użytkownik w bazie danych, rola to \mintinline{java}{ROLE_ADMIN}), kod 200 (OK) 
 	\item Próba zarejestrowania użytkownika o istniejącej już nazwie: kod 403 (Forbidden) 
 	\item Brak nazwy użytkownika lub hasła: kod 400 (Bad Request)
 \end{itemize}
@@ -1126,16 +1128,16 @@ Odpowiedzi:
 
 \mintinline{bash}{POST /api/refreshtoken}
 
-Odświeża JWT odpowiadający za autoryzację użytkownika, jeżeli refreshToken zapisany w ciasteczkach nie stracił ważności.
+Odświeża JWT odpowiadający za autoryzację użytkownika, jeżeli \mintinline{json}{refreshToken} zapisany w ciasteczkach nie stracił ważności.
 
 Ciało zapytania jest ignorowane.
 
 Odpowiedzi: 
 \begin{itemize}
 	\item Poprawne odświeżenie JWT: nowe ciasteczko JWT w nagłówku, kod 200 (OK) 
-	\item refreshToken stracił ważność: kod 403 (Forbidden) 
-	\item Nie znaleziono refreshToken w bazie danych: kod 404 (Not Found)
-	\item refreshToken w ciasteczku jest pusty lub null: kod 400 (Bad Request)
+	\item \mintinline{json}{refreshToken} stracił ważność: kod 403 (Forbidden) 
+	\item Nie znaleziono \mintinline{json}{refreshToken} w bazie danych: kod 404 (Not Found)
+	\item \mintinline{json}{refreshToken} w ciasteczku jest pusty lub \mintinline{json}{null}: kod 400 (Bad Request)
 \end{itemize}
 
 
@@ -1203,10 +1205,7 @@ Wymagane podanie ID użytkownika w ciele zapytania. Możliwa jest tylko aktualiz
 }
 \end{minted}
 
-Parametry brane pod uwagę: 
-\begin{itemize}
-	\item  username \item  name \item  email
-\end{itemize}
+Parametry brane pod uwagę: username, name, email.
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1330,10 +1329,7 @@ Wymagane podanie ID katalogu w ciele zapytania.
 }
 \end{minted}
 
-Parametry brane pod uwagę: 
-\begin{itemize}
-	\item  name
-\end{itemize}
+Parametr brany pod uwagę: name.
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1345,7 +1341,7 @@ Odpowiedzi:
 
 \paragraph{Delete Directory}
 
-\mintinline{bash}{DELETE /api/directories/\{id\}}
+\mintinline{bash}{DELETE /api/directories/{id}}
 
 Usuwa katalog o podanym ID, wraz z jego plikami.
 
@@ -1437,10 +1433,7 @@ Wymagane podanie ID wydarzenia w ciele zapytania. Jeżeli daty nie zostaną poda
 }
 \end{minted}
 
-Parametry brane pod uwagę: 
-\begin{itemize}
-	\item  name \item  textContent \item  startDate \item  endDate \item location
-\end{itemize}
+Parametry brane pod uwagę: name, textContent, startDate, endDate, location.
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1489,10 +1482,7 @@ Wymagane podanie ID notatki w ciele zapytania.
 }
 \end{minted}
 
-Parametry brane pod uwagę: 
-\begin{itemize}
-	\item  name \item  textContent
-\end{itemize}
+Parametry brane pod uwagę: name, textContent.
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1542,10 +1532,7 @@ Wymagane podanie ID zadania w ciele zapytania. Jeżeli data wykonania nie zostan
 }
 \end{minted}
 
-Parametry brane pod uwagę: 
-\begin{itemize}
-	\item  name \item  textContent \item  isFinished \item  deadline
-\end{itemize}
+Parametry brane pod uwagę: name, textContent, isFinished, deadline.
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1573,13 +1560,13 @@ Odpowiedzi:
 
 \mintinline{bash}{GET /api/ad/user/{user}}
 
-Zwraca listę obiektów AccessDirectory dla podanego ID użytkownika.
+Zwraca listę obiektów \mintinline{java}{AccessDirectory} dla podanego ID użytkownika.
 
 Lista jest pusta dla nieistniejącego użytkownika.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów AccessDirectory, kod 200 (OK)
+	\item ID istnieje: lista obiektów \mintinline{java}{AccessDirectory}, kod 200 (OK)
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
@@ -1587,13 +1574,13 @@ Odpowiedzi:
 
 \mintinline{bash}{GET /api/ad/dir/{dir}}
 
-Zwraca listę obiektów AccessDirectory dla podanego ID katalogu.
+Zwraca listę obiektów \mintinline{java}{AccessDirectory} dla podanego ID katalogu.
 
 Lista jest pusta dla nieistniejącego katalogu.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów AccessDirectory, kod 200 (OK)
+	\item ID istnieje: lista obiektów \mintinline{java}{AccessDirectory}, kod 200 (OK)
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
@@ -1601,7 +1588,7 @@ Odpowiedzi:
 
 \mintinline{bash}{POST /api/ad}
 
-Tworzy lub aktualizuje obiekt AccessDirectory o podanych ID użytkownika i katalogu.
+Tworzy lub aktualizuje obiekt \mintinline{java}{AccessDirectory} o podanych ID użytkownika i katalogu.
 
 Wymagane podanie obydwu ID w ciele zapytania.
 
@@ -1617,7 +1604,7 @@ Wymagane podanie obydwu ID w ciele zapytania.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie/aktualizacja: obiekt AccessDirectory, kod 200 (OK) 
+	\item Pomyślne utworzenie/aktualizacja: obiekt \mintinline{java}{AccessDirectory}, kod 200 (OK) 
 	\item Nie istnieje któreś z ID: kod 404 (Not Found) 
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
@@ -1626,7 +1613,7 @@ Odpowiedzi:
 
 \mintinline{bash}{DELETE /api/ad/{user}/{dir}}
 
-Usuwa obiekt AccessDirectory o podanych ID użytkownika i katalogu.
+Usuwa obiekt \mintinline{java}{AccessDirectory} o podanych ID użytkownika i katalogu.
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1640,13 +1627,13 @@ Odpowiedzi:
 
 \mintinline{bash}{GET /api/af/user/{user}}
 
-Zwraca listę obiektów AccessFile dla podanego ID użytkownika.
+Zwraca listę obiektów \mintinline{java}{AccessFile} dla podanego ID użytkownika.
 
 Lista jest pusta dla nieistniejącego użytkownika.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów AccessFile, kod 200 (OK) 
+	\item ID istnieje: lista obiektów \mintinline{java}{AccessFile}, kod 200 (OK) 
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
@@ -1654,13 +1641,13 @@ Odpowiedzi:
 
 \mintinline{bash}{GET /api/af/file/{file}}
 
-Zwraca listę obiektów AccessFile dla podanego ID pliku.
+Zwraca listę obiektów \mintinline{java}{AccessFile} dla podanego ID pliku.
 
 Lista jest pusta dla nieistniejącego pliku.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów AccessFile, kod 200 (OK) 
+	\item ID istnieje: lista obiektów \mintinline{java}{AccessFile}, kod 200 (OK) 
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
 
@@ -1668,7 +1655,7 @@ Odpowiedzi:
 
 \mintinline{bash}{POST /api/af}
 
-Tworzy lub aktualizuje obiekt AccessFile o podanych ID użytkownika i pliku.
+Tworzy lub aktualizuje obiekt \mintinline{java}{AccessFile} o podanych ID użytkownika i pliku.
 
 Wymagane podanie obydwu ID w ciele zapytania.
 
@@ -1684,7 +1671,7 @@ Wymagane podanie obydwu ID w ciele zapytania.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie/aktualizacja: obiekt AccessFile, kod 200 (OK) 
+	\item Pomyślne utworzenie/aktualizacja: obiekt \mintinline{java}{AccessFile}, kod 200 (OK) 
 	\item Nie istnieje któreś z ID: kod 404 (Not Found) 
 	\item Brak ID: kod 400 (Bad Request)
 \end{itemize}
@@ -1693,7 +1680,7 @@ Odpowiedzi:
 
 \mintinline{bash}{DELETE /api/af/{user}/{file}}
 
-Usuwa obiekt AccessFile o podanych ID użytkownika i pliku.
+Usuwa obiekt \mintinline{java}{AccessFile} o podanych ID użytkownika i pliku.
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1707,19 +1694,19 @@ Odpowiedzi:
 
 \mintinline{bash}{GET /api/ed}
 
-Zwraca wszystkie obiekty EventDate.
+Zwraca wszystkie obiekty \mintinline{java}{EventDate}.
 
-Odpowiedź: lista obiektów EventDate, kod 200 (OK)
+Odpowiedź: lista obiektów \mintinline{java}{EventDate}, kod 200 (OK)
 
 \paragraph{Get EventDates By Event ID}
 
 \mintinline{bash}{GET /api/ed?id={eventId}}
 
-Zwraca obiekty EventDate dotyczące wydarzenia o podanym ID.
+Zwraca obiekty \mintinline{java}{EventDate} dotyczące wydarzenia o podanym ID.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów EventDate, kod 200 (OK) 
+	\item ID istnieje: lista obiektów \mintinline{java}{EventDate}, kod 200 (OK) 
 	\item ID nie istnieje: kod 404 (Not Found) 
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
@@ -1728,11 +1715,11 @@ Odpowiedzi:
 
 \mintinline{bash}{GET /api/ed/{id}}
 
-Zwraca obiekt EventDate o podanym ID.
+Zwraca obiekt \mintinline{java}{EventDate} o podanym ID.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: obiekt EventDate, kod 200 (OK) 
+	\item ID istnieje: obiekt \mintinline{java}{EventDate}, kod 200 (OK) 
 	\item ID nie istnieje: kod 404 (Not Found) 
 	\item Nie podano ID: kod 400 (Bad Request)
 \end{itemize}
@@ -1741,7 +1728,7 @@ Odpowiedzi:
 
 \mintinline{bash}{POST /api/ed}
 
-Tworzy obiekt EventDate.
+Tworzy obiekt \mintinline{java}{EventDate}.
 
 Wymagane jest podanie ID wydarzenia, a także początku i końca terminu. Wynik całkowity ustawiany jest na 0. Wydarzenie musi istnieć i należeć do tworzącego obiekt użytkownika.
 
@@ -1755,7 +1742,7 @@ Wymagane jest podanie ID wydarzenia, a także początku i końca terminu. Wynik 
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie: nowy obiekt EventDate, kod 200 (OK) 
+	\item Pomyślne utworzenie: nowy obiekt \mintinline{java}{EventDate}, kod 200 (OK) 
 	\item Brak ID/terminu początkowego/końcowego: kod 400 (Bad Request)
 	\item Wydarzenie nie istnieje: kod 404 (Not Found) 
 	\item Wydarzenie należy do innego użytkownika: kod 403 (Forbidden) 
@@ -1765,7 +1752,7 @@ Odpowiedzi:
 
 \mintinline{bash}{DELETE /api/ed/{id}}
 
-Usuwa obiekt EventDate o podanym ID, wraz z jego głosami. Wydarzenie należeć musi do usuwającego obiekt użytkownika.
+Usuwa obiekt \mintinline{java}{EventDate} o podanym ID, wraz z jego głosami. Wydarzenie należeć musi do usuwającego obiekt użytkownika.
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1793,7 +1780,7 @@ Odpowiedzi:
 
 \mintinline{bash}{GET /api/votes/myvote/{id}}
 
-Zwraca listę głosów oddanych przez aktualnie zalogowanego użytkownika na termin EventDate o podanym ID.
+Zwraca listę głosów oddanych przez aktualnie zalogowanego użytkownika na termin \mintinline{java}{EventDate} o podanym ID.
 
 Odpowiedzi: 
 \begin{itemize}
@@ -1806,9 +1793,9 @@ Odpowiedzi:
 
 \mintinline{bash}{POST /api/votes}
 
-Sprawdza, czy zalogowany użytkownik oddał głos na dany termin, jeżeli nie, to tworzy nowy głos, jeżeli tak, to aktualizuje istniejący. Modyfikuje wynik całkowity dla terminu EventDate. Użytkownik musi posiadać dostęp do wydarzenia, na które głosuje.
+Sprawdza, czy zalogowany użytkownik oddał głos na dany termin, jeżeli nie, to tworzy nowy głos, jeżeli tak, to aktualizuje istniejący. Modyfikuje wynik całkowity dla terminu \mintinline{java}{EventDate}. Użytkownik musi posiadać dostęp do wydarzenia, na które głosuje.
 
-Wymagane podanie ID EventDate.
+Wymagane podanie ID \mintinline{java}{EventDate}.
 
 \begin{minted}{json}
 {
@@ -1820,8 +1807,8 @@ Wymagane podanie ID EventDate.
 Odpowiedzi: 
 \begin{itemize}
 	\item Pomyślne oddanie/modyfikacja głosu: obiekt głosu, kod 200 (OK) 
-	\item Nie podano ID EventDate: kod 400 (Bad Request) 
-	\item Nie istnieje ID EventDate: kod 404 (Not Found)
+	\item Nie podano ID \mintinline{java}{EventDate}: kod 400 (Bad Request) 
+	\item Nie istnieje ID \mintinline{java}{EventDate}: kod 404 (Not Found)
 	\item Brak dostępu do wydarzenia: kod 403 (Forbidden)
 \end{itemize}
 
@@ -1852,7 +1839,7 @@ Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
 \mintinline{bash}{GET /api/notifs/mynotifs?read={read}}
 
-Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w zależności od parametru read (true - odczytane, false - nieodczytane).
+Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w zależności od parametru \mintinline{json}{read} (\mintinline{json}{true} - odczytane, \mintinline{json}{false} - nieodczytane).
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
 
@@ -1974,7 +1961,7 @@ Odpowiedzi:
 
 Testowanie aplikacji wymaga sprawdzenia, czy jest ona odporna na nieprawidłowe dane wejściowe oraz czy dla danych poprawnych zachowuje się zgodnie z oczekiwaniami. Przetestować pod tym kątem należy zarówno back-end, jak i front-end.
 
-W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne z wymienionymi w podrozdziale ,,Lista Endpointów'' \ksremark{odwołanie poprzez etykietę \LaTeX a: \nameref{sec:lista-endpointow}}. Z kolei front-end powinien już na poziomie interfejsu w jak największym stopniu ograniczyć możliwość wprowadzenia błędnych danych.
+W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne z wymienionymi w podrozdziale \nameref{sec:lista-endpointow}. Z kolei front-end powinien już na poziomie interfejsu w jak największym stopniu ograniczyć możliwość wprowadzenia błędnych danych.
 
 \section{Testowanie back-endu}
 
@@ -2011,7 +1998,7 @@ Otrzymano odpowiedź:
 \end{minted}
 Odpowiedź nie zawiera już hasła -- zostało ono zakodowane i zapisane w bazie.
 
-Rejestrację przeprowadzono również przy pustej bazie danych. Pierwszy utworzony użytkownik otrzymał rolę ,,ROLE\_ADMIN'', każdy kolejny -- ,,ROLE\_USER''.
+Rejestrację przeprowadzono również przy pustej bazie danych. Pierwszy utworzony użytkownik otrzymał rolę \mintinline{java}{ROLE_ADMIN}, każdy kolejny -- \mintinline{java}{ROLE_USER}.
 
 Podobnie przetestowano logowanie: dla brakujących danych otrzymano kod 400 i informację ,,Empty username or password'', dla nieistniejącego loginu i nieprawidłowego hasła -- kod 403 i informację ,,Incorrect credentials''. Dla poprawnych danych logowania:
 \begin{minted}{json}
@@ -2039,7 +2026,7 @@ Otrzymano odpowiedź:
 Obiekt użytkownika został pobrany z bazy danych. Automatycznie utworzony został katalog bazowy, który jest jedynym katalogiem użytkownika nieposiadającym katalogu nadrzędnego.
 
 Ponadto wygenerowane zostały dwa ciasteczka:
-\begin{minted}[breaklines]{json}
+\begin{minted}[breaklines]{bash}
 organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNzMzMDc1MTYxLCJleHAiOjE3MzMxNjE1NjF9.UOpUtCw0G1TgcEf9ufIk2T00JqQ8ARo61cZJnYslPdU; Path=/; HttpOnly; Expires=Mon, 02 Dec 2024 17:46:00 GMT;
 organizerRefreshJwt=1ee7c994-e296-4a12-a636-8cf39380a1e8; Path=/api/auth/refreshtoken; HttpOnly; Expires=Mon, 02 Dec 2024 23:46:00 GMT;
 \end{minted}
@@ -2049,12 +2036,12 @@ Następnie przetestowano przypadki użycia dla użytkownika zwykłego.
 Wylogowanie przebiega zawsze pomyślnie, można je powtarzać nawet będąc już wylogowanym bez negatywnych skutków. W wyniku wylogowania obydwa ciasteczka stają się puste.
 
 Przetestowano działanie odświeżania ciasteczka organizerJwt. Przed odświeżeniem ciasteczka miały następujące wartości:
-\begin{minted}[breaklines]{json}
+\begin{minted}[breaklines]{bash}
 organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzMzMTY2NDA4LCJleHAiOjE3MzMyNTI4MDh9._JyoQNrhYdpdl3EPM8NFg29c0HwLm5nMidQ8Fh4Wsik; Path=/; HttpOnly; Expires=Tue, 03 Dec 2024 19:06:48 GMT;
 organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refreshtoken; HttpOnly; Expires=Wed, 04 Dec 2024 01:06:48 GMT;
 \end{minted}
 Po wykonaniu odświeżenia:
-\begin{minted}[breaklines]{json}
+\begin{minted}[breaklines]{bash}
 organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzMzMTY2NDg0LCJleHAiOjE3MzMyNTI4ODR9.ekR8DYMFlny3pKLKaunjOtXXTE3qH8dTfEFGYdaSpNs; Path=/; HttpOnly; Expires=Tue, 03 Dec 2024 19:08:04 GMT;
 organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refreshtoken; HttpOnly; Expires=Wed, 04 Dec 2024 01:08:04 GMT;
 \end{minted}
@@ -2079,7 +2066,7 @@ Przetestowano tworzenie nowych elementów. Kody błędów 400, 403 i 404 są zwr
 
 Z takim samym wynikiem przeprowadzono testy edycji nazw i zawartości elementów. Notatki, wydarzenia oraz zadania posiadają osobne endpointy do ich edycji. Próba edycji elementu przy użyciu niewłaściwego endpointu, na przykład wydarzenia używając \mintinline{bash}{PUT /api/files/note}, skutkuje kodem 404.
 
-Element można przenieść tylko do istniejącego katalogu, należącego do tego samego użytkownika. Back-end nie blokuje sytuacji, w której użytkownik przemieszcza elementy innego użytkownika. Ignorowane są przypadki, gdy podejmowana jest próba przeniesienia katalogu bazowego, bądź ustawienia katalogu nadrzędnego na ten sam katalog lub katalog podrzędny. Taka sytuacja mogłaby skutkować nieskończoną pętlą podczas sprawdzania dostępu, a także błędem bazy danych przy usuwaniu.
+Element można przenieść tylko do istniejącego katalogu, należącego do tego samego użytkownika, przez tego użytkownika. Ignorowane są przypadki, gdy podejmowana jest próba przeniesienia katalogu bazowego, bądź ustawienia katalogu nadrzędnego na ten sam katalog lub katalog podrzędny. Taka sytuacja mogłaby skutkować nieskończoną pętlą podczas sprawdzania dostępu, a także błędem bazy danych przy usuwaniu.
 \begin{minted}{json}
 {
 	"id": 29,
@@ -2121,7 +2108,7 @@ Następnie usunięto katalog 29. Próba odczytu katalogu 29, 30 oraz pliku 15 sk
 
 W przypadku katalogu bazowego, próba usunięcia skutkuje kodem błędu 403.
 
-Sprawdzanie uprawnień do edycji zwraca kod 404 dla nieistniejącego elementu, ,,true'' lub ,,false'' odpowiednio kiedy użytkownik posiada lub nie posiada uprawnień do edycji elementu.
+Sprawdzanie uprawnień do edycji zwraca kod 404 dla nieistniejącego elementu, \mintinline{json}{true} lub \mintinline{json}{false} odpowiednio kiedy użytkownik posiada lub nie posiada uprawnień do edycji elementu.
 
 Przetestowano działanie algorytmu dostępu dla użytkownika o ID 4. Zdefiniowano dla niego dostęp do katalogu 3 z poziomem dostępu 1 (odczyt) oraz do plików 1 i 2 z poziomem dostępu 2 (edycja). Struktura wymienionych plików:
 \begin{minted}{bash}
@@ -2167,7 +2154,7 @@ Powiadomienie można dodać tylko do pliku, do którego posiada się dostęp. Zo
 
 Powiadomienie zaktualizowano, zmieniając wartość pola \mintinline{sql}{read} na ,,true'' -- jest to jedyne pole, które można zmienić. Usunięto własne powiadomienie, następnie spróbowano zaktualizować i usunąć powiadomienie innego użytkownika -- otrzymano kod 403.
 
-Próba utworzenia obiektu EventDate dla wydarzenia należącego do innego użytkownika skutkuje kodem 403, dla nieistniejącego wydarzenia -- kodem 404. Podanie ID pliku innego niż wydarzenie również zwraca kod 404. Próba utworzenia wydarzenia z pustym terminem początkowym zwraca kod 400, można jednak nie podać terminu końcowego:
+Próba utworzenia obiektu \mintinline{java}{EventDate} dla wydarzenia należącego do innego użytkownika skutkuje kodem 403, dla nieistniejącego wydarzenia -- kodem 404. Podanie ID pliku innego niż wydarzenie również zwraca kod 404. Próba utworzenia wydarzenia z pustym terminem początkowym zwraca kod 400, można jednak nie podać terminu końcowego:
 \begin{minted}{json}
 {
 	"id": 7,
@@ -2179,7 +2166,7 @@ Próba utworzenia obiektu EventDate dla wydarzenia należącego do innego użytk
 }
 \end{minted}
 
-Oddawanie wielu głosów na ten sam termin EventDate modyfikuje wartość \mintinline{sql}{score}, nie dodaje kolejnych głosów. Zalogowano się jako inny użytkownik i oddano głos: wartość \mintinline{sql}{totalScore} dla terminu jest każdorazowo przeliczana, jest równa sumie punktów z każdego głosu. Głos można oddać tylko na wydarzenie, do którego posiada się dostęp -- w przeciwnym razie zwracany jest kod 403.
+Oddawanie wielu głosów na ten sam termin \mintinline{java}{EventDate} modyfikuje wartość \mintinline{sql}{score}, nie dodaje kolejnych głosów. Zalogowano się jako inny użytkownik i oddano głos: wartość \mintinline{sql}{totalScore} dla terminu jest każdorazowo przeliczana, jest równa sumie punktów z każdego głosu. Głos można oddać tylko na wydarzenie, do którego posiada się dostęp -- w przeciwnym razie zwracany jest kod 403.
 
 Zwykły użytkownik nie może listować pełnych danych innych użytkowników (kod 403), może jednak skorzystać z bezpiecznego endpointu -- dla wszystkich użytkowników oraz użytkownika o konkretnym ID. Fragment odpowiedzi dla bezpiecznego listowania wszystkich użytkowników:
 \begin{minted}{json}
@@ -2288,7 +2275,7 @@ Na stronie rejestracji (\mintinline{bash}{http://localhost:4200/auth/register}) 
 
 Na stronie logowania (\mintinline{bash}{http://localhost:4200/auth/login}) również nie można się zalogować bez podania nazwy użytkownika i hasła. Podanie nieprawidłowej kombinacji nazwy i hasła, w tym niewystępującej w bazie danych nazwy użytkownika, skutkuje pojawieniem się powiadomienia ,,Incorrect username or password''. Po wpisaniu poprawnych danych użytkownik zostaje zalogowany i przekierowany na stronę główną, która zawiera przeglądarkę plików. Dla nowo zarejestrowanego użytkownika na liście plików znajduje się jeden katalog -- ,,Base Directory'' -- utworzony automatycznie podczas rejestracji.
 
-Aby zweryfikować automatyczne odświeżanie ciasteczek, tymczasowo zmieniono ich czas ważności w back-endzie na 1 minutę dla organizerJwt i 3 minuty dla organizerRefreshJwt. W inspektorze przeglądarki sprawdzono, że co jedną minutę cyklicznie wywoływane zapytanie wysyłające powiadomienia zwraca kod 403 i wysyłana jest prośba o odświeżenie ciasteczka. Następnie zamknięto kartę aplikacji i ponownie otwarto ją po ponad 3 minutach. Użytkownik został automatycznie wylogowany.
+Aby zweryfikować automatyczne odświeżanie ciasteczek, tymczasowo zmieniono ich czas ważności w back-endzie na 1 minutę dla \mintinline{json}{organizerJwt} i 3 minuty dla \mintinline{json}{organizerRefreshJwt}. W inspektorze przeglądarki sprawdzono, że co jedną minutę cyklicznie wywoływane zapytanie wysyłające powiadomienia zwraca kod 403 i wysyłana jest prośba o odświeżenie ciasteczka. Następnie zamknięto kartę aplikacji i ponownie otwarto ją po ponad 3 minutach. Użytkownik został automatycznie wylogowany.
 
 Utworzono dwa nowe katalogi oraz notatkę, wydarzenie i zadanie. Formularz nie pozwala na wpisanie nazwy elementu lub lokalizacji dłuższej niż 50 znaków, ani zawartości pliku dłuższej niż 65000 znaków, nie pozwala też zapisać elementu z pustą nazwą -- przycisk do zapisu jest nieaktywny. Sprawdzono, że poprawnie zapisuje się notatka z 65000-znakową treścią. Nie można zapisać wydarzenia, którego termin początkowy jest późniejszy od końcowego. Jeżeli w polu daty wpisze się niepełną datę (na przykład bez minut), lub będzie ona nieprawidłowa (na przykład 30.02.2024) pojawi się informacja, że data ta nie zostanie zapisana w bazie danych. Próba podania daty spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC skutkuje informacją, że data nie mieści się w tym przedziale. Przycisk ,,Discard changes'' przywraca stan formularza do stanu ostatniego zapisu.
 
@@ -2302,19 +2289,19 @@ Base Directory
 		New Note
 \end{minted}
 
-W panelu udostępniania elementów wybrano z listy użytkowników \mintinline{bash}{newUser} i udzielono mu dostępu do edycji katalogu ,,Child Directory'' oraz dostępu do przeglądania pliku ,,New Task''. Zalogowano się jako \mintinline{bash}{newUser}. Zweryfikowano, że użytkownik ten może edytować pliki New Note oraz New Event, a tylko przeglądać New Task.
+W panelu udostępniania elementów wybrano z listy użytkowników \mintinline{bash}{newUser} i udzielono mu dostępu do edycji katalogu ,,Child Directory'' oraz dostępu do przeglądania pliku ,,New Task''. Zalogowano się jako \mintinline{bash}{newUser}. Zweryfikowano, że użytkownik ten może edytować pliki ,,New Note'' oraz ,,New Event'', a tylko przeglądać ,,New Task''.
 
-Następnie, jako właściciel, usunięto udzielenie dostępu do przeglądania pliku ,,New Task''. Ponownie zalogowano się jako newUser -- tym razem może on edytować ten plik. Zmodyfikowano dostęp do katalogu ,,Child Directory'' na dostęp do przeglądania. Zgodnie z założeniami, użytkownik newUser może tylko przeglądać wszystkie pliki w tym katalogu.
+Następnie, jako właściciel, usunięto udzielenie dostępu do przeglądania pliku ,,New Task''. Ponownie zalogowano się jako \mintinline{bash}{newUser} -- tym razem może on edytować ten plik. Zmodyfikowano dostęp do katalogu ,,Child Directory'' na dostęp do przeglądania. Zgodnie z założeniami, użytkownik newUser może tylko przeglądać wszystkie pliki w tym katalogu.
 
 Panel udostępniania pobiera listę użytkowników z bazy danych, nie jest możliwe wybranie nieistniejącego użytkownika. 
 
-Pliki i katalogi nieudostępnione użytkownikowi nie pojawiają się w drzewie plików. Jeżeli użytkownik spróbuje dostać się do elementu wpisując jego identyfikator w adresie URL, w przeglądarce nie pojawi się żaden element, a na dole ekranu pokazuje się powiadomienie ,,You don't have access to view this file'' (lub ,,[...] folder'', w przypadku próby dostępu do katalogu). Jeżeli w analogiczny sposób użytkownik spróbuje dostać się do nieistniejącego elementu, powiadomienie będzie miało treść ,,This file could not be found'' (lub ,,This folder [...]\ksremark{[\ldots]}).
+Pliki i katalogi nieudostępnione użytkownikowi nie pojawiają się w drzewie plików. Jeżeli użytkownik spróbuje dostać się do elementu wpisując jego identyfikator w adresie URL, w przeglądarce nie pojawi się żaden element, a na dole ekranu pokazuje się powiadomienie ,,You don't have access to view this file'' (lub ,,[\ldots] folder'', w przypadku próby dostępu do katalogu). Jeżeli w analogiczny sposób użytkownik spróbuje dostać się do nieistniejącego elementu, powiadomienie będzie miało treść ,,This file could not be found'' (lub ,,This folder [\ldots]).
 
 Przycisk służący do przenoszenia elementu do innego katalogu jest ukryty dla katalogu bazowego. Przetestowano przenoszenie plików -- na liście katalogów do wyboru są jedynie katalogi należące do użytkownika. W przypadku katalogu ,,Child Directory'' niemożliwe jest umieszczenie go wewnątrz katalogu ,,Grandchild Directory'' -- przejście wgłąb przenoszonego katalogu jest nieaktywne, jak pokazano na rys. \ref{fig:move-dir-inactive}.
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth]{./MoveDirInactive.png}
+\includegraphics{./MoveDirInactive.png}
 \caption{Zrzut ekranu z panelu przenoszenia katalogu ,,Child Directory''. Opcja przeniesienia katalogu do środka niego samego jest zablokowana.}
 \label{fig:move-dir-inactive}
 \end{figure}
@@ -2343,21 +2330,21 @@ Zalogowano się jako użytkownik posiadający prawa administratorskie. Na pasku 
 
 Aplikację uruchomiono również w przeglądarkach Microsoft Edge wersji w 131.0 oraz Google Chrome w wersji 131.0. Sprawdzono działanie operacji takich jak logowanie i rejestracja, dodawanie i udostępnianie plików, dodawanie powiadomień, głosowanie na terminy. Nie zauważono różnic w działaniu aplikacji.
 
-\section{Wykryte i usunięte błędy}.
+\section{Wykryte i usunięte błędy}
 
-Autentykacja: podczas logowania generowane są dwa ciasteczka: organizerJwt oraz organizerRefreshJwt. Drugie z ciasteczek służy do odświeżania pierwszego, powinno więc mieć dłuższy czas ważności. Przez przypadek do obydwu ciasteczek przypisywano tę samą wartość maxAge.
+Autentykacja: podczas logowania generowane są dwa ciasteczka: \mintinline{bash}{organizerJwt} oraz \mintinline{bash}{organizerRefreshJwt}. Drugie z ciasteczek służy do odświeżania pierwszego, powinno więc mieć dłuższy czas ważności. Przez przypadek do obydwu ciasteczek przypisywano tę samą wartość \mintinline{java}{maxAge}.
 
 Tworzenie katalogu bazowego przy rejestracji: podczas tworzenia katalogu sprawdzane jest, czy jego katalog nadrzędny istnieje. Nie uwzględniono sytuacji wyjątkowej, w której tworzony jest katalog bazowy nieposiadający katalogu nadrzędnego.
 
-Odświeżanie ciasteczek: odświeżane było jedynie ciasteczko organizerJwt \ksremark{Tu i dalej: napisałbym w minted.} zamiast obydwu. 
+Odświeżanie ciasteczek: odświeżane było jedynie ciasteczko \mintinline{bash}{organizerJwt} zamiast obydwu. 
 
 Tworzenie elementu: dodano obsługę sytuacji, gdzie katalog nadrzędny o podanym ID nie istnieje lub należy do innego użytkownika.
 
-Pola w tabeli typu TIMESTAMP: typ danych TIMESTAMP w MySQL obsługuje jedynie przedział 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC. Należało dodać zabezpieczenia, przed podaniem daty spoza tego przedziału.
+Pola w tabeli typu \mintinline{sql}{TIMESTAMP}: typ danych \mintinline{sql}{TIMESTAMP} w MySQL obsługuje jedynie przedział 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC. Należało dodać zabezpieczenia, przed podaniem daty spoza tego przedziału.
 
 Usuwanie elementu: element powinien móc usunąć jedynie jego właściciel. Przypadkowo zrealizowano sytuację odwrotną: wszyscy użytkownicy niebędący właścicielem mogli usuwać elementy.
 
-Panel dostępu do elementów: obiekty AccessFile lub AccessDirectory oraz obiekty User były przechowywane w osobnych tablicach. Obiekty użytkowników były w innej kolejności w tablicy, niż obiekty dostępów -- błędnie założono, że dodawanie użytkowników iterując po obiektach dostępów spowoduje, że kolejność zostanie zachowana. W wyniku tego błędu, zmiany w przydzielonych dostępach następowały nie dla tych użytkowników, których nazwy były wyświetlone w liście w interfejsie graficznym panelu. Błąd naprawiono przechowując pary obiektów we wspólnej tablicy.
+Panel dostępu do elementów: obiekty \mintinline{java}{AccessFile} lub \mintinline{java}{AccessDirectory} oraz obiekty \mintinline{java}{User} były przechowywane w osobnych tablicach. Obiekty użytkowników były w innej kolejności w tablicy, niż obiekty dostępów -- błędnie założono, że dodawanie użytkowników iterując po obiektach dostępów spowoduje, że kolejność zostanie zachowana. W wyniku tego błędu, zmiany w przydzielonych dostępach następowały nie dla tych użytkowników, których nazwy były wyświetlone w liście w interfejsie graficznym panelu. Błąd naprawiono przechowując pary obiektów we wspólnej tablicy.
 
 % \begin{table}
 % \centering
@@ -2398,15 +2385,15 @@ Panel dostępu do elementów: obiekty AccessFile lub AccessDirectory oraz obiekt
 
 \section{Podsumowanie wykonanej aplikacji}
 
-\ksremark{To jest trochę długie. Napisałbym w pierwszym akapicie bardzo syntetycznie, co zostało zrobione. Takie streszczeni pracy na jeden akapit (może być trochę dłuższy).}
+W ramach projektu powstała aplikacja webowa wykorzystująca bazę danych, która pomaga użytkownikom w planowaniu zadań i wydarzeń. W tym celu wykorzystano technologie MySQL, Spring i Angular do stworzenia odpowiednio bazy danych, back-endu i front-endu. Aplikacja pozwala na tworzenie i udostępnianie notatek, wydarzeń i zadań, dodawanie do nich powiadomień, grupowanie ich w katalogach. Wyróżnia się funkcjonalnością głosowania na terminy wydarzeń. Jej interfejs nastawiony jest na zrozumiałość i łatwość użycia, a hasła użytkowników przechowywane są w bezpieczny sposób. 
 
-W ramach projektu zaprojektowano \ksremark{Najpierw napiszemy, że powstała aplikacja. Czym się cechuje. Takie krótkie powtórzenie ze wstępu. Tutaj też można napisać, co nowego wnosi ta aplikacja w stosunku do istniejących rozwiązań. Potem przejdziemy do szczegółów.} relacyjną bazę danych. Niektóre tabele odpowiadają występującym w temacie pojęciom -- użytkownik, plik, katalog. Inne, takie jak tabele przypisujące dostępy do elementów użytkownikom, bądź tabela zawierająca dane niezbędne do odświeżenia ciasteczek, są niezbędne do prawidłowego działania aplikacji, lecz niewidoczne dla jej użytkownika.
+Na początku zaprojektowano relacyjną bazę danych. Niektóre tabele odpowiadają występującym w temacie pojęciom -- użytkownik, plik, katalog. Inne, takie jak tabele przypisujące dostępy do elementów użytkownikom, bądź tabela zawierająca dane niezbędne do odświeżenia ciasteczek, są niezbędne do prawidłowego działania aplikacji, lecz niewidoczne dla jej użytkownika.
 
-Implementację back-endu aplikacji utrzymano w konwencji frameworku Spring. Korzystając z mapowania obiektowo-relacyjnego tabele bazy danych zostały odwzorowane jako klasy języka Java. Dla każdej z nich zaimplementowano również klasy Repository \ksremark{tu i dalej: w minted}, Service oraz Controller, a dla większości także klasy DTO oraz Mapper. Utworzono również klasy kluczy złożonych, konieczne do implementacji klas w relacji N:M \ksremark{$N:M$}, oraz pomocnicze klasy wyjątków, zwiększające czytelność kodu odpowiedzialnego za sprawdzanie dostępu do plików i katalogów.
+Implementację back-endu aplikacji utrzymano w konwencji frameworku Spring. Korzystając z mapowania obiektowo-relacyjnego tabele bazy danych zostały odwzorowane jako klasy języka Java. Dla każdej z nich zaimplementowano również klasy \mintinline{java}{Repository}, \mintinline{java}{Service} oraz \mintinline{java}{Controller}, a dla większości także klasy \mintinline{java}{DTO} oraz \mintinline{java}{Mapper}. Utworzono również klasy kluczy złożonych, konieczne do implementacji klas w relacji $N:M$, oraz pomocnicze klasy wyjątków, zwiększające czytelność kodu odpowiedzialnego za sprawdzanie dostępu do plików i katalogów.
 
-Do implementacji dziedziczenia klas Event, Note oraz Task po klasie File w bazie danych wykorzystano metodę Single Table Inheritance, przez co w bazie odpowiada im wszystkim jedna tabela. Dzięki zastosowaniu dziedziczenia, operacje odczytu oraz usunięcia wierszy wystarczyło zaimplementować raz, dla klasy bazowej. Operacje tworzenia oraz aktualizacji wierszy musiały jednak być napisane osobno dla każdej klasy.
+Do implementacji dziedziczenia klas \mintinline{java}{Event}, \mintinline{java}{Note} oraz \mintinline{java}{Task} po klasie \mintinline{java}{File} w bazie danych wykorzystano metodę \english{Single Table Inheritance}, przez co w bazie odpowiada im wszystkim jedna tabela. Dzięki zastosowaniu dziedziczenia, operacje odczytu oraz usunięcia wierszy wystarczyło zaimplementować raz, dla klasy bazowej. Operacje tworzenia oraz aktualizacji wierszy musiały jednak być napisane osobno dla każdej klasy.
 
-Konieczne było również zaimplemenowanie funkcjonalności autentykacji i autoryzacji użytkowników. Wykorzystano do tego framework Spring Security, który pozwolił na logowanie i wylogowywanie, zakodowywanie haseł oraz autoryzację ról użytkowników na poziomie poszczególnych metod.
+Konieczne było również zaimplemenowanie autentykacji i autoryzacji użytkowników. Wykorzystano do tego framework Spring Security, który pozwolił na logowanie i wylogowywanie, oraz autoryzację ról użytkowników na poziomie poszczególnych metod.
 
 We front-endzie odwzorowano klasy back-endu jako interfejsy języka TypeScript. Serwisy frameworku Angular zostały wykorzystane do komunikacji z back-endem. Konieczne było zadbanie, aby wraz z każdym zapytaniem przekazywały one ciasteczka autentykacyjne.
 
@@ -2414,19 +2401,13 @@ Zgodnie z konwencją frameworku, funkcjonalności aplikacji rozdzielono pomiędz
 
 Większość komponentów w trakcie inicjalizacji pobiera dane z back-endu i pozwala użytkownikowi na edytowanie ich. Back-end wysyła zaktualizowane obiekty w odpowiedzi na zapytania, jednak konieczna była równoległa edycja danych już pobranych we front-endzie, aby zapewnić płynne działanie. Weryfikacja poprawności danych musiała więc zajść w obydwu częściach aplikacji.
 
-Wszystkie wymagania funkcjonalne zostały spełnione. 
-
-Zapewniono bezpieczeństwo danych użytkownika: hasło przesyłane jest w zapytaniu z front-endu tylko podczas rejestracji i logowania, nigdy nie jest przesyłane w odpowiedzi. W bazie danych jest przechowywane w postaci zakodowanej, wykorzystując enkoder zapewniony przez Spring Security.
+Zapewniono bezpieczeństwo danych użytkownika: hasło przesyłane jest w zapytaniu z front-endu tylko podczas rejestracji i logowania, nigdy nie jest przesyłane w odpowiedzi. W bazie danych jest przechowywane w postaci zakodowanej, wykorzystując enkoder BCrypt.
 
 W zapewnieniu intuicyjności aplikacji pomogło skorzystanie z biblioteki komponentów Angular Material. Dzięki temu wygląd interfejsu i poszczególnych kontrolek jest podobny do innych, znanych aplikacji. Oprócz tekstu wykorzystano wiele ikon, dodatkowo wskazujących na działanie każdego przycisku. Na przyciski, które, ze względów estetycznych, mają postać ikony bez tekstu, można najechać myszą, aby wyświetlić wskazówkę dotyczącą ich działania.
 
 Przetestowano endpointy back-endu przy pomocy programu Postman. Sprawdzono zarówno przypadki poprawnych danych wejściowych, jak i dane, dla których zwracany jest kod błędu. Podczas testowania front-endu sprawdzono, czy dane są poprawnie przekazywane między front-endem a back-endem i poprawnie reprezentowane w interfejsie. Przetestowano sposoby reakcji interfejsu na błędy i niedozwolone operacje. 
 
-\section{Dalsze kierunki rozwoju aplikacji}
-
-Kolejnym krokiem rozwoju aplikacji byłoby wdrożenie jej na serwerze internetowym. Obecnie dostępna jest tylko lokalnie, a proces jej budowy i uruchamiania jest zbyt złożony dla przeciętnego użytkownika. Szczególnie funkcjonalności udostępniania elementów mają sens wtedy, kiedy użytkownicy różnych urządzeń mają dostęp do tej samej bazy danych. \ksremark{Nie wiem, jak dobrze opisać deployment}
-
-Drugim kierunkiem rozwoju może być dodanie funkcjonalności związanych z e-mailem. W obecnej aplikacji jest to opcjonalne pole, które nie wpływa na działanie. Na adres e-mail mogłyby być wysyłane powiadomienia, przypominające użytkownikowi o ważnych terminach nawet wtedy, gdy sama aplikacja jest zamknięta. Można by było również dodać opcję odzyskiwania zapomnianego hasła poprzez wysłanie e-maila z jednorazowym kodem weryfikacyjnym.
+Projekt jest gotowy na dalsze rozszerzanie -- do bazy danych można dodać tabele bez znacznego wpływu na napisany już kod back-endu, front-end podzielony jest na komponenty o dużym stopniu niezależności. Potencjalnym kierunkiem rozwoju może być dodanie funkcjonalności związanych z e-mailem. W obecnej aplikacji jest to opcjonalne pole, które nie jest wykorzystywane. Na adres e-mail mogłyby być wysyłane powiadomienia, przypominające użytkownikowi o ważnych terminach nawet wtedy, gdy sama aplikacja jest zamknięta. Można by było również dodać opcję odzyskiwania zapomnianego hasła poprzez wysłanie e-maila z jednorazowym kodem weryfikacyjnym.
 
 
 \backmatter

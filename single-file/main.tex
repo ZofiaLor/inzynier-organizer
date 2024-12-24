@@ -569,13 +569,13 @@ Projekt będzie mieć postać aplikacji webowej. Do przechowywania danych użytk
 % \end{itemize}
 
 \section{Opis problemu}
-Aplikacja w dużym stopniu oparta jest na interakcji z użytkownikiem, który w każdym momencie użytkowania ma wiele dostępnych mu działań. Wyzwaniem jest więc nie zaprojektowanie złożonej logiki programu, a zapewnienie poprawnego działania dla wszelkich danych wejściowych pobranych od użytkownika. Zabezpieczenia takie muszą pojawić się od strony interfejsu, który powinien maksymalnie ograniczać możliwość wprowadzenia niepoprawnych danych, ale i od strony back-endu, gdzie weryfikować należy przychodzące zapytania HTTP. Zawartość odpowiedzi HTTP jest łatwo dostępna w inspektorze przeglądarki, dlatego już na jej poziomie nie mogą być dostępne dane wrażliwe (hasła), a nie dopiero na poziomie interfejsu.
+Aplikacja w dużym stopniu oparta jest na interakcji z użytkownikiem, który w każdym momencie użytkowania ma wiele dostępnych mu działań. Wyzwaniem jest więc nie zaprojektowanie złożonej logiki programu, a zapewnienie poprawnego działania dla wszelkich danych wejściowych pobranych od użytkownika. Zabezpieczenia takie muszą pojawić się od strony interfejsu, który powinien maksymalnie ograniczać możliwość wprowadzenia niepoprawnych danych, ale i od strony back-endu \ksremark{Proszę sprawdzić, czy «back-end» jest zawsze zapisywany w ten sam sposób. Chodzi o to, żebyśmy mieli jeden konsekwentnie stosowany zapis.}, gdzie weryfikować należy przychodzące zapytania HTTP. Zawartość odpowiedzi HTTP jest łatwo dostępna w inspektorze przeglądarki, dlatego już na jej poziomie nie mogą być dostępne dane wrażliwe (hasła \ksremark{Czy tylko hasło, czy coś jeszcze jest daną wrażliwą?}), a nie dopiero na poziomie interfejsu.
 
 Jedną z zalet aplikacji przeglądarkowych jest możliwość zapisywania odnośników do stron, na przykład do konkretnego pliku. Oznacza to jednak, że nawet dokładnie zaprojektowany interfejs nie pozwoli na pełną kontrolę ścieżki, którą użytkownik poruszać się będzie po programie. Zmieniając adres w przeglądarce, może on w dowolnym momencie usiłować dostać się do nieistniejących bądź nieudostępnionych mu zasobów.
 
-Drugim problemem związanym z wykorzystaniem odnośników jest fakt, że użycie ich wiąże się z przeładowywaniem aplikacji, a co za tym idzie -- z utratą przechowywanych w niej danych. Aby zachować ciągłość działania, każdorazowo konieczne są odwołania do bazy danych, a także pamięci przeglądarki: ciasteczek, pamięci lokalnej i pamięci sesji.
+Drugim problemem związanym z wykorzystaniem odnośników jest fakt, że użycie ich wiąże się z przeładowywaniem \ksremark{Czy istnieje jakiś synonim? «Przeładowanie» można różnie rozumieć.} aplikacji, a co za tym idzie -- z utratą przechowywanych w niej danych. Aby zachować ciągłość działania, każdorazowo konieczne są odwołania do bazy danych, a także pamięci przeglądarki: ciasteczek, pamięci lokalnej i pamięci sesji.
 
-Każda zmiana danych wyświetlanych w interfejsie graficznym front-endu, która zachodzi w bazie danych, musi jednocześnie być niezależnie przeprowadzana na obiektach front-endu. Każdorazowe pobieranie danych z bazy skutkowałoby miganiem obrazu, a asynchroniczność wykonywania operacji w back-endzie oznacza, że pobrane dane wciąż mogłyby nie odzwierciedlać stanu bazy.
+Każda zmiana danych wyświetlanych w interfejsie graficznym front-endu \ksremark{Tak samo jak z back-endem, proszę sprawdzić, czy mamy zawsze jeden zapis.}, która zachodzi w bazie danych, musi jednocześnie być niezależnie przeprowadzana na obiektach front-endu. Każdorazowe pobieranie danych z bazy skutkowałoby miganiem obrazu, a asynchroniczność wykonywania operacji w back-endzie oznacza, że pobrane dane wciąż mogłyby nie odzwierciedlać stanu bazy.
 
 \section{Istniejące rozwiązania}
 \subsection{Google Calendar}
@@ -585,30 +585,7 @@ Aplikacja Google Docs pozwala na tworzenie różnych rodzajów plików -- dokume
 \subsection{Produkty Microsoft Office}
 Analogiczne funkcjonalności zapewniają aplikacje pakietu Microsoft Office. Programy typu OneNote, Word, PowerPoint, Excel pozwalają na tworzenie i udostępnianie plików różnych typów. Kalendarz pakietu Office pozwala na tworzenie wydarzeń, dodawanie do niego innych użytkowników i planowanie na ich podstawie spotkań w aplikacji Microsoft Teams.
 
-
-% Wzory  
-% \begin{align}
-% y = \frac{\partial x}{\partial t}
-% \end{align}
-% jak i pojedyncze symbole $x$ i $y$  składa się w trybie matematycznym.
-
-
-%\begin{Definition}\label{def:1}
-%Definicja to zdanie (lub układ zdań) odpowiadające na pytanie o strukturze „co to jest a?”. Definicja normalna jest zdaniem złożonym z 2 członów: definiowanego (łac. definiendum) i definiującego (łac. definiens), połączonych spójnikiem definicyjnym („jest to”, „to tyle, co” itp.). 
-%\end{Definition}
-%
-%\begin{Theorem}[Pitagorasa]\label{t:pitagoras}
-%W dowolnym trójkącie prostokątnym suma kwadratów długości przyprostokątnych jest równa kwadratowi długości przeciwprostokątnej tego trójkąta. 
-%\end{Theorem}
-%
-%\begin{Example}[generalizacja]\label{ex:generalizacja}
-%Przykładem generalizacji jest para: zwierzę i pies. Pies jest zwierzęciem. Pies jest uszczegółowieniem pojęcia zwierzę. Zwierzę jest uogólnieniem pojęcia pies.
-%\end{Example}
-
-%%%%%%%%%%%%%%%%%%%%%%%%
-
-
- 
+\ksremark{Czy istnieją jakieś rozwiązania poza GAFAM?} 
 
 % TODO
 \chapter{Wymagania i narzędzia}

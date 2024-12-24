@@ -1940,7 +1940,7 @@ Odpowiedzi:
 
 Testowanie aplikacji wymaga sprawdzenia, czy jest ona odporna na nieprawidłowe dane wejściowe oraz czy dla danych poprawnych zachowuje się zgodnie z oczekiwaniami. Przetestować pod tym kątem należy zarówno back-end, jak i front-end.
 
-W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne z wymienionymi w podrozdziale \nameref{sec:lista-endpointow}. Z kolei front-end powinien już na poziomie interfejsu w jak największym stopniu ograniczyć możliwość wprowadzenia błędnych danych.
+W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne z wymienionymi w podrozdziale \ref{sec:lista-endpointow} \nameref{sec:lista-endpointow}. Z kolei front-end powinien już na poziomie interfejsu w jak największym stopniu ograniczyć możliwość wprowadzenia błędnych danych.
 
 \section{Testowanie back-endu}
 
@@ -1953,7 +1953,7 @@ Testowanie rozpoczęto od sprawdzenia przypadków użycia dla użytkownika nieza
 \label{fig:send-notifs-403}
 \end{figure}
 
-Przy rejestracji, zgodnie z założeniami, otrzymano kod 400 gdy w ciele zapytania brakowało hasła lub nazwy użytkownika, oraz kod 403 gdy wpisano nazwę użytkownika występującą już w bazie danych. Dla poprawnych danych:
+Przy rejestracji, zgodnie z założeniami, otrzymano kod 400 \comma\ gdy w ciele zapytania brakowało hasła lub nazwy użytkownika, oraz kod 403 \comma\ gdy wpisano nazwę użytkownika występującą już w bazie danych. Dla poprawnych danych:
 \begin{minted}{json}
 {
 	"username": "test",
@@ -2045,7 +2045,8 @@ Przetestowano tworzenie nowych elementów. Kody błędów 400, 403 i 404 są zwr
 
 Z takim samym wynikiem przeprowadzono testy edycji nazw i zawartości elementów. Notatki, wydarzenia oraz zadania posiadają osobne endpointy do ich edycji. Próba edycji elementu przy użyciu niewłaściwego endpointu, na przykład wydarzenia używając \mintinline{bash}{PUT /api/files/note}, skutkuje kodem 404.
 
-Element można przenieść tylko do istniejącego katalogu, należącego do tego samego użytkownika, przez tego użytkownika. Ignorowane są przypadki, gdy podejmowana jest próba przeniesienia katalogu bazowego, bądź ustawienia katalogu nadrzędnego na ten sam katalog lub katalog podrzędny. Taka sytuacja mogłaby skutkować nieskończoną pętlą podczas sprawdzania dostępu, a także błędem bazy danych przy usuwaniu.
+Element można przenieść tylko do istniejącego katalogu, należącego do tego samego użytkownika, przez tego użytkownika. Ignorowane są przypadki, gdy podejmowana jest próba przeniesienia katalogu bazowego, \nocomma\ bądź ustawienia katalogu nadrzędnego na ten sam katalog lub katalog podrzędny. Taka sytuacja mogłaby skutkować nieskończoną pętlą podczas sprawdzania dostępu, a także błędem bazy danych przy usuwaniu.
+\ksremark{Tu choć jedno zdanie wprowadzające przykład.}
 \begin{minted}{json}
 {
 	"id": 29,
@@ -2085,7 +2086,7 @@ W katalogu o ID 29 umieszczono katalog podrzędny oraz plik:
 \end{minted}
 Następnie usunięto katalog 29. Próba odczytu katalogu 29, 30 oraz pliku 15 skutkuje błędem 404 -- zawartość katalogu została kaskadowo usunięta.
 
-W przypadku katalogu bazowego, próba usunięcia skutkuje kodem błędu 403.
+W przypadku katalogu bazowego, \nocomma\ próba usunięcia skutkuje kodem błędu 403.
 
 Sprawdzanie uprawnień do edycji zwraca kod 404 dla nieistniejącego elementu, \mintinline{json}{true} lub \mintinline{json}{false} odpowiednio kiedy użytkownik posiada lub nie posiada uprawnień do edycji elementu.
 
@@ -2175,8 +2176,13 @@ Zwykły użytkownik nie może listować pełnych danych innych użytkowników (k
 
 Próba edycji danych innego użytkownika niż zalogowany skutkuje kodem błędu 403. Nie można też zmienić nazwy na inną występującą już w bazie. Wyjątkiem jest podanie własnej nazwy użytkownika. Podanie pustego ciągu znaków jako nowa nazwa użytkownika zwraca kod 403. Zmiany hasła i roli są ignorowane. Na puste ciągi znaków można zmieniać pola \mintinline{sql}{name} oraz \mintinline{sql}{email}.
 
-Przetestowano zmianę hasła. Jeżeli nie podane zostanie stare lub nowe hasło otrzymywany jest kod 400. Dla niepoprawnego starego hasła zwracany jest kod 403. Zmieniono hasło w poprawny sposób i spróbowano zalogować się przy pomocy starego i nowego hasła -- operacja przebiegła pomyślnie dla hasła nowego. 
+\ksremark{Piszę tutaj, ale odnosi się to do tekstu wyżej i niżej. Mamy w tym rozdziale wiele przypadków testowych. Warto by je wizualnie wydzielić. Tutaj robię tak przykładowo do «przetestowano zmianę hasła». Czy tak jest lepiej?}
 
+\paragraph{Zmiana hasła}
+%Przetestowano zmianę hasła. 
+Jeżeli nie podane zostanie stare lub nowe hasło \comma\ otrzymywany jest kod 400. Dla niepoprawnego starego hasła zwracany jest kod 403. Zmieniono hasło w poprawny sposób i spróbowano zalogować się przy pomocy starego i nowego hasła -- operacja przebiegła pomyślnie dla hasła nowego. 
+
+\paragraph{Usunięcie konta}
 Zwykły użytkownik może usunąć tylko swoje konto. Usunięto użytkownika:
 \begin{minted}{json}
 {
@@ -2244,17 +2250,18 @@ Próba usunięcia własnego użytkownika poprzez endpoint administratora zwraca 
 
 \section{Testowanie front-endu}
 
-Podczas testowania front-endu, tam, gdzie nie zaznaczono inaczej, korzystano z przeglądarki Mozilla Firefox w wersji 133.0. Wysyłane do back-endu zapytania weryfikowano przy pomocy inspektora przeglądarki.
+\ksremark{W tym podrozdziale też podbiłbym wizualnie poszczególne przypadki.}
+Podczas testowania front-endu, \nocomma\ tam, gdzie nie zaznaczono inaczej, korzystano z przeglądarki Mozilla Firefox w wersji 133.0. Wysyłane do back-endu zapytania weryfikowano przy pomocy inspektora przeglądarki.
 
-Po przejściu na adres \mintinline{bash}{http://localhost:4200/} w przeglądarce, pokazana zostaje strona powitalna. Użytkownik jest niezalogowany -- w górnym pasku nawigacyjnym dostępny jest przycisk ,,Log In''. 
+Po przejściu na adres \mintinline{bash}{http://localhost:4200/} w przeglądarce, \nocomma\ pokazana zostaje strona powitalna. Użytkownik jest niezalogowany -- w górnym pasku nawigacyjnym dostępny jest przycisk ,,Log In''. 
 
-Sprawdzono zabezpieczenia przed próbą dostępu do nieudostępnionych użytkownikowi niezalogowanemu zasobów. Przejście na stronę \mintinline{bash}{http://localhost:4200/file/1} przeładowuje stronę, nie zostaje jednak wysłane żadne zapytanie, a widok strony nie zmienia się. Próba wejścia na stronę profilu \mintinline{bash}{http://localhost:4200/profile} skutkuje wyświetleniem komunikatu ,,Please log in to view your profile''. Próba wejścia na dostępną administratorowi stronę \mintinline{bash}{http://localhost:4200/admin/users} pokazuje komunikat ,,This page is accessible for administrators only''. Przejście na niezdefiniowany adres, na przykład \mintinline{bash}{http://localhost:4200/wrong} przekierowuje na prostą stronę ,,Page Not Found'', zawierającą odnośnik do strony głównej. 
+Sprawdzono zabezpieczenia przed próbą dostępu do nieudostępnionych użytkownikowi niezalogowanemu zasobów. Przejście na stronę \mintinline{bash}{http://localhost:4200/file/1} przeładowuje stronę, nie zostaje jednak wysłane żadne zapytanie, a widok strony nie zmienia się. Próba wejścia na stronę profilu \mintinline{bash}{http://localhost:4200/profile} skutkuje wyświetleniem komunikatu ,,Please log in to view your profile'' \ksremark{\english{Please log in to view your profile} i dalej analogicznie.}. Próba wejścia na dostępną administratorowi stronę \mintinline{bash}{http://localhost:4200/admin/users} pokazuje komunikat ,,This page is accessible for administrators only''. Przejście na niezdefiniowany adres, na przykład \mintinline{bash}{http://localhost:4200/wrong} przekierowuje na prostą stronę ,,Page Not Found'', zawierającą odnośnik do strony głównej. 
 
 Na stronie rejestracji (\mintinline{bash}{http://localhost:4200/auth/register}) sprawdzono, że nie można się zarejestrować bez podania nazwy użytkownika oraz przynajmniej 6-znakowego hasła -- przycisk zatwierdzający jest nieaktywny. Pole adresu e-mail może pozostać puste, jeśli jednak wpisze się do niego treść, to musi ona być poprawnym adresem. Wpisano nazwę użytkownika występującą już w bazie danych: po zatwierdzeniu na dole ekranu pojawiło się powiadomienie ,,This username is already taken''. Wpisano unikalną nazwę użytkownika, po zatwierdzeniu na dole ekranu pojawiło się powiadomienie ,,You have successfully registered!'', wyświetlił się również link do strony logowania.
 
 Na stronie logowania (\mintinline{bash}{http://localhost:4200/auth/login}) również nie można się zalogować bez podania nazwy użytkownika i hasła. Podanie nieprawidłowej kombinacji nazwy i hasła, w tym niewystępującej w bazie danych nazwy użytkownika, skutkuje pojawieniem się powiadomienia ,,Incorrect username or password''. Po wpisaniu poprawnych danych użytkownik zostaje zalogowany i przekierowany na stronę główną, która zawiera przeglądarkę plików. Dla nowo zarejestrowanego użytkownika na liście plików znajduje się jeden katalog -- ,,Base Directory'' -- utworzony automatycznie podczas rejestracji.
 
-Aby zweryfikować automatyczne odświeżanie ciasteczek, tymczasowo zmieniono ich czas ważności w back-endzie na 1 minutę dla \mintinline{json}{organizerJwt} i 3 minuty dla \mintinline{json}{organizerRefreshJwt}. W inspektorze przeglądarki sprawdzono, że co jedną minutę cyklicznie wywoływane zapytanie wysyłające powiadomienia zwraca kod 403 i wysyłana jest prośba o odświeżenie ciasteczka. Następnie zamknięto kartę aplikacji i ponownie otwarto ją po ponad 3 minutach. Użytkownik został automatycznie wylogowany.
+Aby zweryfikować automatyczne odświeżanie ciasteczek, tymczasowo zmieniono ich czas ważności w back-endzie na 1 minutę dla \mintinline{json}{organizerJwt} i 3 minuty dla \mintinline{json}{organizerRefreshJwt} \ksremark{Chyba się trzeba będzie zlitować nad minted i dać mu «bash» zamiast «json».}. W inspektorze przeglądarki sprawdzono, że co jedną minutę cyklicznie wywoływane zapytanie wysyłające powiadomienia zwraca kod 403 i wysyłana jest prośba o odświeżenie ciasteczka. Następnie zamknięto kartę aplikacji i ponownie otwarto ją po ponad 3 minutach. Użytkownik został automatycznie wylogowany.
 
 Utworzono dwa nowe katalogi oraz notatkę, wydarzenie i zadanie. Formularz nie pozwala na wpisanie nazwy elementu lub lokalizacji dłuższej niż 50 znaków, ani zawartości pliku dłuższej niż 65000 znaków, nie pozwala też zapisać elementu z pustą nazwą -- przycisk do zapisu jest nieaktywny. Sprawdzono, że poprawnie zapisuje się notatka z 65000-znakową treścią. Nie można zapisać wydarzenia, którego termin początkowy jest późniejszy od końcowego. Jeżeli w polu daty wpisze się niepełną datę (na przykład bez minut), lub będzie ona nieprawidłowa (na przykład 30.02.2024) pojawi się informacja, że data ta nie zostanie zapisana w bazie danych. Próba podania daty spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC skutkuje informacją, że data nie mieści się w tym przedziale. Przycisk ,,Discard changes'' przywraca stan formularza do stanu ostatniego zapisu.
 
@@ -2310,8 +2317,8 @@ Zalogowano się jako użytkownik posiadający prawa administratorskie. Na pasku 
 Aplikację uruchomiono również w przeglądarkach Microsoft Edge wersji w 131.0 oraz Google Chrome w wersji 131.0. Sprawdzono działanie operacji takich jak logowanie i rejestracja, dodawanie i udostępnianie plików, dodawanie powiadomień, głosowanie na terminy. Nie zauważono różnic w działaniu aplikacji.
 
 \section{Wykryte i usunięte błędy}
-
-Autentykacja: podczas logowania generowane są dwa ciasteczka: \mintinline{bash}{organizerJwt} oraz \mintinline{bash}{organizerRefreshJwt}. Drugie z ciasteczek służy do odświeżania pierwszego, powinno więc mieć dłuższy czas ważności. Przez przypadek do obydwu ciasteczek przypisywano tę samą wartość \mintinline{java}{maxAge}.
+\ksremark{Choć zdanie wprowadzenia, np. «Testowanie ujawniło szereg błędów w aplikacji» czy coś może mniej ostrego.}
+Autentykacja: podczas logowania generowane są dwa ciasteczka: \mintinline{bash}{organizerJwt} \ksremark{Proszę sprawdzić, gdzieś wyżej w pracy ciasteczko jest napisane bez minted. Trzeba je tam też zapisać w minted.} oraz \mintinline{bash}{organizerRefreshJwt}. Drugie z ciasteczek służy do odświeżania pierwszego, powinno więc mieć dłuższy czas ważności. Przez przypadek do obydwu ciasteczek przypisywano tę samą wartość \mintinline{java}{maxAge}.
 
 Tworzenie katalogu bazowego przy rejestracji: podczas tworzenia katalogu sprawdzane jest, czy jego katalog nadrzędny istnieje. Nie uwzględniono sytuacji wyjątkowej, w której tworzony jest katalog bazowy nieposiadający katalogu nadrzędnego.
 
@@ -2323,7 +2330,7 @@ Pola w tabeli typu \mintinline{sql}{TIMESTAMP}: typ danych \mintinline{sql}{TIME
 
 Usuwanie elementu: element powinien móc usunąć jedynie jego właściciel. Przypadkowo zrealizowano sytuację odwrotną: wszyscy użytkownicy niebędący właścicielem mogli usuwać elementy.
 
-Panel dostępu do elementów: obiekty \mintinline{java}{AccessFile} lub \mintinline{java}{AccessDirectory} oraz obiekty \mintinline{java}{User} były przechowywane w osobnych tablicach. Obiekty użytkowników były w innej kolejności w tablicy, niż obiekty dostępów -- błędnie założono, że dodawanie użytkowników iterując po obiektach dostępów spowoduje, że kolejność zostanie zachowana. W wyniku tego błędu, zmiany w przydzielonych dostępach następowały nie dla tych użytkowników, których nazwy były wyświetlone w liście w interfejsie graficznym panelu. Błąd naprawiono przechowując pary obiektów we wspólnej tablicy.
+Panel dostępu do elementów: obiekty \mintinline{java}{AccessFile} lub \mintinline{java}{AccessDirectory} oraz obiekty \mintinline{java}{User} były przechowywane w osobnych tablicach. Obiekty użytkowników były w innej kolejności w tablicy, \nocomma\ niż obiekty dostępów -- błędnie założono, że dodawanie użytkowników iterując po obiektach dostępów spowoduje, że kolejność zostanie zachowana. W wyniku tego błędu zmiany w przydzielonych dostępach następowały nie dla tych użytkowników, których nazwy były wyświetlone w liście w interfejsie graficznym panelu. Błąd naprawiono przechowując pary obiektów we wspólnej tablicy.
 
 % \begin{table}
 % \centering

@@ -717,7 +717,7 @@ Wykorzystano również komponenty Angular Material \cite{bib:angularmaterial}, d
 \section{Uruchamianie}
 
 \subsection{Wymagania}
-Do uruchomienia programu potrzebne są: JDK wersja 17, Docker (w systemie Linux zainstalować można sam silnik Docker, w systemie Windows potrzebna jest aplikacja Docker Desktop) oraz Node.js, wraz z NPM (wykorzystano wersję 20). Program wykorzystywać będzie porty: 3306 (baza danych), 8080 (back-end) i 4200 (front-end) -- należy więc zadbać, aby żadna inna aplikacja nie korzystała z nich podczas uruchamiania.
+Do uruchomienia programu potrzebne są: JDK wersja 17, Docker \ksremark{jaka wersja?} (w systemie Linux zainstalować można sam silnik Docker, w systemie Windows potrzebna jest aplikacja Docker Desktop) oraz Node.js, wraz z NPM (wykorzystano wersję 20). Program wykorzystywać będzie porty: 3306 (baza danych), 8080 (back-end) i 4200 (front-end) -- należy więc zadbać, aby żadna inna aplikacja nie korzystała z nich podczas uruchamiania.
 
 \subsection{Instalacja}
 
@@ -730,7 +730,7 @@ Jeżeli spełnione zostały powyższe wymagania, można przejść do zbudowania 
 Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bash}{mvnw.cmd}.
    \item Następnie należy uruchomić kontener zawierający bazę danych poleceniem 
 
-\mintinline{bash}{docker compose up db}.
+\mintinline{bash}{docker compose up db}
    \item Aby zbudować projekt należy użyć polecenia 
 
    \begin{itemize}
@@ -763,9 +763,9 @@ Znajdować się w nim powinny pliki \mintinline{bash}{mvnw} oraz \mintinline{bas
 
 	\item Przed uruchomieniem back-endu można zatrzymać kontener z bazą danych. Jeżeli korzysta się z programu Docker Desktop, wystarczy nacisnąć przycisk ,,stop'' przy kontenerze ,,db''.
 
-	Aby zatrzymać kontener z poziomu terminala należy najpierw znaleźć jego identyfikator używając polecenia 
+	Aby zatrzymać kontener z poziomu terminala \comma\ należy najpierw znaleźć jego identyfikator używając polecenia 
 
-	\mintinline{bash}{docker ps}.
+	\mintinline{bash}{docker ps}
 
 	Przykładowym wynikiem tego polecenia jest
 
@@ -778,15 +778,15 @@ c22ebdb94057   mysql:5.7   "docker-entrypoint.s…"   7 weeks ago   Up About a m
 
 	\mintinline{bash}{docker stop <CONTAINER ID>}
 
-	wstawiając w miejsce <CONTAINER ID> identyfikator odczytany w poprzednim kroku (tu: c22ebdb94057).
+	wstawiając w miejsce \mintinline{bash}{<CONTAINER ID>} identyfikator odczytany w poprzednim kroku (tu: \mintinline{bash}{c22ebdb94057}).
 
 	\item Obydwa kontenery należy zbudować poleceniem 
 
-	\mintinline{bash}{docker compose build},
+	\mintinline{bash}{docker compose build}
 
 	a następnie uruchomić 
 
-	\mintinline{bash}{docker compose up -d}.
+	\mintinline{bash}{docker compose up -d}
     \end{enumerate}
 
 \subsubsection{Front-end}
@@ -810,7 +810,7 @@ c22ebdb94057   mysql:5.7   "docker-entrypoint.s…"   7 weeks ago   Up About a m
 
 	 \mintinline{bash}{http://localhost:4200/}.
 
-	Należy otworzyć go w wybranej przeglądarce wklejając go w polu adresu, bądź naciskając go lewym przyciskiem myszy, wciskając jednocześnie klawisz Ctrl.
+	Należy otworzyć go w wybranej przeglądarce, wklejając go w polu adresu, \nocomma\ bądź naciskając go lewym przyciskiem myszy, wciskając jednocześnie klawisz Ctrl.
 
 	 \end{enumerate}
 

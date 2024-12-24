@@ -939,6 +939,7 @@ c22ebdb94057   mysql:5.7   "docker-entrypoint.s…"   7 weeks ago   Up About a m
 % \end{figure}
 
 \section{Implementacja klas}
+\ksremark{Tutaj trzeba napisać kilka słów wprowadzenia / wstępu. Teraz zaczynamy od razu z grubej rury.}
 
 Zależności między klasami przedstawiono na rys. \ref{fig:erd}.
 
@@ -964,11 +965,11 @@ Tabele w bazie danych mają następujące atrybuty:
 
 Do zaimplementowania dziedziczenia klas \mintinline{java}{Event}, \mintinline{java}{Note} i \mintinline{java}{Task} po klasie bazowej wybrano strategię \english{Singe Table Inheritance}. W bazie danych wszystkie klasy reprezentowane są przez tę samą tabelę \mintinline{sql}{File}, która zawiera kolumny atrybutów wszystkich dziedziczących klas, a także ukrytą kolumnę \mintinline{sql}{file_type}, pozwalającą frameworkowi na rozróżnienie typów podczas mapowania obiektowo-relacyjnego. Rozwiązanie takie pozwala również na odczytanie jednocześnie wszystkich typów plików, co jest przydatne podczas wyświetlania ich w eksploratorze.
 
-Rozwiązanie \english{MappedSuperclass} zostało odrzucone, ponieważ nie tworzy ono tabeli klasy bazowej, przez co nie może ona być w relacji z żadną inną klasą. Rozwiązania \english{Joined Table} oraz \english{Table Per Class} mogłyby być wykorzystane, jednak są mniej optymalne z perspektywy założonego działania.
+Rozwiązanie \english{MappedSuperclass} zostało odrzucone, ponieważ nie tworzy ono tabeli klasy bazowej, przez co nie może ona być w relacji z żadną inną klasą. Rozwiązania \english{Joined Table} oraz \english{Table Per Class} mogłyby być wykorzystane, jednak są mniej optymalne \ksremark{«Optymalny» to synonim słowa «najlepszy». Mamy zatem «… jednak są mniej najlepsze …».} z perspektywy założonego działania.
 
 \section{Budowa aplikacji}
 
-Na diagramie rys. \ref{fig:package} przedstawiono ogólną budowę wewnętrzną aplikacji. Zarówno back-end jak i front-end zostały podzielone zgodnie z konwencją wykorzystanych w nich frameworków. Framework Spring zakłada podział na klasy typu \mintinline{java}{Model}, \mintinline{java}{DTO}, \mintinline{java}{Repository}, \mintinline{java}{Service} i \mintinline{java}{Controller}, a także, opcjonalnie, \mintinline{java}{Mapper}. Angular wykorzystuje wiele komponentów, z których każdy odpowiada za część wyświetlanego interfejsu. Do komunikacji z back-endem stosuje się serwisy. W języku TypeScript istotne jest typowanie, dla klas zwracanych przez back-end zaimplementowano więc modele po stronie front-endu.
+Na diagramie \ksremark{Jaki to diagram?} \ksremark{na} rys. \ref{fig:package} przedstawiono ogólną budowę wewnętrzną aplikacji. Zarówno back-end jak i front-end zostały podzielone zgodnie z konwencją wykorzystanych w nich frameworków. Framework Spring zakłada podział na klasy typu \mintinline{java}{Model}, \mintinline{java}{DTO}, \mintinline{java}{Repository}, \mintinline{java}{Service} i \mintinline{java}{Controller}, a także, opcjonalnie, \mintinline{java}{Mapper}. Angular wykorzystuje wiele komponentów, z których każdy odpowiada za część wyświetlanego interfejsu. Do komunikacji z back-endem stosuje się serwisy. W języku TypeScript istotne jest typowanie, dla klas zwracanych przez back-end zaimplementowano więc modele po stronie front-endu.
 
 \begin{figure}
 \centering
@@ -976,14 +977,15 @@ Na diagramie rys. \ref{fig:package} przedstawiono ogólną budowę wewnętrzną 
 \caption{Schemat UML pakietów back-endu oraz front-endu.}
 \label{fig:package}
 \end{figure}
+\ksremark{Rys. \ref{fig:package}: Jaki to diagram?}
 
 \section{Autentykacja i autoryzacja}
 
-Do implementacji autentykacji i autoryzacji po stronie back-endu wykorzystano rozwiązanie inspirowane przykładem \cite{bib:bkspringauth}. W ciasteczku przechowywany jest JWT \english{Json Web Token} zawierający zakodowaną nazwę użytkownika. Dla każdego zapytania wykonywany jest filtr dekodujący tę nazwę i ustawiający odpowiednie role dla kontekstu. Aby zablokować pewne metody dla użytkowników niezalogowanych, bądź niebędących administratorami, wystarczy wtedy wykorzystać adnotacje odpowiednio \mintinline{java}{@PreAuthorize("isAuthenticated()")} i \mintinline{java}{@PreAuthorize("hasRole('ADMIN')")}. 
+Do implementacji autentykacji i autoryzacji po stronie back-endu wykorzystano rozwiązanie inspirowane przykładem \cite{bib:bkspringauth}. W ciasteczku przechowywany jest JWT \english{Json Web Token} zawierający zakodowaną nazwę użytkownika. Dla każdego zapytania wykonywany jest filtr dekodujący tę nazwę i ustawiający odpowiednie role dla kontekstu. Aby zablokować pewne metody dla użytkowników niezalogowanych, \nocomma\ bądź niebędących administratorami, wystarczy wykorzystać adnotacje  \mintinline{java}{@PreAuthorize("isAuthenticated()")} i \mintinline{java}{@PreAuthorize("hasRole('ADMIN')")}. 
 
 Ciasteczko ma ograniczony czas ważności, dlatego, wzorując się na przykładzie \cite{bib:bkspringrefresh}, zaimplementowano funkcjonalność odświeżania. Wykorzystano w tym celu drugie ciasteczko, o dłuższym czasie ważności. Wywołanie metody odświeżającej token przydziela nowe ciasteczka, pod warunkiem, że nie minął jeszcze czas ważności tokenu odświeżającego.
 
-Autentykację i autoryzację po stronie front-endu wzorowano na przykładach \cite{bib:bkangularauth} oraz \cite{bib:bkangularrefresh}. Do zapisania informacji o użytkowniku wykorzystano jednak pamięć lokalną przeglądarki, nie pamięć sesji. Dzięki temu dane użytkownika są dostępne również wtedy, gdy aplikacja otwarta zostanie w nowej karcie. Pamięć sesji została za to użyta do przechowywania danych o ostatnio przeglądanych katalogach w drzewie, co sprawia, że drzewo nie wraca do stanu początkowego z każdym przeładowaniem strony. Ponadto prośba o odświeżenie ciasteczek wysyłana jest tylko wtedy, gdy endpoint ,,Send Notifications'' zwróci kod błędu, jako że jest on wywoływany cyklicznie co kilka sekund i nie może zwrócić błędu, jeżeli ciasteczko zawiera poprawne dane użytkownika.
+Autentykację i autoryzację po stronie front-endu wzorowano na przykładach \cite{bib:bkangularauth} oraz \cite{bib:bkangularrefresh}. Do zapisania informacji o użytkowniku wykorzystano jednak pamięć lokalną przeglądarki, nie pamięć sesji. Dzięki temu dane użytkownika są dostępne również wtedy, gdy aplikacja otwarta zostanie w nowej karcie. Pamięć sesji została za to użyta do przechowywania danych o ostatnio przeglądanych katalogach w drzewie, co sprawia, że drzewo nie wraca do stanu początkowego z każdym przeładowaniem strony. Ponadto prośba o odświeżenie ciasteczek wysyłana jest tylko wtedy, gdy endpoint \ksremark{To nie jest najważniejsza rzecz na świecie. Nie będę o to kruszył kopii. Czy nie mamy tutaj pewnej niekonsekwencji ortograficznej? Mianowicie mamy «front-end» z myślnikiem, ale «endpoint» bez myślnika.} ,,Send Notifications'' zwróci kod błędu, jako że jest on wywoływany cyklicznie co kilka sekund i nie może zwrócić błędu, jeżeli ciasteczko zawiera poprawne dane użytkownika.
 
 \section{Lista endpointów}
 \label{sec:lista-endpointow}
@@ -1009,9 +1011,9 @@ Wymagane w ciele zapytania: nazwa użytkownika (username), hasło
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Poprawne zalogowanie: obiekt użytkownika z pustym hasłem, kod 200 (OK) 
-	\item Niepoprawne hasło/login: ,,Incorrect credentials'', kod 403 (Forbidden) 
-	\item Brak hasła/loginu: ,,Empty username or password'', kod 400 (Bad Request) 
+	\item Poprawne zalogowanie: obiekt użytkownika z pustym hasłem, kod 200 (\english{OK}) 
+	\item Niepoprawne hasło/login: ,,Incorrect credentials'', kod 403 (\english{Forbidden}) 
+	\item Brak hasła/loginu: ,,Empty username or password'', kod 400 (\english{Bad Request}) 
 \end{itemize}
 
 \paragraph{Log Out} 
@@ -1028,7 +1030,7 @@ Brak wymaganego ciała zapytania.
 {}
 \end{minted}
 
-Odpowiedź: ,,Success'', puste ciasteczka w nagłówku, kod 200 (OK)
+Odpowiedź: ,,Success'', puste ciasteczka w nagłówku, kod 200 (\english{OK})
 
 \paragraph{Register}
 
@@ -1049,9 +1051,9 @@ Wymagana nazwa użytkownika i hasło, opcjonalne są adres email oraz imię (nam
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Poprawne zarejestrowanie: obiekt utworzonego użytkownika z pustym hasłem i rolą \mintinline{java}{ROLE_USER} (jeżeli jest to pierwszy użytkownik w bazie danych, rola to \mintinline{java}{ROLE_ADMIN}), kod 200 (OK) 
-	\item Próba zarejestrowania użytkownika o istniejącej już nazwie: kod 403 (Forbidden) 
-	\item Brak nazwy użytkownika lub hasła: kod 400 (Bad Request)
+	\item Poprawne zarejestrowanie: obiekt utworzonego użytkownika z pustym hasłem i rolą \mintinline{java}{ROLE_USER} (jeżeli jest to pierwszy użytkownik w bazie danych, rola to \mintinline{java}{ROLE_ADMIN}), kod 200 (\english{OK}) 
+	\item Próba zarejestrowania użytkownika o istniejącej już nazwie: kod 403 (\english{Forbidden}) 
+	\item Brak nazwy użytkownika lub hasła: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Change Password}
@@ -1071,10 +1073,10 @@ Wymaga podania starego hasła, służącego do zatwierdzenia zmiany, oraz nowego
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Poprawna zmiana hasła: ,,Success'', kod 200 (OK)
-	\item Brak podanego starego lub nowego hasła: kod 400 (Bad Request) 
-	\item Użytkownik nie istnieje: kod 404 (Not Found) 
-	\item Stare hasło jest niepoprawne: kod 403 (Forbidden)
+	\item Poprawna zmiana hasła: ,,Success'', kod 200 (\english{OK})
+	\item Brak podanego starego lub nowego hasła: kod 400 (\english{Bad Request}) 
+	\item Użytkownik nie istnieje: kod 404 (\english{Not Found}) 
+	\item Stare hasło jest niepoprawne: kod 403 (\english{Forbidden})
 \end{itemize}
 
 
@@ -1094,10 +1096,10 @@ Wymagana nazwa użytkownika. Endpoint dostępny jest tylko administratorowi.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Poprawne nadanie/odebranie roli: obiekt użytkownika, kod 200 (OK) 
-	\item Nieistniejąca nazwa użytkownika: kod 404 (Not Found) 
-	\item Próba nadania/odebrania sobie roli: kod 400 (Bad Request) 
-	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
+	\item Poprawne nadanie/odebranie roli: obiekt użytkownika, kod 200 (\english{OK}) 
+	\item Nieistniejąca nazwa użytkownika: kod 404 (\english{Not Found}) 
+	\item Próba nadania/odebrania sobie roli: kod 400 (\english{Bad Request}) 
+	\item Użytkownik nie jest administratorem: kod 403 (\english{Forbidden})
 \end{itemize}
 
 
@@ -1105,16 +1107,16 @@ Odpowiedzi:
 
 \mintinline{bash}{POST /api/refreshtoken}
 
-Odświeża JWT odpowiadający za autoryzację użytkownika, jeżeli \mintinline{json}{refreshToken} zapisany w ciasteczkach nie stracił ważności.
+Odświeża JWT odpowiadający za autoryzację użytkownika, jeżeli \mintinline{json}{refreshToken} \ksremark{Chyba minted trochę się gubi w przypadku JSON-a.} zapisany w ciasteczkach nie stracił ważności.
 
 Ciało zapytania jest ignorowane.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Poprawne odświeżenie JWT: nowe ciasteczko JWT w nagłówku, kod 200 (OK) 
-	\item \mintinline{json}{refreshToken} stracił ważność: kod 403 (Forbidden) 
-	\item Nie znaleziono \mintinline{json}{refreshToken} w bazie danych: kod 404 (Not Found)
-	\item \mintinline{json}{refreshToken} w ciasteczku jest pusty lub \mintinline{json}{null}: kod 400 (Bad Request)
+	\item Poprawne odświeżenie JWT: nowe ciasteczko JWT w nagłówku, kod 200 (\english{OK}) 
+	\item \mintinline{json}{refreshToken} stracił ważność: kod 403 (\english{Forbidden}) 
+	\item Nie znaleziono \mintinline{json}{refreshToken} w bazie danych: kod 404 (\english{Not Found})
+	\item \mintinline{json}{refreshToken} w ciasteczku jest pusty lub \mintinline{json}{null}: kod 400 (\english{Bad Request})
 \end{itemize}
 
 
@@ -1128,8 +1130,8 @@ Zwraca wszystkich użytkowników z pustymi hasłami. Endpoint dostępny tylko ad
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Użytkownik jest administratorem: lista obiektów użytkowników, kod 200 (OK) 
-	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
+	\item Użytkownik jest administratorem: lista obiektów użytkowników, kod 200 (\english{OK}) 
+	\item Użytkownik nie jest administratorem: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Get All Users Safe}
@@ -1138,7 +1140,7 @@ Odpowiedzi:
 
 Zwraca ID, nazwy użytkownika i nazwy wszystkich użytkowników.
 
-Odpowiedź: lista obiektów użytkowników, kod 200 (OK)
+Odpowiedź: lista obiektów użytkowników, kod 200 (\english{OK})
 
 \paragraph{Get User By ID}
 
@@ -1148,10 +1150,10 @@ Zwraca użytkownika o podanym ID z pustym hasłem. Endpoint dostępny tylko admi
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Użytkownik istnieje: obiekt użytkownika, kod 200 (OK)
-	\item Użytkownik nie istnieje: kod 404 (Not Found) 
-	\item Brak ID: kod 400 (Bad Request) 
-	\item Użytkownik nie jest administratorem: kod 403 (Forbidden)
+	\item Użytkownik istnieje: obiekt użytkownika, kod 200 (\english{OK})
+	\item Użytkownik nie istnieje: kod 404 (\english{Not Found}) 
+	\item Brak ID: kod 400 (\english{Bad Request}) 
+	\item Użytkownik nie jest administratorem: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Get User By ID Safe}
@@ -1162,9 +1164,9 @@ Zwraca ID, nazwę użytkownika oraz nazwę dla użytkownika o podanym ID z pusty
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Użytkownik istnieje: obiekt użytkownika, kod 200 (OK)
-	\item Użytkownik nie istnieje: kod 404 (Not Found) 
-	\item Brak ID: kod 400 (Bad Request) 
+	\item Użytkownik istnieje: obiekt użytkownika, kod 200 (\english{OK})
+	\item Użytkownik nie istnieje: kod 404 (\english{Not Found}) 
+	\item Brak ID: kod 400 (\english{Bad Request}) 
 \end{itemize}
 
 \paragraph{Update User}
@@ -1186,10 +1188,10 @@ Parametry brane pod uwagę: username, name, email.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślna aktualizacja: obiekt użytkownika z pustym hasłem, kod 200 (OK) 
-	\item Nie znaleziono ID: kod 404 (Not Found) 
-	\item Nie podano ID: kod 400 (Bad Request)
-	\item Próba zmiany nazwy użytkownika na już istniejącą lub pustą/zmiany użytkownika innego niż aktualnie zalogowany: kod 403 (Forbidden)
+	\item Pomyślna aktualizacja: obiekt użytkownika z pustym hasłem, kod 200 (\english{OK}) 
+	\item Nie znaleziono ID: kod 404 (\english{Not Found}) 
+	\item Nie podano ID: kod 400 (\english{Bad Request})
+	\item Próba zmiany nazwy użytkownika na już istniejącą lub pustą/zmiany użytkownika innego niż aktualnie zalogowany: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Delete User}
@@ -1200,9 +1202,9 @@ Usuwa użytkownika o podanym ID, wraz z jego katalogami, głosami i powiadomieni
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found) 
-	\item Próba usunięcia własnego użytkownika/użytkownik nie jest administratorem: kod 403 (Forbidden)
+	\item ID istnieje: kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found}) 
+	\item Próba usunięcia własnego użytkownika/użytkownik nie jest administratorem: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Delete My User}
@@ -1213,8 +1215,8 @@ Wylogowuje i usuwa aktualnie zalogowanego użytkownika, wraz z jego katalogami, 
 
 Odpowiedzi: 
 \begin{itemize}
-	\item  Poprawne usunięcie: puste ciasteczka w nagłówku, kod 200 (OK) 
-	\item  Nie znaleziono użytkownika: kod 404 (Not Found)
+	\item  Poprawne usunięcie: puste ciasteczka w nagłówku, kod 200 (\english{OK}) 
+	\item  Nie znaleziono użytkownika: kod 404 (\english{Not Found})
 \end{itemize}
 
 \subsection{Directories}
@@ -1225,7 +1227,7 @@ Odpowiedzi:
 
 Zwraca katalog bazowy aktualnie zalogowanego użytkownika.
 
-Odpowiedź: obiekt katalogu bazowego, kod 200 (OK)
+Odpowiedź: obiekt katalogu bazowego, kod 200 (\english{OK})
 
 \paragraph{Get Directories By Parent ID}
 
@@ -1235,10 +1237,10 @@ Zwraca katalogi podrzędne katalogu o podanym ID.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów katalogów, kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found) 
-	\item Nie podano ID: kod 400 (Bad Request)
-	\item Brak dostępu: kod 403 (Forbidden)
+	\item ID istnieje: lista obiektów katalogów, kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found}) 
+	\item Nie podano ID: kod 400 (\english{Bad Request})
+	\item Brak dostępu: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Get Directory By ID}
@@ -1249,10 +1251,10 @@ Zwraca katalog o podanym ID.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: obiekt katalogu, kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found) 
-	\item Nie podano ID: kod 400 (Bad Request)
-	\item Brak dostępu: kod 403 (Forbidden)
+	\item ID istnieje: obiekt katalogu, kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found}) 
+	\item Nie podano ID: kod 400 (\english{Bad Request})
+	\item Brak dostępu: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Check Directory Edit Access}
@@ -1263,9 +1265,9 @@ Sprawdza, czy aktualnie zalogowany użytkownik posiada prawa do edycji katalogu 
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: true jeżeli użytkownik może edytować katalog, false jeżeli nie, kod 200 (OK) 
-	\item Nie podano ID: kod 400 (Bad Request) 
-	\item ID nie istnieje: kod 404 (Not Found)
+	\item ID istnieje: true jeżeli użytkownik może edytować katalog, false jeżeli nie, kod 200 (\english{OK}) 
+	\item Nie podano ID: kod 400 (\english{Bad Request}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found})
 \end{itemize}
 
 \paragraph{Create Directory}
@@ -1285,10 +1287,10 @@ Wymagane ID rodzica, można podać nazwę. W przypadku niepodania nazwy, domyśl
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Poprawne utworzenie katalogu: obiekt nowego katalogu, kod 200 (OK) 
-	\item Brak ID rodzica: kod 400 (Bad Request)
-	\item Nie znaleziono ID rodzica: kod 404 (Not Found) 
-	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
+	\item Poprawne utworzenie katalogu: obiekt nowego katalogu, kod 200 (\english{OK}) 
+	\item Brak ID rodzica: kod 400 (\english{Bad Request})
+	\item Nie znaleziono ID rodzica: kod 404 (\english{Not Found}) 
+	\item Katalog rodzic należy do innego użytkownika: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Update Directory}
@@ -1310,10 +1312,10 @@ Parametr brany pod uwagę: name.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślna aktualizacja: obiekt katalogu, kod 200 (OK)
-	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (Bad Request) 
-	\item Nie znaleziono ID: kod 404 (Not Found) 
-	\item Brak dostępu do edycji: kod 403 (Forbidden)
+	\item Pomyślna aktualizacja: obiekt katalogu, kod 200 (\english{OK})
+	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (\english{Bad Request}) 
+	\item Nie znaleziono ID: kod 404 (\english{Not Found}) 
+	\item Brak dostępu do edycji: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Delete Directory}
@@ -1324,8 +1326,8 @@ Usuwa katalog o podanym ID, wraz z jego plikami.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found)
+	\item ID istnieje: kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found})
 \end{itemize}
 
 \subsection{Files}
@@ -1338,9 +1340,9 @@ Zwraca wszystkie pliki w katalogu o podanym ID.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów katalogów, kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found) 
-	\item Brak dostępu: kod 403 (Forbidden)
+	\item ID istnieje: lista obiektów katalogów, kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found}) 
+	\item Brak dostępu: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Get File By ID}
@@ -1351,10 +1353,10 @@ Zwraca katalog o podanym ID.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: obiekt katalogu, kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found) 
-	\item Nie podano ID: kod 400 (Bad Request) 
-	\item Brak dostępu: kod 403 (Forbidden)
+	\item ID istnieje: obiekt katalogu, kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found}) 
+	\item Nie podano ID: kod 400 (\english{Bad Request}) 
+	\item Brak dostępu: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Check File Edit Access}
@@ -1365,9 +1367,9 @@ Sprawdza, czy aktualnie zalogowany użytkownik posiada prawa do edycji pliku o d
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: true jeżeli użytkownik może edytować plik, false jeżeli nie, kod 200 (OK) 
-	\item  Nie podano ID: kod 400 (Bad Request) 
-	\item ID nie istnieje: kod 404 (Not Found)
+	\item ID istnieje: true jeżeli użytkownik może edytować plik, false jeżeli nie, kod 200 (\english{OK}) 
+	\item  Nie podano ID: kod 400 (\english{Bad Request}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found})
 \end{itemize}
 
 \paragraph{Create Event}
@@ -1389,10 +1391,10 @@ Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Even
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie: obiekt nowego wydarzenia, kod 200 (OK) 
-	\item Nie podano ID rodzica: kod 400 (Bad Request)
-	\item Nie znaleziono ID rodzica: kod 404 (Not Found) 
-	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
+	\item Pomyślne utworzenie: obiekt nowego wydarzenia, kod 200 (\english{OK}) 
+	\item Nie podano ID rodzica: kod 400 (\english{Bad Request})
+	\item Nie znaleziono ID rodzica: kod 404 (\english{Not Found}) 
+	\item Katalog rodzic należy do innego użytkownika: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Update Event}
@@ -1414,10 +1416,10 @@ Parametry brane pod uwagę: name, textContent, startDate, endDate, location.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślna aktualizacja: obiekt wydarzenia, kod 200 (OK) 
-	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (Bad Request) 
-	\item Nie znaleziono ID: kod 404 (Not Found) 
-	\item Brak dostępu do edycji: kod 403 (Forbidden)
+	\item Pomyślna aktualizacja: obiekt wydarzenia, kod 200 (\english{OK}) 
+	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (\english{Bad Request}) 
+	\item Nie znaleziono ID: kod 404 (\english{Not Found}) 
+	\item Brak dostępu do edycji: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Create Note}
@@ -1438,10 +1440,10 @@ Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Note
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie: obiekt nowej notatki, kod 200 (OK) 
-	\item Nie podano ID rodzica: kod 400 (Bad Request)
-	\item Nie znaleziono ID rodzica: kod 404 (Not Found) 
-	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
+	\item Pomyślne utworzenie: obiekt nowej notatki, kod 200 (\english{OK}) 
+	\item Nie podano ID rodzica: kod 400 (\english{Bad Request})
+	\item Nie znaleziono ID rodzica: kod 404 (\english{Not Found}) 
+	\item Katalog rodzic należy do innego użytkownika: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Update Note}
@@ -1463,10 +1465,10 @@ Parametry brane pod uwagę: name, textContent.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślna aktualizacja: obiekt notatki, kod 200 (OK) 
-	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (Bad Request) 
-	\item Nie znaleziono ID: kod 404 (Not Found)
-	\item Brak dostępu do edycji: kod 403 (Forbidden)
+	\item Pomyślna aktualizacja: obiekt notatki, kod 200 (\english{OK}) 
+	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (\english{Bad Request}) 
+	\item Nie znaleziono ID: kod 404 (\english{Not Found})
+	\item Brak dostępu do edycji: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Create Task}
@@ -1488,10 +1490,10 @@ Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Task
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie: obiekt nowego zadania, kod 200 (OK) 
-	\item Nie podano ID rodzica: kod 400 (Bad Request)
-	\item Nie znaleziono ID rodzica: kod 404 (Not Found) 
-	\item Katalog rodzic należy do innego użytkownika: kod 403 (Forbidden)
+	\item Pomyślne utworzenie: obiekt nowego zadania, kod 200 (\english{OK}) 
+	\item Nie podano ID rodzica: kod 400 (\english{Bad Request})
+	\item Nie znaleziono ID rodzica: kod 404 (\english{Not Found}) 
+	\item Katalog rodzic należy do innego użytkownika: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Update Task}
@@ -1509,14 +1511,14 @@ Wymagane podanie ID zadania w ciele zapytania. Jeżeli data wykonania nie zostan
 }
 \end{minted}
 
-Parametry brane pod uwagę: name, textContent, isFinished, deadline.
+Parametry brane pod uwagę: name, textContent, isFinished, deadline \ksremark{$\gets$ w minted}.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślna aktualizacja: obiekt zadania, kod 200 (OK) 
-	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (Bad Request) 
-	\item Nie znaleziono ID: kod 404 (Not Found)
-	\item Brak dostępu do edycji: kod 403 (Forbidden)
+	\item Pomyślna aktualizacja: obiekt zadania, kod 200 (\english{OK}) 
+	\item Brak obiektu/próba zmiany katalogu nadrzędnego na należący do innego użytkownika: kod 400 (\english{Bad Request}) 
+	\item Nie znaleziono ID: kod 404 (\english{Not Found})
+	\item Brak dostępu do edycji: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Delete File}
@@ -1527,8 +1529,8 @@ Usuwa plik o podanym ID, w przypadku wydarzenia - wraz z jego obiektami EventDat
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found)
+	\item ID istnieje: kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found})
 \end{itemize}
 
 \subsection{Access Directory}
@@ -1543,8 +1545,8 @@ Lista jest pusta dla nieistniejącego użytkownika.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów \mintinline{java}{AccessDirectory}, kod 200 (OK)
-	\item Brak ID: kod 400 (Bad Request)
+	\item ID istnieje: lista obiektów \mintinline{java}{AccessDirectory}, kod 200 (\english{OK})
+	\item Brak ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Get AccessDirectory By Directory}
@@ -1557,8 +1559,8 @@ Lista jest pusta dla nieistniejącego katalogu.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów \mintinline{java}{AccessDirectory}, kod 200 (OK)
-	\item Brak ID: kod 400 (Bad Request)
+	\item ID istnieje: lista obiektów \mintinline{java}{AccessDirectory}, kod 200 (\english{OK})
+	\item Brak ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Modify AccessDirectory}
@@ -1581,9 +1583,9 @@ Wymagane podanie obydwu ID w ciele zapytania.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie/aktualizacja: obiekt \mintinline{java}{AccessDirectory}, kod 200 (OK) 
-	\item Nie istnieje któreś z ID: kod 404 (Not Found) 
-	\item Brak ID: kod 400 (Bad Request)
+	\item Pomyślne utworzenie/aktualizacja: obiekt \mintinline{java}{AccessDirectory}, kod 200 (\english{OK}) 
+	\item Nie istnieje któreś z ID: kod 404 (\english{Not Found}) 
+	\item Brak ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Delete AccessDirectory}
@@ -1594,8 +1596,8 @@ Usuwa obiekt \mintinline{java}{AccessDirectory} o podanych ID użytkownika i kat
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieją: kod 200 (OK) 
-	\item ID nie istnieją: kod 404 (Not Found)
+	\item ID istnieją: kod 200 (\english{OK}) 
+	\item ID nie istnieją: kod 404 (\english{Not Found})
 \end{itemize}
 
 \subsection{Access File}
@@ -1610,8 +1612,8 @@ Lista jest pusta dla nieistniejącego użytkownika.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów \mintinline{java}{AccessFile}, kod 200 (OK) 
-	\item Brak ID: kod 400 (Bad Request)
+	\item ID istnieje: lista obiektów \mintinline{java}{AccessFile}, kod 200 (\english{OK}) 
+	\item Brak ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Get AccessFile By File}
@@ -1624,8 +1626,8 @@ Lista jest pusta dla nieistniejącego pliku.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów \mintinline{java}{AccessFile}, kod 200 (OK) 
-	\item Brak ID: kod 400 (Bad Request)
+	\item ID istnieje: lista obiektów \mintinline{java}{AccessFile}, kod 200 (\english{OK}) 
+	\item Brak ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Modify AccessFile}
@@ -1648,9 +1650,9 @@ Wymagane podanie obydwu ID w ciele zapytania.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie/aktualizacja: obiekt \mintinline{java}{AccessFile}, kod 200 (OK) 
-	\item Nie istnieje któreś z ID: kod 404 (Not Found) 
-	\item Brak ID: kod 400 (Bad Request)
+	\item Pomyślne utworzenie/aktualizacja: obiekt \mintinline{java}{AccessFile}, kod 200 (\english{OK}) 
+	\item Nie istnieje któreś z ID: kod 404 (\english{Not Found}) 
+	\item Brak ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Delete AccessFile}
@@ -1661,8 +1663,8 @@ Usuwa obiekt \mintinline{java}{AccessFile} o podanych ID użytkownika i pliku.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieją: kod 200 (OK) 
-	\item ID nie istnieją: kod 404 (Not Found)
+	\item ID istnieją: kod 200 (\english{OK}) 
+	\item ID nie istnieją: kod 404 (\english{Not Found})
 \end{itemize}
 
 \subsection{Event Dates}
@@ -1673,7 +1675,7 @@ Odpowiedzi:
 
 Zwraca wszystkie obiekty \mintinline{java}{EventDate}.
 
-Odpowiedź: lista obiektów \mintinline{java}{EventDate}, kod 200 (OK)
+Odpowiedź: lista obiektów \mintinline{java}{EventDate}, kod 200 (\english{OK})
 
 \paragraph{Get EventDates By Event ID}
 
@@ -1683,9 +1685,9 @@ Zwraca obiekty \mintinline{java}{EventDate} dotyczące wydarzenia o podanym ID.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów \mintinline{java}{EventDate}, kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found) 
-	\item Nie podano ID: kod 400 (Bad Request)
+	\item ID istnieje: lista obiektów \mintinline{java}{EventDate}, kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found}) 
+	\item Nie podano ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Get EventDate By ID}
@@ -1696,9 +1698,9 @@ Zwraca obiekt \mintinline{java}{EventDate} o podanym ID.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: obiekt \mintinline{java}{EventDate}, kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found) 
-	\item Nie podano ID: kod 400 (Bad Request)
+	\item ID istnieje: obiekt \mintinline{java}{EventDate}, kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found}) 
+	\item Nie podano ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Create EventDate}
@@ -1719,10 +1721,10 @@ Wymagane jest podanie ID wydarzenia, a także początku i końca terminu. Wynik 
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie: nowy obiekt \mintinline{java}{EventDate}, kod 200 (OK) 
-	\item Brak ID/terminu początkowego/końcowego: kod 400 (Bad Request)
-	\item Wydarzenie nie istnieje: kod 404 (Not Found) 
-	\item Wydarzenie należy do innego użytkownika: kod 403 (Forbidden) 
+	\item Pomyślne utworzenie: nowy obiekt \mintinline{java}{EventDate}, kod 200 (\english{OK}) 
+	\item Brak ID/terminu początkowego/końcowego: kod 400 (\english{Bad Request})
+	\item Wydarzenie nie istnieje: kod 404 (\english{Not Found}) 
+	\item Wydarzenie należy do innego użytkownika: kod 403 (\english{Forbidden}) 
 \end{itemize}
 
 \paragraph{Delete EventDate}
@@ -1733,9 +1735,9 @@ Usuwa obiekt \mintinline{java}{EventDate} o podanym ID, wraz z jego głosami. Wy
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found)
-	\item Wydarzenie należy do innego użytkownika: kod 403 (Forbidden) 
+	\item ID istnieje: kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found})
+	\item Wydarzenie należy do innego użytkownika: kod 403 (\english{Forbidden}) 
 \end{itemize}
 
 \subsection{Votes}
@@ -1748,9 +1750,9 @@ Zwraca głosy na termin EventDate o podanym ID.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów głosów, kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found) 
-	\item Nie podano ID: kod 400 (Bad Request)
+	\item ID istnieje: lista obiektów głosów, kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found}) 
+	\item Nie podano ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Get Current User's Vote By EventDate ID}
@@ -1761,9 +1763,9 @@ Zwraca listę głosów oddanych przez aktualnie zalogowanego użytkownika na ter
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów głosów, kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found) 
-	\item Nie podano ID: kod 400 (Bad Request)
+	\item ID istnieje: lista obiektów głosów, kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found}) 
+	\item Nie podano ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Cast Vote}
@@ -1783,10 +1785,10 @@ Wymagane podanie ID \mintinline{java}{EventDate}.
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne oddanie/modyfikacja głosu: obiekt głosu, kod 200 (OK) 
-	\item Nie podano ID \mintinline{java}{EventDate}: kod 400 (Bad Request) 
-	\item Nie istnieje ID \mintinline{java}{EventDate}: kod 404 (Not Found)
-	\item Brak dostępu do wydarzenia: kod 403 (Forbidden)
+	\item Pomyślne oddanie/modyfikacja głosu: obiekt głosu, kod 200 (\english{OK}) 
+	\item Nie podano ID \mintinline{java}{EventDate}: kod 400 (\english{Bad Request}) 
+	\item Nie istnieje ID \mintinline{java}{EventDate}: kod 404 (\english{Not Found})
+	\item Brak dostępu do wydarzenia: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Delete Vote}
@@ -1797,9 +1799,9 @@ Usuwa głos o podanym ID. Głos musiał być oddany przez aktualnie zalogowanego
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found)
-	\item Głos należy do innego użytkownika: kod 403 (Forbidden)
+	\item ID istnieje: kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found})
+	\item Głos należy do innego użytkownika: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \subsection{Notifications}
@@ -1810,15 +1812,15 @@ Odpowiedzi:
 
 Zwraca wszystkie wysłane powiadomienia aktualnie zalogowanego użytkownika.
 
-Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
+Odpowiedź: lista obiektów powiadomień, kod 200 (\english{OK})
 
 \paragraph{Get All My Read/Unread Notifications}
 
 \mintinline{bash}{GET /api/notifs/mynotifs?read={read}}
 
-Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w zależności od parametru \mintinline{json}{read} (\mintinline{json}{true} - odczytane, \mintinline{json}{false} - nieodczytane).
+Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w zależności od parametru \mintinline{json}{read} (\mintinline{json}{true} - \ksremark{--} odczytane, \mintinline{json}{false} - \ksremark{--} nieodczytane).
 
-Odpowiedź: lista obiektów powiadomień, kod 200 (OK)
+Odpowiedź: lista obiektów powiadomień, kod 200 (\english{OK})
 
 \paragraph{Get Current User's Notification By File ID}
 
@@ -1828,9 +1830,9 @@ Zwraca listę niewysłanych powiadomień aktualnie zalogowanego użytkownika pow
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: lista obiektów powiadomień, kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found) 
-	\item Nie podano ID: kod 400 (Bad Request)
+	\item ID istnieje: lista obiektów powiadomień, kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found}) 
+	\item Nie podano ID: kod 400 (\english{Bad Request})
 \end{itemize}
 
 \paragraph{Create Notification}
@@ -1851,10 +1853,10 @@ Wymagane jest podanie ID pliku. Czas wysłania domyślnie ustawiany jest na czas
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie: nowy obiekt powiadomienia, kod 200 (OK) 
-	\item Brak ID pliku: kod 400 (Bad Request) 
-	\item Nie istnieje ID pliku: kod 404 (Not Found)
-	\item Brak dostępu do pliku: kod 403 (Forbidden)
+	\item Pomyślne utworzenie: nowy obiekt powiadomienia, kod 200 (\english{OK}) 
+	\item Brak ID pliku: kod 400 (\english{Bad Request}) 
+	\item Nie istnieje ID pliku: kod 404 (\english{Not Found})
+	\item Brak dostępu do pliku: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Update Notification}
@@ -1873,10 +1875,10 @@ Wymagane jest podanie ID powiadomienia. Jedynym branym pod uwagę parametrem jes
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Pomyślne utworzenie: nowy obiekt powiadomienia, kod 200 (OK) 
-	\item Brak ID powiadomienia: kod 400 (Bad Request) 
-	\item Nie istnieje ID powiadomienia: kod 404 (Not Found)
-	\item Powiadomienie należy do innego użytkownika: kod 403 (Forbidden)
+	\item Pomyślne utworzenie: nowy obiekt powiadomienia, kod 200 (\english{OK}) 
+	\item Brak ID powiadomienia: kod 400 (\english{Bad Request}) 
+	\item Nie istnieje ID powiadomienia: kod 404 (\english{Not Found})
+	\item Powiadomienie należy do innego użytkownika: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Send Current User's Notifications}
@@ -1887,8 +1889,8 @@ Wysyła powiadomienia aktualnie zalogowanego poprzez porównanie ich czasu wysł
 
 Odpowiedzi: 
 \begin{itemize}
-	\item Poprawna aktualizacja powiadomień: kod 200 (OK) 
-	\item Nie znaleziono użytkownika: kod 404 (Not Found)
+	\item Poprawna aktualizacja powiadomień: kod 200 (\english{OK}) 
+	\item Nie znaleziono użytkownika: kod 404 (\english{Not Found})
 \end{itemize}
 
 \paragraph{Delete Notification}
@@ -1899,9 +1901,9 @@ Usuwa powiadomienie o podanym ID. Musi ono należeć do aktualnie zalogowanego u
 
 Odpowiedzi: 
 \begin{itemize}
-	\item ID istnieje: kod 200 (OK) 
-	\item ID nie istnieje: kod 404 (Not Found)
-	\item Powiadomienie należy do innego użytkownika: kod 403 (Forbidden)
+	\item ID istnieje: kod 200 (\english{OK}) 
+	\item ID nie istnieje: kod 404 (\english{Not Found})
+	\item Powiadomienie należy do innego użytkownika: kod 403 (\english{Forbidden})
 \end{itemize}
 
 %\begin{figure}
@@ -1942,7 +1944,7 @@ W przypadku back-endu należy zweryfikować, czy faktyczne odpowiedzi są zgodne
 
 \section{Testowanie back-endu}
 
-Testowanie rozpoczęto od sprawdzenia przypadków użycia dla użytkownika niezalogowanego. Większość endpointów wymaga autentykacji, sprawdzono więc, że zwracają one bez niej kod 403 (Forbidden). Przykład takiego zapytania pokazano na rys. \ref{fig:send-notifs-403}.
+Testowanie rozpoczęto od sprawdzenia przypadków użycia dla użytkownika niezalogowanego. Większość endpointów wymaga autentykacji, sprawdzono więc, że zwracają one bez niej kod 403 (\english{Forbidden}). Przykład takiego zapytania pokazano na rys. \ref{fig:send-notifs-403}.
 
 \begin{figure}
 \centering

@@ -534,15 +534,15 @@ Angular, MySQL, Spring, Organizer
 % \end{itemize}
 
 Obecnie wiele programów tworzonych jest w formie aplikacji przeglądarkowych. Aplikacje takie są niezależne od systemu operacyjnego użytkownika i nie wymagają instalacji, dzięki czemu są łatwiejsze i wygodniejsze w obsłudze.
+%
+Przykładami takich aplikacji są produkty Google: Google Calendar oraz Google Docs, jak i ich odpowiedniki należące do firmy Microsoft, takie jak aplikacje pakietu Microsoft Office. \ksremark{Dodałbym jeszcze jakieś przykłady poza GAFAM.} Pozwalają one na tworzenie różnych rodzajów plików i udostępnianie ich innym użytkownikom.
 
-Przykładami takich aplikacji są produkty Google: Google Calendar oraz Google Docs, jak i ich odpowiedniki należące do firmy Microsoft, takie jak aplikacje pakietu Microsoft Office. Pozwalają one na tworzenie różnych rodzajów plików i udostępnianie ich innym użytkownikom.
-
-Organizer, podobnie jak wymienione aplikacje, pozwalać będzie na tworzenie różnych plików -- w tym przypadku są to typy powiązane z organizacją i planowaniem: notatki, wydarzenia i zadania. Będą one mogły być grupowane w katalogach, udostępniane, dodawać będzie można powiadomienia. 
+\ksremark{Celem niniejszej pracy dyplomowej jest zaprojektowanie i implementacja …} Organizer, podobnie jak wymienione aplikacje, pozwalać będzie na tworzenie różnych plików -- w tym przypadku są to typy powiązane z organizacją i planowaniem: notatki, wydarzenia i zadania. Będą one mogły być grupowane w katalogach, udostępniane, dodawać będzie można powiadomienia. 
 
 Na tle innych aplikacji wyróżniać ją będzie funkcjonalność głosowania na terminy wydarzeń. Obecnie umawianie się na spotkania odbywa się na przykład na czatach internetowych, gdzie każdy musi wyrazić swoją opinię na temat preferowanej daty i godziny, przez co też często gubione są szczegóły. W aplikacji organizera, właściciel wydarzenia (użytkownik, który je utworzył) będzie mógł zdefiniować dowolną liczbę terminów, a każdy użytkownik mający do tego wydarzenia dostęp będzie mógł oddać na nie głosy. Jako że wszystko odbywa się w tym samym programie, zastosowanie tak wybranego terminu jest bardzo proste, a dodatkowe informacje dotyczące tego wydarzenia pozostają łatwo dostępne.
 
 Podstawowymi założeniami aplikacji są intuicyjność i bezpieczeństwo. Aplikacja musi być prosta w obsłudze, aby każdy był w stanie z niej skorzystać. Użytkownicy muszą też mieć pewność, że ich hasła nie zostaną przechwycone.
-
+%
 Projekt będzie mieć postać aplikacji webowej. Do przechowywania danych użytkowników, ich plików i innych potrzebnych informacji, jak i ich odczytu i modyfikacji, konieczne będzie wykorzystanie bazy danych -- w tym przypadku MySQL. Do implementacji back-endu wykorzystany zostanie framework Spring dla języka Java, który pozwala między innymi na korzystanie z Java Persistance API oraz ułatwia implementację autentykacji i autoryzacji użytkowników. Do wykonania front-endu posłuży framework Angular, w którym korzysta się z języka TypeScript.
 
 % Organizer ma za zadanie pomóc użytkownikowi w planowaniu. Będzie więc możliwe tworzenie wydarzeń, mających miejsce w podanych terminach i miejscach, a także zadań, posiadających pewien termin wykonania, które można oznaczyć jako wykonane lub niewykonane. Ponadto dostępny będzie trzeci rodzaj pliku: notatka, będąca prostszą wersją pozostałych plików -- zawiera tylko opis. Pliki umieszczać będzie można w katalogach, a same katalogi tworzyć będą strukturę hierarchiczną (w katalogu znajdować się mogą inne katalogi). Wszystkie elementy (pliki i katalogi) będzie można przenosić między katalogami.

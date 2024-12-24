@@ -2369,7 +2369,7 @@ Panel dostępu do elementów: obiekty \mintinline{java}{AccessFile} lub \mintinl
 % \item problemy napotkane w trakcie pracy
 % \end{itemize}
 
-\section{Podsumowanie wykonanej aplikacji}
+%\section{Podsumowanie wykonanej aplikacji}
 
 W ramach projektu powstała aplikacja webowa wykorzystująca bazę danych, która pomaga użytkownikom w planowaniu zadań i wydarzeń. W tym celu wykorzystano technologie MySQL, Spring i Angular do stworzenia odpowiednio bazy danych, back-endu i front-endu. Aplikacja pozwala na tworzenie i udostępnianie notatek, wydarzeń i zadań, dodawanie do nich powiadomień, grupowanie ich w katalogach. Wyróżnia się funkcjonalnością głosowania na terminy wydarzeń. Jej interfejs nastawiony jest na zrozumiałość i łatwość użycia, a hasła użytkowników przechowywane są w bezpieczny sposób. 
 
@@ -2377,15 +2377,15 @@ Na początku zaprojektowano relacyjną bazę danych. Niektóre tabele odpowiadaj
 
 Implementację back-endu aplikacji utrzymano w konwencji frameworku Spring. Korzystając z mapowania obiektowo-relacyjnego tabele bazy danych zostały odwzorowane jako klasy języka Java. Dla każdej z nich zaimplementowano również klasy \mintinline{java}{Repository}, \mintinline{java}{Service} oraz \mintinline{java}{Controller}, a dla większości także klasy \mintinline{java}{DTO} oraz \mintinline{java}{Mapper}. Utworzono również klasy kluczy złożonych, konieczne do implementacji klas w relacji $N:M$, oraz pomocnicze klasy wyjątków, zwiększające czytelność kodu odpowiedzialnego za sprawdzanie dostępu do plików i katalogów.
 
-Do implementacji dziedziczenia klas \mintinline{java}{Event}, \mintinline{java}{Note} oraz \mintinline{java}{Task} po klasie \mintinline{java}{File} w bazie danych wykorzystano metodę \english{Single Table Inheritance}, przez co w bazie odpowiada im wszystkim jedna tabela. Dzięki zastosowaniu dziedziczenia, operacje odczytu oraz usunięcia wierszy wystarczyło zaimplementować raz, dla klasy bazowej. Operacje tworzenia oraz aktualizacji wierszy musiały jednak być napisane osobno dla każdej klasy.
+Do implementacji dziedziczenia klas \mintinline{java}{Event}, \mintinline{java}{Note} oraz \mintinline{java}{Task} po klasie \mintinline{java}{File} w bazie danych wykorzystano metodę \english{Single Table Inheritance}, przez co w bazie odpowiada im wszystkim jedna tabela. Dzięki zastosowaniu dziedziczenia, \nocomma\ operacje odczytu oraz usunięcia wierszy wystarczyło zaimplementować raz – dla klasy bazowej. Operacje tworzenia oraz aktualizacji wierszy musiały jednak być napisane osobno dla każdej klasy.
 
 Konieczne było również zaimplemenowanie autentykacji i autoryzacji użytkowników. Wykorzystano do tego framework Spring Security, który pozwolił na logowanie i wylogowywanie, oraz autoryzację ról użytkowników na poziomie poszczególnych metod.
 
 We front-endzie odwzorowano klasy back-endu jako interfejsy języka TypeScript. Serwisy frameworku Angular zostały wykorzystane do komunikacji z back-endem. Konieczne było zadbanie, aby wraz z każdym zapytaniem przekazywały one ciasteczka autentykacyjne.
 
-Zgodnie z konwencją frameworku, funkcjonalności aplikacji rozdzielono pomiędzy komponenty. Angular pozwala na tworzenie aplikacji typu Single-Page, wykorzystano jednak różne adresy, aby pozwolić użytkownikowi na zapisywanie poszczególnych adresów w zakładkach przeglądarki. Wiązało się to z dodatkowym problemem zapewnienia ciągłości stanu aplikacji, który rozwiązano używając pamięci sesji oraz pamięci lokalnej przeglądarki.
+Zgodnie z konwencją frameworku, \nocomma\ funkcjonalności aplikacji rozdzielono pomiędzy komponenty. Angular pozwala na tworzenie aplikacji typu Single-Page, wykorzystano jednak różne adresy, aby pozwolić użytkownikowi na zapisywanie poszczególnych adresów w zakładkach przeglądarki. Wiązało się to z dodatkowym problemem zapewnienia ciągłości stanu aplikacji, który rozwiązano używając pamięci sesji oraz pamięci lokalnej przeglądarki.
 
-Większość komponentów w trakcie inicjalizacji pobiera dane z back-endu i pozwala użytkownikowi na edytowanie ich. Back-end wysyła zaktualizowane obiekty w odpowiedzi na zapytania, jednak konieczna była równoległa edycja danych już pobranych we front-endzie, aby zapewnić płynne działanie. Weryfikacja poprawności danych musiała więc zajść w obydwu częściach aplikacji.
+Większość komponentów w trakcie inicjalizacji pobiera dane z back-endu i pozwala użytkownikowi na edytowanie ich \ksremark{ich edytowanie}. Back-end wysyła zaktualizowane obiekty w odpowiedzi na zapytania, jednak konieczna była równoległa edycja danych już pobranych we front-endzie, aby zapewnić płynne działanie. Weryfikacja poprawności danych musiała więc zajść w obydwu częściach aplikacji.
 
 Zapewniono bezpieczeństwo danych użytkownika: hasło przesyłane jest w zapytaniu z front-endu tylko podczas rejestracji i logowania, nigdy nie jest przesyłane w odpowiedzi. W bazie danych jest przechowywane w postaci zakodowanej, wykorzystując enkoder BCrypt.
 

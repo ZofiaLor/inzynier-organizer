@@ -585,8 +585,9 @@ Aplikacja Google Docs pozwala na tworzenie różnych rodzajów plików -- dokume
 \subsection{Produkty Microsoft Office}
 Analogiczne funkcjonalności zapewniają aplikacje pakietu Microsoft Office. Programy typu OneNote, Word, PowerPoint, Excel pozwalają na tworzenie i~udostępnianie plików różnych typów. Kalendarz pakietu Office pozwala na tworzenie wydarzeń, dodawanie do niego innych użytkowników i~planowanie na ich podstawie spotkań w~aplikacji Microsoft Teams.
 \subsection{Doodle}
-Aplikacja Doodle pomaga w~układaniu spotkań dla dwóch lub więcej osób. Jedną z~funkcjonalności jest \english{Group Poll}, w~ramach której użytkownik zdefiniować może kilka terminów wydarzenia, a~następnie udostępnić je innym, aby mogli zagłosować na wybrane terminy jako pasujące. Spotkania umówione poprzez Doodle można zintegrować na przykład z~aplikacjami służącymi do wideokonferencji, takimi jak Zoom, Microsoft Teams czy Google Meet. 
-\ksremark{Jak przeczytałem o~Doodle'u, to mi się przypomniała jeszcze bardzo prosta, ale całkiem użyteczna, aplikacja internetowa \url{https://www.when2meet.com/}.}
+Aplikacja Doodle pomaga w~układaniu spotkań dla dwóch lub więcej osób. Jedną z~funkcjonalności jest \english{Group Poll}, w~ramach której użytkownik zdefiniować może kilka terminów wydarzenia, a~następnie udostępnić je innym, aby mogli zagłosować na wybrane terminy jako pasujące. Spotkania umówione poprzez Doodle można zintegrować na przykład z~aplikacjami służącymi do wideokonferencji, takimi jak Zoom, Microsoft Teams czy Google Meet.
+\subsection{When2meet}
+When2meet jest prostą aplikacją przeglądarkową, która pozwala określić dostępność grupy osób w wybranym przedziale czasu. Użytkownik, który organizuje spotkanie może określić wstępny przedział dni oraz godzin, a następnie udostępnić odnośnik innym użytkownikom. Każdy z nich zaznaczyć może przedziały czasu, w których jest dostępny. Tak zebrane informacje są podsumowywane wizualnie -- ciemniejszy kolor dla danej godziny odpowiada większej ilości osób, którym ona odpowiada.
 \subsection{Notion, Notion Calendar}
 Notion pozwala na tworzenie i~udostępnianie złożonych dokumentów, zawierających podsekcje, wykresy, multimedia i~wiele innych elementów. Umożliwia też zarządzanie projektami i~podział zadań. Aplikacja zintegrowana jest z~Notion Calendar, do którego dodawać można spotkania i~wydarzenia.
 
@@ -1384,7 +1385,7 @@ Odpowiedzi:
 
 Tworzy nowe wydarzenie.
 
-Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Event''.
+Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Event''. Każda podana data musi zawierać się w przedziale 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC.
 
 \begin{minted}{json}
 {
@@ -1400,7 +1401,7 @@ Odpowiedzi:
 	\item Pomyślne utworzenie: obiekt nowego wydarzenia, kod 200 (\english{OK}) 
 	\item Nie podano ID rodzica: kod 400 (\english{Bad Request})
 	\item Nie znaleziono ID rodzica: kod 404 (\english{Not Found}) 
-	\item Katalog rodzic należy do innego użytkownika: kod 403 (\english{Forbidden})
+	\item Katalog rodzic należy do innego użytkownika/data początkowa lub końcowa nie należy do przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Update Event}
@@ -1409,7 +1410,7 @@ Odpowiedzi:
 
 Aktualizuje wydarzenie.
 
-Wymagane podanie ID wydarzenia w~ciele zapytania. Jeżeli daty nie zostaną podane, to zmienione zostaną na \mintinline{json}{null}.
+Wymagane podanie ID wydarzenia w~ciele zapytania. Jeżeli daty nie zostaną podane, to zmienione zostaną na \mintinline{json}{null}. Ignorowane są daty spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC.
 
 \begin{minted}{json}
 {
@@ -1483,7 +1484,7 @@ Odpowiedzi:
 
 Tworzy nowe zadanie.
 
-Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Task''.
+Wymagane jest podanie ID katalogu rodzica. Domyślną nazwą jest ,,Unnamed Task''. Jeżeli podany został termin wykonania (\mintinline{java}{deadline}), to musi on należeć do przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC.
 
 \begin{minted}{json}
 {
@@ -1499,7 +1500,7 @@ Odpowiedzi:
 	\item Pomyślne utworzenie: obiekt nowego zadania, kod 200 (\english{OK}) 
 	\item Nie podano ID rodzica: kod 400 (\english{Bad Request})
 	\item Nie znaleziono ID rodzica: kod 404 (\english{Not Found}) 
-	\item Katalog rodzic należy do innego użytkownika: kod 403 (\english{Forbidden})
+	\item Katalog rodzic należy do innego użytkownika/termin wykonania nie należy do przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Update Task}
@@ -1508,7 +1509,7 @@ Odpowiedzi:
 
 Aktualizuje zadanie.
 
-Wymagane podanie ID zadania w~ciele zapytania. Jeżeli data wykonania nie zostanie podana, to zmieniona zostanie na \mintinline{json}{null}.
+Wymagane podanie ID zadania w~ciele zapytania. Jeżeli data wykonania nie zostanie podana, to zmieniona zostanie na \mintinline{json}{null}. Ignorowana jest data spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC.
 
 \begin{minted}{json}
 {
@@ -1715,7 +1716,7 @@ Odpowiedzi:
 
 Tworzy obiekt \mintinline{java}{EventDate}.
 
-Wymagane jest podanie ID wydarzenia, a~także początku i~końca terminu. Wynik całkowity ustawiany jest na 0. Wydarzenie musi istnieć i~należeć do tworzącego obiekt użytkownika.
+Wymagane jest podanie ID wydarzenia, a~także początku terminu. Wynik całkowity ustawiany jest na 0. Wydarzenie musi istnieć i~należeć do tworzącego obiekt użytkownika. Każda podana data musi należeć do przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC.
 
 \begin{minted}{json}
 {
@@ -1730,7 +1731,7 @@ Odpowiedzi:
 	\item Pomyślne utworzenie: nowy obiekt \mintinline{java}{EventDate}, kod 200 (\english{OK}) 
 	\item Brak ID/terminu początkowego/końcowego: kod 400 (\english{Bad Request})
 	\item Wydarzenie nie istnieje: kod 404 (\english{Not Found}) 
-	\item Wydarzenie należy do innego użytkownika: kod 403 (\english{Forbidden}) 
+	\item Wydarzenie należy do innego użytkownika/data początkowa lub końcowa nie należy do przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC: kod 403 (\english{Forbidden}) 
 \end{itemize}
 
 \paragraph{Delete EventDate}
@@ -1847,7 +1848,7 @@ Odpowiedzi:
 
 Tworzy powiadomienie dla aktualnie zalogowanego użytkownika. Użytkownik musi mieć dostęp do pliku.
 
-Wymagane jest podanie ID pliku. Czas wysłania domyślnie ustawiany jest na czas utworzenia, powiadomienie jest domyślnie nieodczytane. Wysłanie odbywa się na podstawie porównania aktualnego czasu z~czasem wysłania.
+Wymagane jest podanie ID pliku. Czas wysłania domyślnie ustawiany jest na czas utworzenia, powiadomienie jest domyślnie nieodczytane. Wysłanie odbywa się na podstawie porównania aktualnego czasu z~czasem wysłania. Jeżeli czas wysłania jest podany przez użytkownika, to musi należeć on do przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC.
 
 \begin{minted}{json}
 {
@@ -1862,7 +1863,7 @@ Odpowiedzi:
 	\item Pomyślne utworzenie: nowy obiekt powiadomienia, kod 200 (\english{OK}) 
 	\item Brak ID pliku: kod 400 (\english{Bad Request}) 
 	\item Nie istnieje ID pliku: kod 404 (\english{Not Found})
-	\item Brak dostępu do pliku: kod 403 (\english{Forbidden})
+	\item Brak dostępu do pliku/czas wysłania nie należy do przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC: kod 403 (\english{Forbidden})
 \end{itemize}
 
 \paragraph{Update Notification}
@@ -2039,7 +2040,7 @@ organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refresh
 Próba dostępu do endpointu dostępnego tylko administratorowi, na przykład nadania roli administratora, skutkuje kodem 403 odpowiedzi.
 
 \paragraph{Tworzenie elementów}
-Kody błędów 400, 403 i~404 są zwracane zgodnie z~oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach -- w~przeciwnym razie zwracany jest kod 403. Kolumna textContent jest typu \mintinline{sql}{TEXT} -- jest to typ danych bazy MySQL o~rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ \mintinline{sql}{TINYTEXT}, mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w~bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie frontendu. Backend nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego.
+Kody błędów 400, 403 i~404 są zwracane zgodnie z~oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach -- w~przeciwnym razie zwracany jest kod 403. Kolumna textContent jest typu \mintinline{sql}{TEXT} -- jest to typ danych bazy MySQL o~rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ \mintinline{sql}{TINYTEXT}, mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w~bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie frontendu. Backend nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego. Sprawdzono też, że próby wpisania dat spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC dla wydarzeń i~zadań skutkuje kodem 403.
 
 \begin{figure}
 \centering
@@ -2056,7 +2057,7 @@ Kody błędów 400, 403 i~404 są zwracane zgodnie z~oczekiwaniami. Elementy two
 \end{figure}
 
 \paragraph{Edycja elementów}
-Z~takim samym wynikiem przeprowadzono testy edycji nazw i~zawartości elementów. Notatki, wydarzenia oraz zadania posiadają osobne endpointy do ich edycji. Próba edycji elementu przy użyciu niewłaściwego endpointu, na przykład wydarzenia używając \mintinline{bash}{PUT /api/files/note}, skutkuje kodem 404.
+Z~takim samym wynikiem przeprowadzono testy edycji nazw i~zawartości elementów. Notatki, wydarzenia oraz zadania posiadają osobne endpointy do ich edycji. Próba edycji elementu przy użyciu niewłaściwego endpointu, na przykład wydarzenia używając \mintinline{bash}{PUT /api/files/note}, skutkuje kodem 404. Daty spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC są ignorowane.
 
 \paragraph{Przenoszenie elementów}
 Element można przenieść tylko do istniejącego katalogu, należącego do tego samego użytkownika, przez tego użytkownika. Ignorowane są przypadki, gdy podejmowana jest próba przeniesienia katalogu bazowego bądź ustawienia katalogu nadrzędnego na ten sam katalog lub katalog podrzędny. Taka sytuacja mogłaby skutkować nieskończoną pętlą podczas sprawdzania dostępu, a~także błędem bazy danych przy usuwaniu.
@@ -2152,12 +2153,14 @@ Utworzono powiadomienie z~wcześniejszym terminem wysłania.
 \end{minted}
 Powiadomienie od początku jest wysłane.
 
+Próba utworzenia powiadomienia z czasem wysłania spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC skutkuje kodem 403.
+
 Powiadomienie można dodać tylko do pliku, do którego posiada się dostęp. Zostaje ono przypisane zalogowanemu użytkownikowi.
 
 Powiadomienie zaktualizowano, zmieniając wartość pola \mintinline{sql}{read} na ,,true'' -- jest to jedyne pole, które można zmienić. Usunięto własne powiadomienie, następnie spróbowano zaktualizować i~usunąć powiadomienie innego użytkownika -- otrzymano kod 403.
 
 \paragraph{Głosowanie na terminy}
-Próba utworzenia obiektu \mintinline{java}{EventDate} dla wydarzenia należącego do innego użytkownika skutkuje kodem 403, dla nieistniejącego wydarzenia -- kodem 404. Podanie ID pliku innego niż wydarzenie również zwraca kod 404. Próba utworzenia wydarzenia z~pustym terminem początkowym zwraca kod 400, można jednak nie podać terminu końcowego:
+Próba utworzenia obiektu \mintinline{java}{EventDate} dla wydarzenia należącego do innego użytkownika lub z~którąkolwiek datą spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC skutkuje kodem 403, dla nieistniejącego wydarzenia -- kodem 404. Podanie ID pliku innego niż wydarzenie również zwraca kod 404. Próba utworzenia wydarzenia z~pustym terminem początkowym zwraca kod 400, można jednak nie podać terminu końcowego:
 \begin{minted}{json}
 {
 	"id": 7,

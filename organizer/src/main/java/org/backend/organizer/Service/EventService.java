@@ -32,6 +32,7 @@ public class EventService {
 
     public EventDTO createEvent(EventDTO newEvent, String username) {
         if (newEvent.getParent() == null) throw new NullPointerException();
+        if ((newEvent.getStartDate() != null && !FileService.isValidDate(newEvent.getStartDate())) || newEvent.getEndDate() != null && !FileService.isValidDate(newEvent.getEndDate())) throw new IllegalArgumentException();
         Event Event = mapper.eventDTOToEvent(newEvent);
         User owner = userRepository.findByUsername(username);
         Event.setCreationDate(LocalDateTime.now());
@@ -48,7 +49,9 @@ public class EventService {
         if (EventUpdates == null) throw new NullPointerException();
         Event event = repository.findById(EventUpdates.getId()).orElseThrow(EntityNotFoundException::new);
         if (EventUpdates.getStartDate() == null) event.setStartDate(null);
+        else if (!FileService.isValidDate(EventUpdates.getStartDate())) EventUpdates.setStartDate(event.getStartDate());
         if (EventUpdates.getEndDate() == null) event.setEndDate(null);
+        else if (!FileService.isValidDate(EventUpdates.getEndDate())) EventUpdates.setEndDate(event.getEndDate());
         FileService.checkAccess(2, event.getId(), event.getOwner(), username, event.getParent(), userRepository, directoryRepository, afService, adService);
         if (EventUpdates.getParent() != null && !Objects.equals(EventUpdates.getParent(), event.getParent().getId())) {
             Directory parent = directoryRepository.findById(EventUpdates.getParent()).orElseThrow(EntityNotFoundException::new);

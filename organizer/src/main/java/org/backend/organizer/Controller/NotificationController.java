@@ -75,6 +75,8 @@ public class NotificationController {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (EntityNotFoundException ex) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }  catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
     }

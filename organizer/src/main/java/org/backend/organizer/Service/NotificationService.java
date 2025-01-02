@@ -75,6 +75,7 @@ public class NotificationService {
         notification.setUser(user);
         notification.setRead(false);
         if (notification.getSendTimeSetting() == null) notification.setSendTimeSetting(LocalDateTime.now());
+        else if (!FileService.isValidDate(notification.getSendTimeSetting())) throw new IllegalArgumentException();
         notification.setSent(LocalDateTime.now().isAfter(notification.getSendTimeSetting()));
         return mapper.notificationToNotificationDTO(repository.save(notification));
     }

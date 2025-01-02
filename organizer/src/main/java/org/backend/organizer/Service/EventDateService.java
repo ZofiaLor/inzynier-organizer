@@ -50,7 +50,9 @@ public class EventDateService {
     }
 
     public EventDateDTO createEventDate(EventDateDTO eventDateDTO, String username) {
-        if (eventDateDTO.getEvent() == null | eventDateDTO.getStart() == null) throw new NullPointerException();
+        if (eventDateDTO.getEvent() == null || eventDateDTO.getStart() == null) throw new NullPointerException();
+        if (!FileService.isValidDate(eventDateDTO.getStart())) throw new IllegalArgumentException();
+        if (eventDateDTO.getEnd() != null && !FileService.isValidDate(eventDateDTO.getEnd())) throw new IllegalArgumentException();
         User user = userRepository.findByUsername(username);
         Event event = eventRepository.findById(eventDateDTO.getEvent()).orElseThrow(EntityNotFoundException::new);
         if (event.getOwner() != user) throw new IllegalArgumentException();

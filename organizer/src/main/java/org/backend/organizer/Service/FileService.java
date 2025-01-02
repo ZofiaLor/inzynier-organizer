@@ -13,6 +13,8 @@ import org.backend.organizer.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -92,5 +94,12 @@ public class FileService {
                 throw new FileAccessForbiddenException();
             }
         }
+    }
+
+    static boolean isValidDate(LocalDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss X");
+        LocalDateTime minDate = LocalDateTime.parse("1970-01-01 00:00:00 Z", formatter);
+        LocalDateTime maxDate = LocalDateTime.parse("2038-01-19 03:14:08 Z", formatter);
+        return (date.isAfter(minDate) && date.isBefore(maxDate));
     }
 }

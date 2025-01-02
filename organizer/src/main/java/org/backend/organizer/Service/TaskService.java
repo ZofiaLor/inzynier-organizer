@@ -34,6 +34,7 @@ public class TaskService {
 
     public TaskDTO createTask(TaskDTO newTask, String username) {
         if (newTask.getParent() == null) throw new NullPointerException();
+        if (newTask.getDeadline() != null && !FileService.isValidDate(newTask.getDeadline())) throw new IllegalArgumentException();
         Task Task = mapper.taskDTOToTask(newTask);
         User owner = userRepository.findByUsername(username);
         Task.setCreationDate(LocalDateTime.now());
@@ -50,6 +51,7 @@ public class TaskService {
         if (TaskUpdates == null) throw new NullPointerException();
         Task task = repository.findById(TaskUpdates.getId()).orElseThrow(EntityNotFoundException::new);
         if (TaskUpdates.getDeadline() == null) task.setDeadline(null);
+        else if (!FileService.isValidDate(TaskUpdates.getDeadline())) TaskUpdates.setDeadline(null);
         FileService.checkAccess(2, task.getId(), task.getOwner(), username, task.getParent(), userRepository, directoryRepository, afService, adService);
         if (TaskUpdates.getParent() != null && !Objects.equals(TaskUpdates.getParent(), task.getParent().getId())) {
             Directory parent = directoryRepository.findById(TaskUpdates.getParent()).orElseThrow(EntityNotFoundException::new);

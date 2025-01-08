@@ -494,7 +494,7 @@ Angular, MySQL, Spring, Organizer
 
 \subsubsection*{Abstract} 
 \begin{otherlanguage}{british}
-Organizer is a~web application that uses database and allows logged users to create and share files: events, notes and tasks, and add reminders for them. Moreover, it helps deciding on event dates thanks to its voting functionality.
+Organizer is a~web application that uses database and allows logged users to create and share files: events, notes and tasks, and add reminders for them. Moreover, it helps decide on event dates thanks to its voting functionality.
 \end{otherlanguage}
 \subsubsection*{Key words}  
 \begin{otherlanguage}{british}
@@ -988,7 +988,7 @@ Na diagramie pakietów na rys. \ref{fig:package} przedstawiono ogólną budowę 
 
 \section{Autentykacja i~autoryzacja}
 
-Do implementacji autentykacji i~autoryzacji po stronie backendu wykorzystano rozwiązanie inspirowane przykładem \cite{bib:bkspringauth}. W~ciasteczku przechowywany jest JWT \english{Json Web Token} zawierający zakodowaną nazwę użytkownika. Dla każdego zapytania wykonywany jest filtr dekodujący tę nazwę i~ustawiający odpowiednie role dla kontekstu. Aby zablokować pewne metody dla użytkowników niezalogowanych bądź niebędących administratorami, wystarczy wykorzystać adnotacje  \mintinline{java}{@PreAuthorize(''isAuthenticated()'')} i~\mintinline{java}{@PreAuthorize(''hasRole('ADMIN')'')}. 
+Do implementacji autentykacji i~autoryzacji po stronie backendu wykorzystano rozwiązanie inspirowane przykładem \cite{bib:bkspringauth}. W~ciasteczku przechowywany jest JWT (\english{Json Web Token}) zawierający zakodowaną nazwę użytkownika. Dla każdego zapytania wykonywany jest filtr dekodujący tę nazwę i~ustawiający odpowiednie role dla kontekstu. Aby zablokować pewne metody dla użytkowników niezalogowanych bądź niebędących administratorami, wystarczy wykorzystać adnotacje \mintinline{java}{@PreAuthorize("isAuthenticated()")} i~\mintinline{java}{@PreAuthorize("hasRole('ADMIN')")}. 
 
 Ciasteczko ma ograniczony czas ważności, dlatego, wzorując się na przykładzie \cite{bib:bkspringrefresh}, zaimplementowano funkcjonalność odświeżania. Wykorzystano w~tym celu drugie ciasteczko, o~dłuższym czasie ważności. Wywołanie metody odświeżającej token przydziela nowe ciasteczka, pod warunkiem, że nie minął jeszcze czas ważności tokenu odświeżającego.
 
@@ -1825,7 +1825,7 @@ Odpowiedź: lista obiektów powiadomień, kod 200 (\english{OK})
 
 \mintinline{bash}{GET /api/notifs/mynotifs?read={read}}
 
-Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w~zależności od parametru \mintinline{json}{read} (\mintinline{json}{true} -- odczytane, \mintinline{json}{false} -- nieodczytane).
+Zwraca wszystkie wysłane odczytane/nieodczytane powiadomienia aktualnie zalogowanego użytkownika, w~zależności od parametru \mintinline{sql}{read} (\mintinline{json}{true} -- odczytane, \mintinline{json}{false} -- nieodczytane).
 
 Odpowiedź: lista obiektów powiadomień, kod 200 (\english{OK})
 
@@ -2040,7 +2040,7 @@ organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refresh
 Próba dostępu do endpointu dostępnego tylko administratorowi, na przykład nadania roli administratora, skutkuje kodem 403 odpowiedzi.
 
 \paragraph{Tworzenie elementów}
-Kody błędów 400, 403 i~404 są zwracane zgodnie z~oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach -- w~przeciwnym razie zwracany jest kod 403. Kolumna textContent jest typu \mintinline{sql}{TEXT} -- jest to typ danych bazy MySQL o~rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ \mintinline{sql}{TINYTEXT}, mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w~bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie frontendu. Backend nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego. Sprawdzono też, że próby wpisania dat spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC dla wydarzeń i~zadań skutkuje kodem 403.
+Kody błędów 400, 403 i~404 są zwracane zgodnie z~oczekiwaniami. Elementy tworzone są poprawnie, można je tworzyć tylko we własnych katalogach -- w~przeciwnym razie zwracany jest kod 403. Kolumna \mintinline{sql}{textContent} jest typu \mintinline{sql}{TEXT} -- jest to typ danych bazy MySQL o~rozmiarze 64KB. Pozostałe kolumny tekstowe posiadają domyślny typ \mintinline{sql}{TINYTEXT}, mogą więc mieć maksymalnie 255 znaków. Próba przypisania większej liczby znaków skutkuje wyjątkiem w~bazie danych. Przykład takiej sytuacji pokazano na rys. \ref{fig:change-name-256} oraz \ref{fig:change-name-255} Zabezpieczenie przed nim występuje po stronie frontendu. Backend nie weryfikuje też, czy termin początkowy wydarzenia jest wcześniejszy od końcowego. Sprawdzono też, że próby wpisania dat spoza przedziału 1970-01-01 00:00:01 UTC do 2038-01-19 03:14:07 UTC dla wydarzeń i~zadań skutkuje kodem 403.
 
 \begin{figure}
 \centering
@@ -2084,7 +2084,7 @@ Odpowiedź:
 }
 \end{minted}
 
-W~odpowiedzi otrzymany został katalog o~ID 29, a~ID katalogu nadrzędnego (\mintinline{json}{parent}) 26 -- zmiana nie zaszła.
+W~odpowiedzi otrzymany został katalog o~ID 29, a~ID katalogu nadrzędnego (\mintinline{bash}{parent}) 26 -- zmiana nie zaszła.
 
 \paragraph{Odczytywanie elementów}
 Przetestowano odczytywanie elementów, odpowiedzi były zgodne z~wymienionymi na liście endpointów.

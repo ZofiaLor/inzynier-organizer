@@ -84,8 +84,8 @@
 %%%%%%%%%%
 
 \newcommand{\Supervisor}{dr hab. inż. Krzysztof Simiński}     % dane promotora (bez $\langle$ i $\rangle$)
-\newcommand{\Title}{Webowy organizer notatek, wydarzeń i zadań}           % tytuł pracy po polsku
-\newcommand{\TitleAlt}{Web organizer of notes, events, and tasks}                     % thesis title in English
+\newcommand{\Title}{Webowy organizer zadań i wydarzeń}           % tytuł pracy po polsku
+\newcommand{\TitleAlt}{Online task and event organizer}                     % thesis title in English
 \newcommand{\Program}{Informatyka}            % kierunek studiów  (bez $\langle$ i $\rangle$)
 \newcommand{\Specialisation}{Bazy Danych i Inżynieria Systemów}     % specjalność  (bez $\langle$ i $\rangle$)
 \newcommand{\Departament}{ALGORYTMIKI I OPROGRAMOWANIA}        % katedra promotora  (bez $\langle$ i $\rangle$)
@@ -2016,7 +2016,7 @@ Obiekt użytkownika został pobrany z~bazy danych. Automatycznie utworzony zosta
 
 Ponadto wygenerowane zostały dwa ciasteczka:
 \begin{minted}[breaklines]{bash}
-organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNzMzMDc1MTYxLCJleHAiOjE3MzMxNjE1NjF9.UOpUtCw0G1TgcEf9ufIk2T00JqQ8ARo61cZJnYslPdU; Path=/; HttpOnly; Expires=Mon, 02 Dec 2024 17:46:00 GMT;
+organizerJwt=eyJhbGciOiJIUzI1NiJ9 .eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNzMzMDc1MTYxLCJleHAiOjE3MzMxNjE1NjF9 .UOpUtCw0G1TgcEf9ufIk2T00JqQ8ARo61cZJnYslPdU; Path=/; HttpOnly; Expires=Mon, 02 Dec 2024 17:46:00 GMT;
 organizerRefreshJwt=1ee7c994-e296-4a12-a636-8cf39380a1e8; Path=/api/auth/refreshtoken; HttpOnly; Expires=Mon, 02 Dec 2024 23:46:00 GMT;
 \end{minted}
 
@@ -2027,12 +2027,12 @@ Wylogowanie przebiega zawsze pomyślnie, można je powtarzać nawet będąc już
 \paragraph{Odświeżanie ciasteczka \mintinline{bash}{organizerJwt}}
 Przed odświeżeniem ciasteczka miały następujące wartości:
 \begin{minted}[breaklines]{bash}
-organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzMzMTY2NDA4LCJleHAiOjE3MzMyNTI4MDh9._JyoQNrhYdpdl3EPM8NFg29c0HwLm5nMidQ8Fh4Wsik; Path=/; HttpOnly; Expires=Tue, 03 Dec 2024 19:06:48 GMT;
+organizerJwt=eyJhbGciOiJIUzI1NiJ9 .eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzMzMTY2NDA4LCJleHAiOjE3MzMyNTI4MDh9 ._JyoQNrhYdpdl3EPM8NFg29c0HwLm5nMidQ8Fh4Wsik; Path=/; HttpOnly; Expires=Tue, 03 Dec 2024 19:06:48 GMT;
 organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refreshtoken; HttpOnly; Expires=Wed, 04 Dec 2024 01:06:48 GMT;
 \end{minted}
 Po wykonaniu odświeżenia:
 \begin{minted}[breaklines]{bash}
-organizerJwt=eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzMzMTY2NDg0LCJleHAiOjE3MzMyNTI4ODR9.ekR8DYMFlny3pKLKaunjOtXXTE3qH8dTfEFGYdaSpNs; Path=/; HttpOnly; Expires=Tue, 03 Dec 2024 19:08:04 GMT;
+organizerJwt=eyJhbGciOiJIUzI1NiJ9 .eyJzdWIiOiJuZXdVc2VyIiwiaWF0IjoxNzMzMTY2NDg0LCJleHAiOjE3MzMyNTI4ODR9 .ekR8DYMFlny3pKLKaunjOtXXTE3qH8dTfEFGYdaSpNs; Path=/; HttpOnly; Expires=Tue, 03 Dec 2024 19:08:04 GMT;
 organizerRefreshJwt=8d9fab79-5a99-4bb0-b56b-ad0626fb2d61; Path=/api/auth/refreshtoken; HttpOnly; Expires=Wed, 04 Dec 2024 01:08:04 GMT;
 \end{minted}
 
